@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Bookmark, Search, Send } from 'lucide-react'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { JobSearchForm } from '@/components/suche/JobSearchForm'
@@ -11,24 +10,6 @@ const POPULAR_SEARCHES = [
   'IT',
   'Ausbildung',
   'Home-Office',
-]
-
-const STEPS = [
-  {
-    icon: Search,
-    title: 'Suchen',
-    description: 'Beruf und Ort eingeben — Fastcareer durchsucht die Arbeitsagentur-Datenbank.',
-  },
-  {
-    icon: Bookmark,
-    title: 'Merken',
-    description: 'Interessante Stellen auf deine persönliche Merkliste legen.',
-  },
-  {
-    icon: Send,
-    title: 'Bewerben',
-    description: 'Direkt beim Original-Stellenangebot bewerben, ohne Umwege.',
-  },
 ]
 
 export default function Home() {
@@ -60,25 +41,6 @@ export default function Home() {
               >
                 {suche}
               </Link>
-            ))}
-          </div>
-        </Container>
-      </Section>
-
-      <Section className="bg-surface py-14 lg:py-20">
-        <Container>
-          <h2 className="text-foreground text-center text-2xl lg:text-3xl">
-            So funktioniert&apos;s
-          </h2>
-          <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-3">
-            {STEPS.map((step) => (
-              <div key={step.title} className="text-center">
-                <div className="bg-accent/10 text-accent mx-auto flex h-12 w-12 items-center justify-center rounded-full">
-                  <step.icon className="h-6 w-6" />
-                </div>
-                <h3 className="text-foreground mt-4 text-lg">{step.title}</h3>
-                <p className="text-text-secondary mt-2 text-sm">{step.description}</p>
-              </div>
             ))}
           </div>
         </Container>
