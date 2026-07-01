@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { ChevronDown, MapPin, Search } from 'lucide-react'
 import { Button } from '@/components/shared/Button'
 import { cn } from '@/lib/cn'
+import { PopularSearchesCarousel } from '@/components/suche/PopularSearchesCarousel'
 import type { LocalitySuggestion } from '@/types/job.types'
 
 interface JobSearchFormProps {
@@ -29,18 +30,7 @@ export function JobSearchForm({
   const [orte, setOrte] = useState<LocalitySuggestion[]>([])
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
   const [arbeitszeit, setArbeitszeit] = useState(defaultArbeitszeit)
-  const [popularIndex, setPopularIndex] = useState(0)
   const isHomeOffice = arbeitszeit === 'ho'
-
-  useEffect(() => {
-    if (!popularSearches || popularSearches.length < 2) return
-
-    const interval = setInterval(() => {
-      setPopularIndex((current) => (current + 1) % popularSearches.length)
-    }, 2500)
-
-    return () => clearInterval(interval)
-  }, [popularSearches])
 
   function selectPopularSearch(suche: string) {
     if (wasInputRef.current) wasInputRef.current.value = suche
@@ -169,17 +159,7 @@ export function JobSearchForm({
       </form>
 
       {popularSearches && popularSearches.length > 0 && (
-        <div className="mt-5 flex flex-col items-center gap-2">
-          <span className="text-text-secondary text-sm">Beliebte Suchen:</span>
-          <button
-            key={popularIndex}
-            type="button"
-            onClick={() => selectPopularSearch(popularSearches[popularIndex] ?? '')}
-            className="border-border text-text-secondary hover:border-accent hover:text-accent animate-fade-in rounded-full border px-4 py-1.5 text-sm transition-colors duration-150"
-          >
-            {popularSearches[popularIndex]}
-          </button>
-        </div>
+        <PopularSearchesCarousel searches={popularSearches} onSelect={selectPopularSearch} />
       )}
     </>
   )
