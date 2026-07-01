@@ -14,18 +14,17 @@ interface ButtonProps {
 }
 
 const variants = {
-  primary:
-    'bg-foreground text-[var(--text-on-dark)] hover:bg-[var(--surface-dark)] shadow-lg hover:shadow-xl',
+  primary: 'bg-foreground text-[var(--text-on-dark)] hover:bg-[var(--surface-dark)] shadow-sm',
   secondary:
     'bg-[var(--surface)] text-foreground hover:bg-[var(--surface-2)] border border-[var(--border)]',
-  ghost: 'bg-transparent text-foreground hover:text-[var(--text-secondary)]',
-  accent: 'bg-[var(--accent)] text-white hover:bg-[var(--accent-dark)]',
+  ghost: 'bg-transparent text-foreground hover:bg-[var(--surface)]',
+  accent: 'bg-accent text-white hover:bg-accent-dark shadow-sm',
 }
 
 const sizes = {
-  sm: 'px-4 py-2 text-xs',
-  md: 'px-6 py-3 text-sm',
-  lg: 'px-8 py-4 text-sm',
+  sm: 'px-3 py-1.5 text-sm',
+  md: 'px-4 py-2.5 text-sm',
+  lg: 'px-6 py-3 text-base',
 }
 
 export function Button({
@@ -44,7 +43,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled ?? isLoading}
       className={cn(
-        'cursor-pointer font-medium tracking-[0.15em] uppercase transition-all duration-300 disabled:cursor-not-allowed disabled:opacity-50',
+        'inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg font-medium transition-[background-color,box-shadow,transform] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100',
         variants[variant],
         sizes[size],
         className
