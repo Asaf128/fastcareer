@@ -3,10 +3,13 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
+import { FavoriteButton } from '@/components/suche/FavoriteButton'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
+import { createClient } from '@/lib/supabase/server'
 
 interface JobDetailPageProps {
   params: Promise<{ refnr: string }>
+  searchParams: Promise<{ titel?: string; arbeitgeber?: string; ort?: string }>
 }
 
 export async function generateMetadata({ params }: JobDetailPageProps): Promise<Metadata> {
@@ -14,8 +17,9 @@ export async function generateMetadata({ params }: JobDetailPageProps): Promise<
   return { title: `Stellenangebot ${refnr}` }
 }
 
-export default async function JobDetailPage({ params }: JobDetailPageProps) {
+export default async function JobDetailPage({ params, searchParams }: JobDetailPageProps) {
   const { refnr } = await params
+  const { titel, arbeitgeber, ort } = await searchParams
 
   let detail
   try {
@@ -24,14 +28,43 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
     notFound()
   }
 
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let isFavorite = false
+  if (user) {
+    const { data } = await supabase
+      .from('favorites')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('job_refnr', refnr)
+      .maybeSingle()
+    isFavorite = !!data
+  }
+
   return (
     <Section className="py-16 lg:py-24">
       <Container className="max-w-3xl">
-        <Link href="/suche" className="text-text-secondary text-xs tracking-[0.2em] uppercase">
-          ← Zurück zur Suche
-        </Link>
+        <div className="flex items-start justify-between gap-4">
+          <Link href="/suche" className="text-text-secondary text-xs tracking-[0.2em] uppercase">
+            ← Zurück zur Suche
+          </Link>
+          {titel && arbeitgeber && (
+            <FavoriteButton
+              jobRefnr={refnr}
+              titel={titel}
+              arbeitgeber={arbeitgeber}
+              ort={ort ?? ''}
+              initialIsFavorite={isFavorite}
+              isAuthenticated={!!user}
+            />
+          )}
+        </div>
 
-        <h1 className="text-foreground mt-6 text-3xl lg:text-4xl">Stellenangebot</h1>
+        <h1 className="text-foreground mt-6 text-3xl lg:text-4xl">{titel ?? 'Stellenangebot'}</h1>
+        {arbeitgeber && <p className="text-text-secondary mt-2 text-sm">{arbeitgeber}</p>}
         <div className="bg-accent mt-4 mb-8 h-px w-16" />
 
         <p className="text-text-primary text-sm whitespace-pre-line">
