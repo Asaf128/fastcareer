@@ -10,7 +10,7 @@ const emailSchema = z.object({
 
 const codeSchema = z.object({
   email: z.string().email(),
-  token: z.string().regex(/^\d{6}$/),
+  token: z.string().regex(/^\d{4,10}$/),
 })
 
 export async function requestLoginCode(
@@ -48,7 +48,7 @@ export async function verifyLoginCode(_prevState: { error: string | null }, form
   })
 
   if (!parsed.success) {
-    return { error: 'Bitte den 6-stelligen Code eingeben.' }
+    return { error: 'Bitte den Code aus der E-Mail eingeben.' }
   }
 
   const supabase = await createClient()
