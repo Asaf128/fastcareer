@@ -44,7 +44,7 @@ export function FavoriteButton({
       onClick={toggle}
       disabled={isPending}
       aria-label={isFavorite ? 'Von Merkliste entfernen' : 'Zur Merkliste hinzufügen'}
-      aria-pressed={isFavorite}
+      aria-pressed={isFavorite ? 'true' : 'false'}
       className={cn(
         'relative z-10 flex shrink-0 items-center justify-center rounded-lg border p-2 transition-[background-color,border-color,color,transform] duration-150 ease-out active:scale-[0.9] disabled:opacity-50 disabled:active:scale-100',
         isFavorite
