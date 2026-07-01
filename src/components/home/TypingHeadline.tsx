@@ -25,7 +25,7 @@ export function TypingHeadline() {
   const isDone = typedLength >= HEADLINE.length
 
   return (
-    <h1 className="text-foreground mx-auto max-w-2xl text-center text-3xl sm:text-4xl lg:text-5xl">
+    <h1 className="text-foreground mx-auto max-w-2xl text-center text-4xl sm:text-4xl lg:text-5xl">
       <span aria-hidden="true">{typedHeadline}</span>
       <span className="sr-only">{HEADLINE}</span>
       {!isDone && (
