@@ -8,12 +8,9 @@ export function TypingHeadline() {
   const [typedLength, setTypedLength] = useState(0)
 
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const step = prefersReducedMotion ? HEADLINE.length : 1
-
     let index = 0
     const interval = setInterval(() => {
-      index += step
+      index += 1
       setTypedLength(Math.min(index, HEADLINE.length))
       if (index >= HEADLINE.length) clearInterval(interval)
     }, 60)

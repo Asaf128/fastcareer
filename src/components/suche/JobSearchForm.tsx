@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChevronDown, MapPin, Search } from 'lucide-react'
 import { Button } from '@/components/shared/Button'
 import { cn } from '@/lib/cn'
@@ -29,7 +29,18 @@ export function JobSearchForm({
   const [orte, setOrte] = useState<LocalitySuggestion[]>([])
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
   const [arbeitszeit, setArbeitszeit] = useState(defaultArbeitszeit)
+  const [popularIndex, setPopularIndex] = useState(0)
   const isHomeOffice = arbeitszeit === 'ho'
+
+  useEffect(() => {
+    if (!popularSearches || popularSearches.length < 2) return
+
+    const interval = setInterval(() => {
+      setPopularIndex((current) => (current + 1) % popularSearches.length)
+    }, 2500)
+
+    return () => clearInterval(interval)
+  }, [popularSearches])
 
   function selectPopularSearch(suche: string) {
     if (wasInputRef.current) wasInputRef.current.value = suche
@@ -60,116 +71,116 @@ export function JobSearchForm({
   }
 
   return (
-    <form
-      ref={formRef}
-      action="/suche"
-      className="border-border bg-background rounded-xl border p-3 shadow-sm sm:p-4"
-    >
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div className="relative col-span-2">
-          <Search className="text-text-secondary pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-          <input
-            ref={wasInputRef}
-            type="text"
-            name="was"
-            aria-label="Beruf oder Stichwort"
-            defaultValue={defaultWas}
-            placeholder="Beruf oder Stichwort"
-            required
-            className="border-border bg-surface text-foreground w-full rounded-lg border py-2.5 pr-4 pl-9 text-base sm:text-sm"
-          />
-        </div>
+    <>
+      <form
+        ref={formRef}
+        action="/suche"
+        className="border-border bg-background rounded-xl border p-3 shadow-sm sm:p-4"
+      >
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="relative col-span-2">
+            <Search className="text-text-secondary pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <input
+              ref={wasInputRef}
+              type="text"
+              name="was"
+              aria-label="Beruf oder Stichwort"
+              defaultValue={defaultWas}
+              placeholder="Beruf oder Stichwort"
+              required
+              className="border-border bg-surface text-foreground w-full rounded-lg border py-2.5 pr-4 pl-9 text-base sm:text-sm"
+            />
+          </div>
 
-        <div className="relative col-span-2 sm:col-span-1">
-          <MapPin className="text-text-secondary pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
-          <input
-            type="text"
-            name="wo"
-            aria-label="Ort oder PLZ"
-            value={isHomeOffice ? '' : wo}
-            onChange={(e) => handleOrtChange(e.target.value)}
-            onFocus={() => orte.length > 0 && setIsSuggestionsOpen(true)}
-            onBlur={() => setTimeout(() => setIsSuggestionsOpen(false), 150)}
-            placeholder={isHomeOffice ? 'Bundesweit' : 'Ort oder PLZ'}
-            autoComplete="off"
-            disabled={isHomeOffice}
-            className="border-border bg-surface text-foreground w-full rounded-lg border py-2.5 pr-4 pl-9 text-base disabled:opacity-50 sm:text-sm"
-          />
-          {isSuggestionsOpen && orte.length > 0 && (
-            <ul className="border-border bg-background animate-scale-in absolute z-10 mt-1 w-full rounded-lg border py-1 shadow-lg">
-              {orte.map((ort) => (
-                <li key={`${ort.ort}-${ort.plz}`}>
-                  <button
-                    type="button"
-                    onClick={() => selectOrt(ort)}
-                    className={cn(
-                      'hover:bg-surface w-full px-4 py-2 text-left text-sm transition-colors duration-150',
-                      'text-text-secondary'
-                    )}
-                  >
-                    {ort.ort} <span className="text-xs">({ort.plz})</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+          <div className="relative col-span-2 sm:col-span-1">
+            <MapPin className="text-text-secondary pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+            <input
+              type="text"
+              name="wo"
+              aria-label="Ort oder PLZ"
+              value={isHomeOffice ? '' : wo}
+              onChange={(e) => handleOrtChange(e.target.value)}
+              onFocus={() => orte.length > 0 && setIsSuggestionsOpen(true)}
+              onBlur={() => setTimeout(() => setIsSuggestionsOpen(false), 150)}
+              placeholder={isHomeOffice ? 'Bundesweit' : 'Ort oder PLZ'}
+              autoComplete="off"
+              disabled={isHomeOffice}
+              className="border-border bg-surface text-foreground w-full rounded-lg border py-2.5 pr-4 pl-9 text-base disabled:opacity-50 sm:text-sm"
+            />
+            {isSuggestionsOpen && orte.length > 0 && (
+              <ul className="border-border bg-background animate-scale-in absolute z-10 mt-1 w-full rounded-lg border py-1 shadow-lg">
+                {orte.map((ort) => (
+                  <li key={`${ort.ort}-${ort.plz}`}>
+                    <button
+                      type="button"
+                      onClick={() => selectOrt(ort)}
+                      className={cn(
+                        'hover:bg-surface w-full px-4 py-2 text-left text-sm transition-colors duration-150',
+                        'text-text-secondary'
+                      )}
+                    >
+                      {ort.ort} <span className="text-xs">({ort.plz})</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
 
-        <div className="relative">
-          <select
-            name="umkreis"
-            aria-label="Umkreis"
-            defaultValue={defaultUmkreis}
-            disabled={isHomeOffice}
-            className="border-border bg-surface text-foreground w-full appearance-none rounded-lg border py-2.5 pr-8 pl-3 text-base disabled:opacity-50 sm:text-sm"
-          >
-            <option value={5}>5 km</option>
-            <option value={10}>10 km</option>
-            <option value={25}>25 km</option>
-            <option value={50}>50 km</option>
-            <option value={100}>100 km</option>
-          </select>
-          <ChevronDown className="text-text-secondary pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2" />
-        </div>
+          <div className="relative">
+            <select
+              name="umkreis"
+              aria-label="Umkreis"
+              defaultValue={defaultUmkreis}
+              disabled={isHomeOffice}
+              className="border-border bg-surface text-foreground w-full appearance-none rounded-lg border py-2.5 pr-8 pl-3 text-base disabled:opacity-50 sm:text-sm"
+            >
+              <option value={5}>5 km</option>
+              <option value={10}>10 km</option>
+              <option value={25}>25 km</option>
+              <option value={50}>50 km</option>
+              <option value={100}>100 km</option>
+            </select>
+            <ChevronDown className="text-text-secondary pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2" />
+          </div>
 
-        <div className="relative sm:col-span-2">
-          <select
-            name="arbeitszeit"
-            aria-label="Arbeitszeit"
-            value={arbeitszeit}
-            onChange={(e) => setArbeitszeit(e.target.value)}
-            className="border-border bg-surface text-foreground w-full appearance-none rounded-lg border py-2.5 pr-8 pl-3 text-base sm:text-sm"
-          >
-            <option value="">Arbeitszeit: alle</option>
-            <option value="vz">Vollzeit</option>
-            <option value="tz">Teilzeit</option>
-            <option value="ho">Home-Office</option>
-            <option value="snw">Schicht/Nacht/Wochenende</option>
-          </select>
-          <ChevronDown className="text-text-secondary pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2" />
-        </div>
+          <div className="relative sm:col-span-2">
+            <select
+              name="arbeitszeit"
+              aria-label="Arbeitszeit"
+              value={arbeitszeit}
+              onChange={(e) => setArbeitszeit(e.target.value)}
+              className="border-border bg-surface text-foreground w-full appearance-none rounded-lg border py-2.5 pr-8 pl-3 text-base sm:text-sm"
+            >
+              <option value="">Arbeitszeit: alle</option>
+              <option value="vz">Vollzeit</option>
+              <option value="tz">Teilzeit</option>
+              <option value="ho">Home-Office</option>
+              <option value="snw">Schicht/Nacht/Wochenende</option>
+            </select>
+            <ChevronDown className="text-text-secondary pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2" />
+          </div>
 
-        <Button type="submit" className="col-span-2">
-          <Search className="h-4 w-4" />
-          Jobs suchen
-        </Button>
-      </div>
+          <Button type="submit" className="col-span-2">
+            <Search className="h-4 w-4" />
+            Jobs suchen
+          </Button>
+        </div>
+      </form>
 
       {popularSearches && popularSearches.length > 0 && (
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+        <div className="mt-5 flex flex-col items-center gap-2">
           <span className="text-text-secondary text-sm">Beliebte Suchen:</span>
-          {popularSearches.map((suche) => (
-            <button
-              key={suche}
-              type="button"
-              onClick={() => selectPopularSearch(suche)}
-              className="border-border text-text-secondary hover:border-accent hover:text-accent rounded-full border px-3 py-1 text-sm transition-colors duration-150"
-            >
-              {suche}
-            </button>
-          ))}
+          <button
+            key={popularIndex}
+            type="button"
+            onClick={() => selectPopularSearch(popularSearches[popularIndex] ?? '')}
+            className="border-border text-text-secondary hover:border-accent hover:text-accent animate-fade-in rounded-full border px-4 py-1.5 text-sm transition-colors duration-150"
+          >
+            {popularSearches[popularIndex]}
+          </button>
         </div>
       )}
-    </form>
+    </>
   )
 }
