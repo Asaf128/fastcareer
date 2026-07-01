@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { JobSearchForm } from '@/components/suche/JobSearchForm'
@@ -11,8 +12,10 @@ export const metadata: Metadata = {
   description: 'Durchsuche aktuelle Stellenangebote der Bundesagentur für Arbeit.',
 }
 
+const PAGE_SIZE = 25
+
 interface SuchePageProps {
-  searchParams: Promise<{ was?: string; wo?: string; umkreis?: string }>
+  searchParams: Promise<{ was?: string; wo?: string; umkreis?: string; page?: string }>
 }
 
 export default async function SuchePage({ searchParams }: SuchePageProps) {
@@ -20,8 +23,16 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
   const was = params.was ?? ''
   const wo = params.wo ?? ''
   const umkreis = Number(params.umkreis ?? 25)
+  const page = Math.max(1, Number(params.page ?? 1))
 
-  const result = was ? await searchJobs({ was, wo, umkreis }) : null
+  const result = was ? await searchJobs({ was, wo, umkreis, page, size: PAGE_SIZE }) : null
+  const totalPages = result ? Math.ceil(result.gesamtTreffer / PAGE_SIZE) : 0
+
+  function pageHref(targetPage: number) {
+    const query = new URLSearchParams({ was, umkreis: String(umkreis), page: String(targetPage) })
+    if (wo) query.set('wo', wo)
+    return `/suche?${query.toString()}`
+  }
 
   const supabase = await createClient()
   const {
@@ -62,6 +73,37 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
               <p className="text-text-secondary">
                 Keine Treffer gefunden. Versuche einen anderen Suchbegriff.
               </p>
+            )}
+
+            {totalPages > 1 && (
+              <nav
+                aria-label="Seiten"
+                className="mt-10 flex items-center justify-between gap-4 text-xs tracking-[0.15em] uppercase"
+              >
+                {page > 1 ? (
+                  <Link
+                    href={pageHref(page - 1)}
+                    className="border-border hover:border-accent hover:text-accent border px-4 py-2"
+                  >
+                    ← Zurück
+                  </Link>
+                ) : (
+                  <span />
+                )}
+                <span className="text-text-secondary">
+                  Seite {page} von {totalPages}
+                </span>
+                {page < totalPages ? (
+                  <Link
+                    href={pageHref(page + 1)}
+                    className="border-border hover:border-accent hover:text-accent border px-4 py-2"
+                  >
+                    Weiter →
+                  </Link>
+                ) : (
+                  <span />
+                )}
+              </nav>
             )}
           </div>
         )}
