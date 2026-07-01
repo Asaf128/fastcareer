@@ -28,8 +28,12 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Arbeitsagentur-API-Anbindung: `src/lib/jobs/arbeitsagentur.ts`, `src/lib/jobs/arbeitsagentur-detail.ts`
 - Orte/PLZ-Lookup: `src/lib/jobs/openplz.ts`
 - Supabase Clients: `src/lib/supabase/`
-- Supabase-Projekt: geteilt mit "Aurum Watches" (Free-Tier-Limit), Tabelle `favorites` gehört zu Fastcareer
+- Supabase-Projekt: geteilt mit "Aurum Watches" (Free-Tier-Limit); Tabellen `applications`, `profiles`, `job_summaries` sowie Storage-Bucket `cvs` gehören zu Fastcareer. `favorites` ist die alte Vorgänger-Tabelle von `applications` (Daten migriert, `favorites` bleibt vorerst als Backup bestehen)
 - Job-Types: `src/types/job.types.ts`
+- Bewerbungs-Types: `src/types/application.types.ts`
+- Profil-Types: `src/types/profile.types.ts`
+- KI-Types (Job-Zusammenfassung, CV-Parsing): `src/types/ai.types.ts`
+- KI-Anbindung (Google Gemini via Vertex AI — **nicht** Claude/Anthropic, siehe Projekt-Memory): `src/lib/ai/` (`genai.ts` Client, `summarizeJob.ts`, `generateCoverLetter.ts`, `parseCv.ts`)
 - Navigation/Config: `src/constants/`
 
 (Pflege: bei jeder strukturrelevanten Änderung — neue Seite, neuer Feature-Ordner, verschobene Komponente — diesen Abschnitt im selben Schritt aktualisieren.)
