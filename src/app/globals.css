@@ -4,33 +4,37 @@
 :root {
   /* Basis */
   --background: #ffffff;
-  --foreground: #0c0c0e;
+  --foreground: #0f172a;
 
   /* Akzent (1 Farbe in 3 Stufen) — hier anpassen für gesamtes Farbschema */
-  --accent: #c5a028;
-  --accent-light: #e8d5a3;
-  --accent-dark: #8a6e1a;
+  --accent: #2563eb;
+  --accent-light: #93c5fd;
+  --accent-dark: #1d4ed8;
 
   /* Flächen */
-  --surface: #f5f4f0;
-  --surface-2: #ebebea;
-  --surface-dark: #1a1a1e;
-  --surface-darker: #2a2a2e;
+  --surface: #f8fafc;
+  --surface-2: #f1f5f9;
+  --surface-dark: #0f172a;
+  --surface-darker: #020617;
 
   /* Text */
-  --text-primary: #0c0c0e;
-  --text-secondary: #88887e;
-  --text-on-dark: #f2f0eb;
-  --text-on-dark-muted: #6b6b70;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --text-on-dark: #f8fafc;
+  --text-on-dark-muted: #94a3b8;
 
   /* Borders */
-  --border: #e0dfd8;
-  --border-dark: #2a2a2e;
+  --border: #e2e8f0;
+  --border-dark: #1e293b;
 
   /* Status */
   --success: #22c55e;
   --error: #ef4444;
   --warning: #f59e0b;
+
+  /* Bewegung */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 /* ─── Tailwind Token-Mapping ───────────────────────────────── */
@@ -54,7 +58,6 @@
   --color-error: var(--error);
   --color-warning: var(--warning);
 
-  --font-display: var(--font-display);
   --font-body: var(--font-body);
 }
 
@@ -67,11 +70,10 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-display), var(--font-body), sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 400;
-  line-height: 1.05;
+  font-family: var(--font-body), sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
 }
 
 /* ─── Basis ────────────────────────────────────────────────── */
@@ -87,7 +89,7 @@ body {
 
 /* ─── Mikro-Details ────────────────────────────────────────── */
 ::selection {
-  background: var(--foreground);
+  background: var(--accent);
   color: #fff;
 }
 
@@ -108,8 +110,8 @@ input:focus,
 textarea:focus,
 select:focus {
   outline: none;
-  border-color: var(--foreground);
-  box-shadow: 0 0 0 2px rgba(12, 12, 14, 0.08);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 /* ─── Custom Animations ────────────────────────────────────── */
@@ -127,7 +129,7 @@ select:focus {
 @keyframes scaleIn {
   from {
     opacity: 0;
-    transform: scale(0.92) translateY(12px);
+    transform: scale(0.95) translateY(4px);
   }
   to {
     opacity: 1;
@@ -136,10 +138,11 @@ select:focus {
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.4s ease-out;
+  animation: fadeIn 0.4s var(--ease-out);
 }
 .animate-scale-in {
-  animation: scaleIn 0.5s ease-out;
+  animation: scaleIn 0.15s var(--ease-out);
+  transform-origin: top;
 }
 
 /* ─── Text-Gradient ────────────────────────────────────────── */
@@ -148,4 +151,16 @@ select:focus {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* ─── Reduzierte Bewegung ──────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
