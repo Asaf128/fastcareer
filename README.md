@@ -77,7 +77,7 @@ src/
     config.ts             → App-Name, App-URL
     navigation.ts         → Nav-Links
   actions/                → Server Actions
-  middleware.ts           → Supabase Auth Session-Refresh
+  proxy.ts                → Supabase Auth Session-Refresh
 ```
 
 ## Regeln (maschinell erzwungen)
