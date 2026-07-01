@@ -7,7 +7,12 @@ export const metadata: Metadata = {
   title: 'Anmelden',
 }
 
-export default function LoginPage() {
+interface LoginPageProps {
+  searchParams: Promise<{ next?: string }>
+}
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
+  const { next } = await searchParams
   return (
     <Section className="flex flex-1 flex-col justify-center py-14 lg:py-20">
       <Container className="max-w-md text-center">
@@ -16,7 +21,7 @@ export default function LoginPage() {
           <p className="text-text-secondary mt-2 mb-6 text-sm">
             Kein Passwort nötig — wir schicken dir einen Anmelde-Code per E-Mail.
           </p>
-          <LoginForm />
+          <LoginForm next={next} />
         </div>
       </Container>
     </Section>
