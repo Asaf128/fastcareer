@@ -1,0 +1,151 @@
+@import 'tailwindcss';
+
+/* ─── Farb-Architektur ─────────────────────────────────────── */
+:root {
+  /* Basis */
+  --background: #ffffff;
+  --foreground: #0c0c0e;
+
+  /* Akzent (1 Farbe in 3 Stufen) — hier anpassen für gesamtes Farbschema */
+  --accent: #c5a028;
+  --accent-light: #e8d5a3;
+  --accent-dark: #8a6e1a;
+
+  /* Flächen */
+  --surface: #f5f4f0;
+  --surface-2: #ebebea;
+  --surface-dark: #1a1a1e;
+  --surface-darker: #2a2a2e;
+
+  /* Text */
+  --text-primary: #0c0c0e;
+  --text-secondary: #88887e;
+  --text-on-dark: #f2f0eb;
+  --text-on-dark-muted: #6b6b70;
+
+  /* Borders */
+  --border: #e0dfd8;
+  --border-dark: #2a2a2e;
+
+  /* Status */
+  --success: #22c55e;
+  --error: #ef4444;
+  --warning: #f59e0b;
+}
+
+/* ─── Tailwind Token-Mapping ───────────────────────────────── */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-accent-dark: var(--accent-dark);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-dark: var(--surface-dark);
+  --color-surface-darker: var(--surface-darker);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-on-dark: var(--text-on-dark);
+  --color-text-on-dark-muted: var(--text-on-dark-muted);
+  --color-border: var(--border);
+  --color-border-dark: var(--border-dark);
+  --color-success: var(--success);
+  --color-error: var(--error);
+  --color-warning: var(--warning);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+/* ─── Typografie ───────────────────────────────────────────── */
+* {
+  font-family: var(--font-body), sans-serif;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display), var(--font-body), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+/* ─── Basis ────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Mikro-Details ────────────────────────────────────────── */
+::selection {
+  background: var(--foreground);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--foreground);
+  box-shadow: 0 0 0 2px rgba(12, 12, 14, 0.08);
+}
+
+/* ─── Custom Animations ────────────────────────────────────── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out;
+}
+
+/* ─── Text-Gradient ────────────────────────────────────────── */
+.text-gradient {
+  background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

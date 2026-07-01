@@ -1,0 +1,41 @@
+onlyBuiltDependencies:
+  - simple-git-hooks
+
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver
+
+minimumReleaseAgeExclude:
+  - "@commitlint/cli"
+  - "@commitlint/config-conventional"
+  - "@commitlint/config-validator"
+  - "@commitlint/ensure"
+  - "@commitlint/format"
+  - "@commitlint/is-ignored"
+  - "@commitlint/lint"
+  - "@commitlint/load"
+  - "@commitlint/message"
+  - "@commitlint/parse"
+  - "@commitlint/read"
+  - "@commitlint/resolve-extends"
+  - "@commitlint/rules"
+  - "@commitlint/top-level"
+  - "@commitlint/types"
+  - "@supabase/auth-js"
+  - "@supabase/ssr"
+  - "@supabase/supabase-js"
+  - "@supabase/functions-js"
+  - "@supabase/postgrest-js"
+  - "@supabase/realtime-js"
+  - "@supabase/storage-js"
+  - "@supabase/cli-darwin-arm64"
+  - "@supabase/cli-darwin-x64"
+  - "@supabase/cli-linux-arm64-musl"
+  - "@supabase/cli-linux-arm64"
+  - "@supabase/cli-linux-x64-musl"
+  - "@supabase/cli-linux-x64"
+  - "@supabase/cli-windows-arm64"
+  - "@supabase/cli-windows-x64"
+  - framer-motion
+  - motion-dom
+  - supabase
