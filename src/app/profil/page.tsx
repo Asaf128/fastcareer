@@ -24,6 +24,15 @@ export default async function ProfilPage() {
     .eq('id', user.id)
     .maybeSingle()
 
+  // Signed URL, weil der cvs-Bucket privat ist (1 h gültig — reicht für die Seite)
+  let cvUrl: string | null = null
+  if (profile?.cv_path) {
+    const { data: signed } = await supabase.storage
+      .from('cvs')
+      .createSignedUrl(profile.cv_path, 3600)
+    cvUrl = signed?.signedUrl ?? null
+  }
+
   return (
     <Section className="py-10 lg:py-14">
       <Container className="max-w-2xl">
@@ -32,7 +41,7 @@ export default async function ProfilPage() {
           Diese Daten nutzen wir, um für dich maßgeschneiderte Anschreiben zu erstellen.
         </p>
 
-        <ProfileForm initialProfile={profile} />
+        <ProfileForm initialProfile={profile} cvUrl={cvUrl} />
         <DeleteAccountSection />
       </Container>
     </Section>

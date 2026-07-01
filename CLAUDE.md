@@ -12,6 +12,7 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Jobsuche (Formular + Ergebnisliste): `src/app/suche/page.tsx`
 - Job-Detailseite: `src/app/suche/[refnr]/page.tsx` (eigener Loading-State: `src/app/suche/[refnr]/loading.tsx`)
 - Startseite Typing-Effekt (Headline/Subline): `src/components/home/TypingHeadline.tsx`
+- Letzte Suchen (localStorage): `src/components/home/RecentSearches.tsx`, `src/lib/recentSearches.ts` (Speichern beim Submit im JobSearchForm)
 - Impressum: `src/app/impressum/page.tsx`
 - Datenschutz: `src/app/datenschutz/page.tsx`
 - SEO (robots/sitemap): `src/app/robots.ts`, `src/app/sitemap.ts`
@@ -22,7 +23,7 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Jobsuche-Komponenten (JobCard, JobSearchForm): `src/components/suche/`
 - Login (6-stelliger E-Mail-Code, zweistufiges Formular): `src/app/login/page.tsx`, `src/components/auth/LoginForm.tsx`
 - Auth-Callback (Code-Exchange, nur noch Fallback für ältere Magic-Link-E-Mails): `src/app/auth/callback/route.ts`
-- Meine Bewerbungen (Liste mit Status-Badges): `src/app/bewerbungen/page.tsx`. `/favoriten` ist ein reiner Redirect dorthin (alte Links bleiben gültig)
+- Meine Bewerbungen (Status-Pipeline gespeichert/beworben/interview/zusage/absage, Filter-Chips, Badges): `src/app/bewerbungen/page.tsx`; Status-Typen/Labels in `src/types/application.types.ts`. `/favoriten` ist ein reiner Redirect dorthin (alte Links bleiben gültig)
 - Auth Server Actions (Code anfordern via `signInWithOtp`, Code prüfen via `verifyOtp`, Logout): `src/actions/auth.actions.ts`
 - Arbeitsagentur-API-Anbindung: `src/lib/jobs/arbeitsagentur.ts`, `src/lib/jobs/arbeitsagentur-detail.ts`
 - Orte/PLZ-Lookup: `src/lib/jobs/openplz.ts`

@@ -11,6 +11,7 @@ import { OriginalListing } from '@/components/jobs/OriginalListing'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
 import { createClient } from '@/lib/supabase/server'
+import type { ApplicationStatus } from '@/types/application.types'
 
 interface JobDetailPageProps {
   params: Promise<{ refnr: string }>
@@ -96,6 +97,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
           titel={resolvedTitel}
           arbeitgeber={resolvedArbeitgeber}
           ort={resolvedOrt}
+          kontaktEmail={detail.kontaktEmail}
           isAuthenticated={Boolean(user)}
           hasProfile={Boolean(profile)}
           initialCoverLetter={coverLetter}
@@ -107,8 +109,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
           arbeitgeber={resolvedArbeitgeber}
           ort={resolvedOrt}
           isAuthenticated={Boolean(user)}
-          initialApplied={application?.applied ?? false}
-          initialAnswered={application?.answered ?? false}
+          initialStatus={(application?.status as ApplicationStatus | undefined) ?? 'gespeichert'}
           initialNotes={application?.notes ?? ''}
         />
       </Container>

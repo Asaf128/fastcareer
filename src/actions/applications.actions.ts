@@ -14,8 +14,7 @@ const jobBaseSchema = z.object({
 })
 
 type ApplicationExtra = Partial<{
-  applied: boolean
-  answered: boolean
+  status: string
   notes: string
   cover_letter: string
 }>
@@ -81,17 +80,13 @@ export async function removeApplication(jobRefnr: string) {
   return { error: null }
 }
 
-const checklistSchema = jobBaseSchema.extend({
-  applied: z.boolean().optional(),
-  answered: z.boolean().optional(),
+const statusSchema = jobBaseSchema.extend({
+  status: z.enum(['gespeichert', 'beworben', 'interview', 'zusage', 'absage']),
 })
 
-export async function updateChecklist(input: z.infer<typeof checklistSchema>) {
-  const parsed = checklistSchema.safeParse(input)
+export async function updateStatus(input: z.infer<typeof statusSchema>) {
+  const parsed = statusSchema.safeParse(input)
   if (!parsed.success) return { error: 'Ungültige Eingabe.' }
-  if (parsed.data.applied === undefined && parsed.data.answered === undefined) {
-    return { error: 'Keine Änderung übergeben.' }
-  }
 
   const supabase = await createClient()
   const {
@@ -99,11 +94,9 @@ export async function updateChecklist(input: z.infer<typeof checklistSchema>) {
   } = await supabase.auth.getUser()
   if (!user) return { error: 'Bitte zuerst anmelden.' }
 
-  const updates: ApplicationExtra = {}
-  if (parsed.data.applied !== undefined) updates.applied = parsed.data.applied
-  if (parsed.data.answered !== undefined) updates.answered = parsed.data.answered
-
-  const error = await upsertApplication(supabase, user.id, parsed.data, updates)
+  const error = await upsertApplication(supabase, user.id, parsed.data, {
+    status: parsed.data.status,
+  })
   if (error) return { error: 'Konnte nicht gespeichert werden.' }
 
   revalidatePath('/bewerbungen')

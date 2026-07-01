@@ -15,9 +15,10 @@ import type { CvParseResult } from '@/types/ai.types'
 
 interface ProfileFormProps {
   initialProfile: Profile | null
+  cvUrl: string | null
 }
 
-export function ProfileForm({ initialProfile }: ProfileFormProps) {
+export function ProfileForm({ initialProfile, cvUrl }: ProfileFormProps) {
   const [fullName, setFullName] = useState(initialProfile?.full_name ?? '')
   const [birthDate, setBirthDate] = useState(initialProfile?.birth_date ?? '')
   const [location, setLocation] = useState(initialProfile?.location ?? '')
@@ -70,7 +71,7 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      <CvUpload onParsed={applyCvParseResult} />
+      <CvUpload onParsed={applyCvParseResult} cvUrl={cvUrl} />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Input

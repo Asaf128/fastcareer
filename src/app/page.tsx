@@ -2,6 +2,7 @@ import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { JobSearchForm } from '@/components/suche/JobSearchForm'
 import { TypingHeadline } from '@/components/home/TypingHeadline'
+import { RecentSearches } from '@/components/home/RecentSearches'
 
 const POPULAR_SEARCHES = [
   'Verkäufer',
@@ -26,6 +27,7 @@ export default function Home() {
               defaultUmkreis={25}
               popularSearches={POPULAR_SEARCHES}
             />
+            <RecentSearches />
           </div>
         </Container>
       </Section>
