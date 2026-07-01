@@ -15,12 +15,19 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Datenschutz: `src/app/datenschutz/page.tsx`
 - SEO (robots/sitemap): `src/app/robots.ts`, `src/app/sitemap.ts`
 - API-Route Orte-Autocomplete: `src/app/api/orte/route.ts`
+- Header (Login-Status, Nav): `src/components/layout/Header.tsx`
 - Footer/Layout: `src/components/layout/Footer.tsx`
 - Shared Base Components (Button, Container, Section): `src/components/shared/`
-- Jobsuche-Komponenten (JobCard, JobSearchForm): `src/components/suche/`
+- Jobsuche-Komponenten (JobCard, JobSearchForm, FavoriteButton): `src/components/suche/`
+- Login (Magic Link): `src/app/login/page.tsx`, `src/components/auth/LoginForm.tsx`
+- Auth-Callback (Code-Exchange nach Magic-Link-Klick): `src/app/auth/callback/route.ts`
+- Meine Merkliste: `src/app/favoriten/page.tsx`
+- Auth Server Actions (Magic Link senden, Logout): `src/actions/auth.actions.ts`
+- Favoriten Server Actions (hinzufügen/entfernen): `src/actions/favorites.actions.ts`
 - Arbeitsagentur-API-Anbindung: `src/lib/jobs/arbeitsagentur.ts`, `src/lib/jobs/arbeitsagentur-detail.ts`
 - Orte/PLZ-Lookup: `src/lib/jobs/openplz.ts`
 - Supabase Clients: `src/lib/supabase/`
+- Supabase-Projekt: geteilt mit "Aurum Watches" (Free-Tier-Limit), Tabelle `favorites` gehört zu Fastcareer
 - Job-Types: `src/types/job.types.ts`
 - Navigation/Config: `src/constants/`
 

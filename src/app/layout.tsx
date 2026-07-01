@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Footer } from '@/components/layout/Footer'
+import { Header } from '@/components/layout/Header'
 import './globals.css'
 
 const displayFont = Playfair_Display({
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="de" className={`${displayFont.variable} ${bodyFont.variable}`}>
       <body className="bg-background text-text-primary antialiased">
+        <Header />
         {children}
         <Footer />
         <Analytics />

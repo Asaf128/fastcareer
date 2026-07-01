@@ -67,12 +67,17 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">5. Supabase (Backend-Infrastruktur)</h2>
+              <h2 className="mb-2 font-medium">5. Nutzerkonto &amp; Merkliste (Supabase)</h2>
               <p>
-                Für Backend-Funktionen nutzen wir Supabase. Aktuell werden über diese Website keine
-                Nutzerkonten angelegt oder personenbezogene Daten von Besuchern in Supabase
-                gespeichert. Sollte sich dies ändern (z. B. durch ein Login), wird diese Erklärung
-                entsprechend aktualisiert.
+                Für die Anmeldung und die Merkliste nutzen wir Supabase als Backend-Infrastruktur.
+                Bei der Anmeldung per Magic Link verarbeiten wir deine E-Mail-Adresse, um dir einen
+                Anmelde-Link zuzusenden und dein Konto zu erstellen bzw. wiederzuerkennen. Merkst du
+                dir ein Stellenangebot, speichern wir die Referenznummer, den Titel und den
+                Arbeitgeber der Stelle, verknüpft mit deinem Konto, damit du sie in deiner Merkliste
+                wiederfindest. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Erfüllung des
+                Nutzungsvertrags). Diese Daten werden gelöscht, wenn du dein Konto löschen lässt
+                oder einzelne Einträge aus deiner Merkliste entfernst. Der Zugriff auf deine Daten
+                ist technisch (Row Level Security) auf dein eigenes Konto beschränkt.
               </p>
             </section>
 

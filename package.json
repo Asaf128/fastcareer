@@ -12,7 +12,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\"",
     "typecheck": "tsc --noEmit",
-    "db:types": "supabase gen types typescript --project-id YOUR_PROJECT_ID > src/types/database.ts",
+    "db:types": "supabase gen types typescript --project-id fnlmzyovveilsjurysql > src/types/database.ts",
     "prepare": "simple-git-hooks"
   },
   "simple-git-hooks": {
