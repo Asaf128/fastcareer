@@ -11,6 +11,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      applications: {
+        Row: {
+          answered: boolean
+          applied: boolean
+          arbeitgeber: string
+          cover_letter: string | null
+          created_at: string
+          id: string
+          job_refnr: string
+          notes: string
+          ort: string | null
+          titel: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answered?: boolean
+          applied?: boolean
+          arbeitgeber: string
+          cover_letter?: string | null
+          created_at?: string
+          id?: string
+          job_refnr: string
+          notes?: string
+          ort?: string | null
+          titel: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answered?: boolean
+          applied?: boolean
+          arbeitgeber?: string
+          cover_letter?: string | null
+          created_at?: string
+          id?: string
+          job_refnr?: string
+          notes?: string
+          ort?: string | null
+          titel?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           arbeitgeber: string
@@ -38,6 +83,27 @@ export type Database = {
           ort?: string | null
           titel?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      job_summaries: {
+        Row: {
+          created_at: string
+          job_refnr: string
+          model: string
+          summary: Json
+        }
+        Insert: {
+          created_at?: string
+          job_refnr: string
+          model: string
+          summary: Json
+        }
+        Update: {
+          created_at?: string
+          job_refnr?: string
+          model?: string
+          summary?: Json
         }
         Relationships: []
       }
@@ -191,6 +257,54 @@ export type Database = {
           name?: string
           price?: number
           stock?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          about: string | null
+          birth_date: string | null
+          created_at: string
+          cv_path: string | null
+          education: Json
+          full_name: string | null
+          headline: string | null
+          id: string
+          languages: string[]
+          location: string | null
+          skills: string[]
+          updated_at: string
+          work_experience: Json
+        }
+        Insert: {
+          about?: string | null
+          birth_date?: string | null
+          created_at?: string
+          cv_path?: string | null
+          education?: Json
+          full_name?: string | null
+          headline?: string | null
+          id: string
+          languages?: string[]
+          location?: string | null
+          skills?: string[]
+          updated_at?: string
+          work_experience?: Json
+        }
+        Update: {
+          about?: string | null
+          birth_date?: string | null
+          created_at?: string
+          cv_path?: string | null
+          education?: Json
+          full_name?: string | null
+          headline?: string | null
+          id?: string
+          languages?: string[]
+          location?: string | null
+          skills?: string[]
+          updated_at?: string
+          work_experience?: Json
         }
         Relationships: []
       }
