@@ -5,7 +5,7 @@ import { JobSearchForm } from '@/components/suche/JobSearchForm'
 export default function Home() {
   return (
     <main className="bg-background min-h-screen">
-      <Section className="pt-32 lg:pt-40">
+      <Section className="pt-20 lg:pt-28">
         <Container>
           <div className="mx-auto max-w-3xl text-center">
             <p className="text-text-secondary mb-4 text-xs tracking-[0.4em] uppercase">Jobsuche</p>

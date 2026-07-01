@@ -4,6 +4,7 @@ import { Section } from '@/components/shared/Section'
 import { JobSearchForm } from '@/components/suche/JobSearchForm'
 import { JobCard } from '@/components/suche/JobCard'
 import { searchJobs } from '@/lib/jobs/arbeitsagentur'
+import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'Jobsuche',
@@ -22,6 +23,17 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
 
   const result = was ? await searchJobs({ was, wo, umkreis }) : null
 
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let favoriteRefnrs = new Set<string>()
+  if (user && result) {
+    const { data } = await supabase.from('favorites').select('job_refnr').eq('user_id', user.id)
+    favoriteRefnrs = new Set(data?.map((f) => f.job_refnr))
+  }
+
   return (
     <Section className="py-16 lg:py-24">
       <Container>
@@ -38,7 +50,12 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
             </p>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               {result.treffer.map((job) => (
-                <JobCard key={job.refnr} job={job} />
+                <JobCard
+                  key={job.refnr}
+                  job={job}
+                  isFavorite={favoriteRefnrs.has(job.refnr)}
+                  isAuthenticated={!!user}
+                />
               ))}
             </div>
             {result.treffer.length === 0 && (
