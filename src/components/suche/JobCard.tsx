@@ -9,9 +9,18 @@ interface JobCardProps {
 }
 
 export function JobCard({ job, isFavorite = false, isAuthenticated = false }: JobCardProps) {
+  const detailParams = new URLSearchParams({
+    titel: job.titel,
+    arbeitgeber: job.arbeitgeber,
+    ort: `${job.plz} ${job.ort}`.trim(),
+  })
+
   return (
     <div className="border-border hover:border-accent relative flex items-start justify-between gap-4 border p-6 transition-colors duration-300">
-      <Link href={`/suche/${encodeURIComponent(job.refnr)}`} className="absolute inset-0">
+      <Link
+        href={`/suche/${encodeURIComponent(job.refnr)}?${detailParams.toString()}`}
+        className="absolute inset-0"
+      >
         <span className="sr-only">{job.titel} ansehen</span>
       </Link>
 
