@@ -16,19 +16,18 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Datenschutz: `src/app/datenschutz/page.tsx`
 - SEO (robots/sitemap): `src/app/robots.ts`, `src/app/sitemap.ts`
 - API-Route Orte-Autocomplete: `src/app/api/orte/route.ts`
-- Header (Login-Status, Nav): `src/components/layout/Header.tsx`
+- Header (Login-Status, Nav): `src/components/layout/Header.tsx` — delegiert an `HeaderNav.tsx` (Desktop-Inline-Links / Mobil-Profil-Icon) und `MobileProfileMenu.tsx` (Vollbild-Overlay: Profil/Bewerbungen/Abmelden)
 - Footer/Layout: `src/components/layout/Footer.tsx`
 - Shared Base Components (Button, Container, Section, Input, Textarea, Checkbox): `src/components/shared/`
-- Jobsuche-Komponenten (JobCard, JobSearchForm, FavoriteButton): `src/components/suche/`
+- Jobsuche-Komponenten (JobCard, JobSearchForm): `src/components/suche/`
 - Login (Magic Link): `src/app/login/page.tsx`, `src/components/auth/LoginForm.tsx`
 - Auth-Callback (Code-Exchange nach Magic-Link-Klick): `src/app/auth/callback/route.ts`
-- Meine Merkliste: `src/app/favoriten/page.tsx`
+- Meine Bewerbungen (Liste mit Status-Badges): `src/app/bewerbungen/page.tsx`. `/favoriten` ist ein reiner Redirect dorthin (alte Links bleiben gültig)
 - Auth Server Actions (Magic Link senden, Logout): `src/actions/auth.actions.ts`
-- Favoriten Server Actions (hinzufügen/entfernen): `src/actions/favorites.actions.ts`
 - Arbeitsagentur-API-Anbindung: `src/lib/jobs/arbeitsagentur.ts`, `src/lib/jobs/arbeitsagentur-detail.ts`
 - Orte/PLZ-Lookup: `src/lib/jobs/openplz.ts`
 - Supabase Clients: `src/lib/supabase/`
-- Supabase-Projekt: geteilt mit "Aurum Watches" (Free-Tier-Limit); Tabellen `applications`, `profiles`, `job_summaries` sowie Storage-Bucket `cvs` gehören zu Fastcareer. `favorites` ist die alte Vorgänger-Tabelle von `applications` (Daten migriert, `favorites` bleibt vorerst als Backup bestehen)
+- Supabase-Projekt: geteilt mit "Aurum Watches" (Free-Tier-Limit); Tabellen `applications`, `profiles`, `job_summaries` sowie Storage-Bucket `cvs` gehören zu Fastcareer. `favorites` ist die alte Vorgänger-Tabelle von `applications` — Daten migriert, kein Code referenziert sie mehr, Tabelle bleibt vorerst als DB-Backup bestehen
 - Job-Types: `src/types/job.types.ts`
 - Bewerbungs-Types: `src/types/application.types.ts`
 - Profil-Types: `src/types/profile.types.ts`

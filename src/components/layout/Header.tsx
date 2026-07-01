@@ -1,8 +1,7 @@
 import Link from 'next/link'
-import { Bookmark } from 'lucide-react'
 import { APP_NAME } from '@/constants/config'
-import { logout } from '@/actions/auth.actions'
 import { createClient } from '@/lib/supabase/server'
+import { HeaderNav } from '@/components/layout/HeaderNav'
 
 export async function Header() {
   const supabase = await createClient()
@@ -17,34 +16,7 @@ export async function Header() {
           {APP_NAME}
         </Link>
 
-        <nav className="flex items-center gap-4">
-          {user ? (
-            <>
-              <Link
-                href="/favoriten"
-                className="text-text-secondary hover:text-foreground flex items-center gap-1.5 text-sm transition-colors duration-150"
-              >
-                <Bookmark className="h-4 w-4" />
-                Meine Merkliste
-              </Link>
-              <form action={logout}>
-                <button
-                  type="submit"
-                  className="text-text-secondary hover:text-foreground text-sm transition-colors duration-150"
-                >
-                  Abmelden
-                </button>
-              </form>
-            </>
-          ) : (
-            <Link
-              href="/login"
-              className="bg-foreground hover:bg-surface-dark inline-flex items-center rounded-lg px-4 py-2 text-sm font-medium text-white transition-[background-color,transform] duration-150 ease-out active:scale-[0.97]"
-            >
-              Anmelden
-            </Link>
-          )}
-        </nav>
+        <HeaderNav isAuthenticated={!!user} />
       </div>
     </header>
   )

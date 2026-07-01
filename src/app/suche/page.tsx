@@ -66,10 +66,10 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  let favoriteRefnrs = new Set<string>()
+  let savedRefnrs = new Set<string>()
   if (user && result) {
-    const { data } = await supabase.from('favorites').select('job_refnr').eq('user_id', user.id)
-    favoriteRefnrs = new Set(data?.map((f) => f.job_refnr))
+    const { data } = await supabase.from('applications').select('job_refnr').eq('user_id', user.id)
+    savedRefnrs = new Set(data?.map((application) => application.job_refnr))
   }
 
   return (
@@ -110,7 +110,7 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
                 <JobCard
                   key={job.refnr}
                   job={job}
-                  isFavorite={favoriteRefnrs.has(job.refnr)}
+                  isSaved={savedRefnrs.has(job.refnr)}
                   isAuthenticated={!!user}
                 />
               ))}
