@@ -30,7 +30,7 @@ export function LoginForm() {
       />
       {state.error && <p className="text-sm text-red-600">{state.error}</p>}
       <Button type="submit" isLoading={isPending}>
-        Anmelde-Link senden
+        Senden
       </Button>
     </form>
   )
