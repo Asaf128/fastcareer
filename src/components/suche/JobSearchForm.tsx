@@ -46,6 +46,7 @@ export function JobSearchForm({ defaultWas, defaultWo, defaultUmkreis }: JobSear
       <input
         type="text"
         name="was"
+        aria-label="Beruf oder Stichwort"
         defaultValue={defaultWas}
         placeholder="Beruf oder Stichwort"
         required
@@ -56,6 +57,7 @@ export function JobSearchForm({ defaultWas, defaultWo, defaultUmkreis }: JobSear
         <input
           type="text"
           name="wo"
+          aria-label="Ort oder PLZ"
           value={wo}
           onChange={(e) => handleOrtChange(e.target.value)}
           onFocus={() => orte.length > 0 && setIsSuggestionsOpen(true)}
@@ -86,6 +88,7 @@ export function JobSearchForm({ defaultWas, defaultWo, defaultUmkreis }: JobSear
 
       <select
         name="umkreis"
+        aria-label="Umkreis"
         defaultValue={defaultUmkreis}
         className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-sm"
       >
