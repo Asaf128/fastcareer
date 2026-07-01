@@ -1,6 +1,7 @@
 'use client'
 
 import { useTransition } from 'react'
+import { BookmarkX } from 'lucide-react'
 import { removeFavorite } from '@/actions/favorites.actions'
 
 interface RemoveFavoriteButtonProps {
@@ -20,9 +21,9 @@ export function RemoveFavoriteButton({ jobRefnr }: RemoveFavoriteButtonProps) {
       }
       disabled={isPending}
       aria-label="Von Merkliste entfernen"
-      className="border-border text-text-secondary hover:border-accent hover:text-accent relative z-10 shrink-0 border px-3 py-2 text-xs tracking-[0.15em] uppercase transition-colors duration-300 disabled:opacity-50"
+      className="border-border text-text-secondary hover:border-accent hover:text-accent relative z-10 flex shrink-0 items-center justify-center rounded-lg border p-2 transition-[background-color,border-color,color,transform] duration-150 ease-out active:scale-[0.9] disabled:opacity-50 disabled:active:scale-100"
     >
-      Entfernen
+      <BookmarkX className="h-4 w-4" />
     </button>
   )
 }

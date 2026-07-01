@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { Bookmark, BookmarkCheck } from 'lucide-react'
 import { addFavorite, removeFavorite } from '@/actions/favorites.actions'
 import { cn } from '@/lib/cn'
 
@@ -45,13 +46,13 @@ export function FavoriteButton({
       aria-label={isFavorite ? 'Von Merkliste entfernen' : 'Zur Merkliste hinzufügen'}
       aria-pressed={isFavorite}
       className={cn(
-        'relative z-10 shrink-0 border px-3 py-2 text-xs tracking-[0.15em] uppercase transition-colors duration-300 disabled:opacity-50',
+        'relative z-10 flex shrink-0 items-center justify-center rounded-lg border p-2 transition-[background-color,border-color,color,transform] duration-150 ease-out active:scale-[0.9] disabled:opacity-50 disabled:active:scale-100',
         isFavorite
           ? 'border-accent bg-accent text-white'
           : 'border-border text-text-secondary hover:border-accent hover:text-accent'
       )}
     >
-      {isFavorite ? 'Gemerkt' : 'Merken'}
+      {isFavorite ? <BookmarkCheck className="h-4 w-4" /> : <Bookmark className="h-4 w-4" />}
     </button>
   )
 }
