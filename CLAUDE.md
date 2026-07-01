@@ -33,7 +33,10 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Bewerbungs-Types: `src/types/application.types.ts`
 - Profil-Types: `src/types/profile.types.ts`
 - KI-Types (Job-Zusammenfassung, CV-Parsing): `src/types/ai.types.ts`
-- KI-Anbindung (Google Gemini via Vertex AI — **nicht** Claude/Anthropic, siehe Projekt-Memory): `src/lib/ai/` (`genai.ts` Client, `summarizeJob.ts`, `generateCoverLetter.ts`, `parseCv.ts`)
+- KI-Anbindung (Google Gemini via Vertex AI — **nicht** Claude/Anthropic, siehe Projekt-Memory): `src/lib/ai/` (`genai.ts` Client, `summarizeJob.ts`, `generateCoverLetter.ts`, `parseCv.ts`, `rateLimit.ts`)
+- Job-Zusammenfassung-Cache (Read-through, `job_summaries`-Tabelle): `src/lib/jobs/jobSummaryCache.ts`
+- Job-Detailseite-Komponenten (Kopf+Stern, KI-Zusammenfassung, Anschreiben, Bewerbungs-Checkliste, Original-Link): `src/components/jobs/`
+- Bewerbungen Server Actions (speichern/entfernen/Checkliste/Notizen/Anschreiben): `src/actions/applications.actions.ts`
 - Navigation/Config: `src/constants/`
 
 (Pflege: bei jeder strukturrelevanten Änderung — neue Seite, neuer Feature-Ordner, verschobene Komponente — diesen Abschnitt im selben Schritt aktualisieren.)

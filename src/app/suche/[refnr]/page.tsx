@@ -1,11 +1,16 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { Building2, ExternalLink, MapPin } from 'lucide-react'
 import { BackButton } from '@/components/shared/BackButton'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
-import { FavoriteButton } from '@/components/suche/FavoriteButton'
+import { JobHeader } from '@/components/jobs/JobHeader'
+import { JobSummary } from '@/components/jobs/JobSummary'
+import { CoverLetterPanel } from '@/components/jobs/CoverLetterPanel'
+import { ApplicationChecklist } from '@/components/jobs/ApplicationChecklist'
+import { OriginalListing } from '@/components/jobs/OriginalListing'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
+import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
+import { generateCoverLetter } from '@/lib/ai/generateCoverLetter'
 import { createClient } from '@/lib/supabase/server'
 
 interface JobDetailPageProps {
@@ -29,20 +34,53 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
     notFound()
   }
 
+  const resolvedTitel = titel ?? 'Stellenangebot'
+  const resolvedArbeitgeber = arbeitgeber ?? ''
+  const resolvedOrt = ort ?? ''
+
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  let isFavorite = false
-  if (user) {
-    const { data } = await supabase
-      .from('favorites')
-      .select('id')
-      .eq('user_id', user.id)
-      .eq('job_refnr', refnr)
-      .maybeSingle()
-    isFavorite = !!data
+  const [applicationResult, profileResult, summary] = await Promise.all([
+    user
+      ? supabase
+          .from('applications')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('job_refnr', refnr)
+          .maybeSingle()
+      : Promise.resolve({ data: null }),
+    user
+      ? supabase.from('profiles').select('*').eq('id', user.id).maybeSingle()
+      : Promise.resolve({ data: null }),
+    getOrCreateJobSummary({
+      refnr,
+      titel: resolvedTitel,
+      arbeitgeber: resolvedArbeitgeber,
+      ort: resolvedOrt,
+      beschreibung: detail.beschreibung,
+    }),
+  ])
+
+  const application = applicationResult.data
+  const profile = profileResult.data
+
+  let coverLetter = application?.cover_letter ?? null
+  if (user && profile && !coverLetter && arbeitgeber) {
+    try {
+      coverLetter = await generateCoverLetter({
+        titel: resolvedTitel,
+        arbeitgeber: resolvedArbeitgeber,
+        ort: resolvedOrt,
+        summary,
+        profile,
+      })
+    } catch (error) {
+      console.error('Anschreiben-Generierung fehlgeschlagen:', error)
+      coverLetter = null
+    }
   }
 
   return (
@@ -51,65 +89,40 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
         <BackButton fallbackHref="/suche">Zurück zur Suche</BackButton>
 
         <div className="border-border bg-background mt-4 rounded-xl border p-6 shadow-sm lg:p-8">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-foreground text-2xl lg:text-3xl">{titel ?? 'Stellenangebot'}</h1>
-              <div className="text-text-secondary mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-                {arbeitgeber && (
-                  <span className="flex items-center gap-1.5">
-                    <Building2 className="h-4 w-4" />
-                    {arbeitgeber}
-                  </span>
-                )}
-                {ort && (
-                  <span className="flex items-center gap-1.5">
-                    <MapPin className="h-4 w-4" />
-                    {ort}
-                  </span>
-                )}
-              </div>
-            </div>
-            {titel && arbeitgeber && (
-              <FavoriteButton
-                jobRefnr={refnr}
-                titel={titel}
-                arbeitgeber={arbeitgeber}
-                ort={ort ?? ''}
-                initialIsFavorite={isFavorite}
-                isAuthenticated={!!user}
-              />
-            )}
-          </div>
+          <JobHeader
+            jobRefnr={refnr}
+            titel={resolvedTitel}
+            arbeitgeber={resolvedArbeitgeber}
+            ort={resolvedOrt}
+            initialIsSaved={Boolean(application)}
+            isAuthenticated={Boolean(user)}
+          />
 
-          <p className="text-text-primary mt-6 text-sm whitespace-pre-line">
-            {detail.beschreibung || 'Keine Beschreibung verfügbar.'}
-          </p>
-
-          <div className="border-border mt-8 border-t pt-6">
-            <h2 className="text-base font-semibold">Kontakt &amp; Bewerbung</h2>
-            {detail.kontaktEmail ? (
-              <p className="mt-2 text-sm">
-                <a href={`mailto:${detail.kontaktEmail}`} className="text-accent hover:underline">
-                  {detail.kontaktEmail}
-                </a>
-              </p>
-            ) : (
-              <p className="text-text-secondary mt-2 text-sm">
-                Der Arbeitgeber hat die Kontaktdaten auf der Arbeitsagentur-Seite gesichert. Bitte
-                öffne das Original-Stellenangebot, um dich zu bewerben.
-              </p>
-            )}
-            <a
-              href={detail.quelleUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-foreground hover:bg-surface-dark mt-4 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-[background-color,transform] duration-150 ease-out active:scale-[0.97]"
-            >
-              Original-Stellenangebot öffnen
-              <ExternalLink className="h-4 w-4" />
-            </a>
-          </div>
+          <OriginalListing kontaktEmail={detail.kontaktEmail} quelleUrl={detail.quelleUrl} />
         </div>
+
+        <JobSummary summary={summary} />
+
+        <CoverLetterPanel
+          jobRefnr={refnr}
+          titel={resolvedTitel}
+          arbeitgeber={resolvedArbeitgeber}
+          ort={resolvedOrt}
+          isAuthenticated={Boolean(user)}
+          hasProfile={Boolean(profile)}
+          initialCoverLetter={coverLetter}
+        />
+
+        <ApplicationChecklist
+          jobRefnr={refnr}
+          titel={resolvedTitel}
+          arbeitgeber={resolvedArbeitgeber}
+          ort={resolvedOrt}
+          isAuthenticated={Boolean(user)}
+          initialApplied={application?.applied ?? false}
+          initialAnswered={application?.answered ?? false}
+          initialNotes={application?.notes ?? ''}
+        />
       </Container>
     </Section>
   )
