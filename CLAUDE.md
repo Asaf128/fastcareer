@@ -6,6 +6,26 @@ Diese Regeln gelten für alle Arbeiten in diesem Repo. Sie sind eine Zusammenfas
 
 Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · Vercel · pnpm
 
+## Struktur-Landkarte
+
+- Startseite: `src/app/page.tsx`
+- Jobsuche (Formular + Ergebnisliste): `src/app/suche/page.tsx`
+- Job-Detailseite: `src/app/suche/[refnr]/page.tsx`
+- Impressum: `src/app/impressum/page.tsx`
+- Datenschutz: `src/app/datenschutz/page.tsx`
+- SEO (robots/sitemap): `src/app/robots.ts`, `src/app/sitemap.ts`
+- API-Route Orte-Autocomplete: `src/app/api/orte/route.ts`
+- Footer/Layout: `src/components/layout/Footer.tsx`
+- Shared Base Components (Button, Container, Section): `src/components/shared/`
+- Jobsuche-Komponenten (JobCard, JobSearchForm): `src/components/suche/`
+- Arbeitsagentur-API-Anbindung: `src/lib/jobs/arbeitsagentur.ts`, `src/lib/jobs/arbeitsagentur-detail.ts`
+- Orte/PLZ-Lookup: `src/lib/jobs/openplz.ts`
+- Supabase Clients: `src/lib/supabase/`
+- Job-Types: `src/types/job.types.ts`
+- Navigation/Config: `src/constants/`
+
+(Pflege: bei jeder strukturrelevanten Änderung — neue Seite, neuer Feature-Ordner, verschobene Komponente — diesen Abschnitt im selben Schritt aktualisieren.)
+
 ## Code-Regeln (maschinell erzwungen via ESLint)
 
 - **Max 300 Zeilen pro Datei** — bei Überschreitung sofort splitten (UI → Sub-Komponenten, Logik → Custom Hook)
