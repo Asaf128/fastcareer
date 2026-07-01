@@ -42,7 +42,9 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
               ))}
             </div>
             {result.treffer.length === 0 && (
-              <p className="text-text-secondary">Keine Treffer gefunden. Versuche einen anderen Suchbegriff.</p>
+              <p className="text-text-secondary">
+                Keine Treffer gefunden. Versuche einen anderen Suchbegriff.
+              </p>
             )}
           </div>
         )}

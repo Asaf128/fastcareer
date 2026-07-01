@@ -19,7 +19,9 @@ export function JobCard({ job }: JobCardProps) {
           {job.plz} {job.ort}
         </span>
         {job.veroeffentlichungsdatum && (
-          <span>Veröffentlicht: {new Date(job.veroeffentlichungsdatum).toLocaleDateString('de-DE')}</span>
+          <span>
+            Veröffentlicht: {new Date(job.veroeffentlichungsdatum).toLocaleDateString('de-DE')}
+          </span>
         )}
       </div>
     </Link>

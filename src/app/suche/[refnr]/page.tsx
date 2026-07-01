@@ -48,8 +48,8 @@ export default async function JobDetailPage({ params }: JobDetailPageProps) {
             </p>
           ) : (
             <p className="text-text-secondary mt-2 text-sm">
-              Der Arbeitgeber hat die Kontaktdaten auf der Arbeitsagentur-Seite gesichert. Bitte öffne das
-              Original-Stellenangebot, um dich zu bewerben.
+              Der Arbeitgeber hat die Kontaktdaten auf der Arbeitsagentur-Seite gesichert. Bitte
+              öffne das Original-Stellenangebot, um dich zu bewerben.
             </p>
           )}
           <a
