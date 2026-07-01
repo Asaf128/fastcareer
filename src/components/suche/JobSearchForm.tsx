@@ -10,7 +10,6 @@ interface JobSearchFormProps {
   defaultWo: string
   defaultUmkreis: number
   defaultArbeitszeit?: string
-  defaultBefristung?: string
 }
 
 let debounceTimer: ReturnType<typeof setTimeout>
@@ -20,11 +19,12 @@ export function JobSearchForm({
   defaultWo,
   defaultUmkreis,
   defaultArbeitszeit = '',
-  defaultBefristung = '',
 }: JobSearchFormProps) {
   const [wo, setWo] = useState(defaultWo)
   const [orte, setOrte] = useState<LocalitySuggestion[]>([])
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
+  const [arbeitszeit, setArbeitszeit] = useState(defaultArbeitszeit)
+  const isHomeOffice = arbeitszeit === 'ho'
 
   function handleOrtChange(value: string) {
     setWo(value)
@@ -66,13 +66,14 @@ export function JobSearchForm({
           type="text"
           name="wo"
           aria-label="Ort oder PLZ"
-          value={wo}
+          value={isHomeOffice ? '' : wo}
           onChange={(e) => handleOrtChange(e.target.value)}
           onFocus={() => orte.length > 0 && setIsSuggestionsOpen(true)}
           onBlur={() => setTimeout(() => setIsSuggestionsOpen(false), 150)}
-          placeholder="Ort oder PLZ"
+          placeholder={isHomeOffice ? 'Bundesweit (Home-Office)' : 'Ort oder PLZ'}
           autoComplete="off"
-          className="border-border bg-surface text-foreground w-full rounded-none border px-4 py-3 text-sm"
+          disabled={isHomeOffice}
+          className="border-border bg-surface text-foreground w-full rounded-none border px-4 py-3 text-sm disabled:opacity-50"
         />
         {isSuggestionsOpen && orte.length > 0 && (
           <ul className="border-border bg-background absolute z-10 mt-1 w-full border shadow-lg">
@@ -98,7 +99,8 @@ export function JobSearchForm({
         name="umkreis"
         aria-label="Umkreis"
         defaultValue={defaultUmkreis}
-        className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-sm"
+        disabled={isHomeOffice}
+        className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-sm disabled:opacity-50"
       >
         <option value={5}>5 km</option>
         <option value={10}>10 km</option>
@@ -110,25 +112,15 @@ export function JobSearchForm({
       <select
         name="arbeitszeit"
         aria-label="Arbeitszeit"
-        defaultValue={defaultArbeitszeit}
-        className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-sm sm:col-span-2"
+        value={arbeitszeit}
+        onChange={(e) => setArbeitszeit(e.target.value)}
+        className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-sm sm:col-span-4"
       >
         <option value="">Arbeitszeit: alle</option>
         <option value="vz">Vollzeit</option>
         <option value="tz">Teilzeit</option>
         <option value="ho">Home-Office</option>
         <option value="snw">Schicht/Nacht/Wochenende</option>
-      </select>
-
-      <select
-        name="befristung"
-        aria-label="Befristung"
-        defaultValue={defaultBefristung}
-        className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-sm sm:col-span-2"
-      >
-        <option value="">Befristung: alle</option>
-        <option value="2">Unbefristet</option>
-        <option value="1">Befristet</option>
       </select>
 
       <Button type="submit" className="sm:col-span-4">
