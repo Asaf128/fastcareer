@@ -9,11 +9,19 @@ interface JobSearchFormProps {
   defaultWas: string
   defaultWo: string
   defaultUmkreis: number
+  defaultArbeitszeit?: string
+  defaultBefristung?: string
 }
 
 let debounceTimer: ReturnType<typeof setTimeout>
 
-export function JobSearchForm({ defaultWas, defaultWo, defaultUmkreis }: JobSearchFormProps) {
+export function JobSearchForm({
+  defaultWas,
+  defaultWo,
+  defaultUmkreis,
+  defaultArbeitszeit = '',
+  defaultBefristung = '',
+}: JobSearchFormProps) {
   const [wo, setWo] = useState(defaultWo)
   const [orte, setOrte] = useState<LocalitySuggestion[]>([])
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
@@ -97,6 +105,30 @@ export function JobSearchForm({ defaultWas, defaultWo, defaultUmkreis }: JobSear
         <option value={25}>25 km</option>
         <option value={50}>50 km</option>
         <option value={100}>100 km</option>
+      </select>
+
+      <select
+        name="arbeitszeit"
+        aria-label="Arbeitszeit"
+        defaultValue={defaultArbeitszeit}
+        className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-sm sm:col-span-2"
+      >
+        <option value="">Arbeitszeit: alle</option>
+        <option value="vz">Vollzeit</option>
+        <option value="tz">Teilzeit</option>
+        <option value="ho">Home-Office</option>
+        <option value="snw">Schicht/Nacht/Wochenende</option>
+      </select>
+
+      <select
+        name="befristung"
+        aria-label="Befristung"
+        defaultValue={defaultBefristung}
+        className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-sm sm:col-span-2"
+      >
+        <option value="">Befristung: alle</option>
+        <option value="2">Unbefristet</option>
+        <option value="1">Befristet</option>
       </select>
 
       <Button type="submit" className="sm:col-span-4">
