@@ -1,25 +1,59 @@
 'use client'
 
 import { useActionState } from 'react'
-import { sendMagicLink } from '@/actions/auth.actions'
+import { requestLoginCode, verifyLoginCode } from '@/actions/auth.actions'
 import { Button } from '@/components/shared/Button'
 
 export function LoginForm() {
-  const [state, formAction, isPending] = useActionState(sendMagicLink, {
+  const [requestState, requestAction, isRequesting] = useActionState(requestLoginCode, {
     error: null,
     success: false,
+    email: '',
+  })
+  const [verifyState, verifyAction, isVerifying] = useActionState<
+    { error: string | null },
+    FormData
+  >(verifyLoginCode, {
+    error: null,
   })
 
-  if (state.success) {
+  if (requestState.success) {
     return (
-      <p className="text-text-primary text-sm">
-        Link verschickt — schau in dein Postfach und klick auf den Anmelde-Link.
-      </p>
+      <form action={verifyAction} className="flex flex-col gap-4">
+        <input type="hidden" name="email" value={requestState.email} />
+        <p className="text-text-secondary text-sm">
+          Code an <span className="text-foreground">{requestState.email}</span> geschickt — bitte
+          die 6 Ziffern eingeben.
+        </p>
+        <input
+          type="text"
+          name="token"
+          inputMode="numeric"
+          pattern="\d{6}"
+          maxLength={6}
+          aria-label="6-stelliger Anmelde-Code"
+          placeholder="123456"
+          required
+          autoFocus
+          className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-center text-lg tracking-[0.5em]"
+        />
+        {verifyState.error && <p className="text-sm text-red-600">{verifyState.error}</p>}
+        <Button type="submit" isLoading={isVerifying}>
+          Bestätigen
+        </Button>
+        <button
+          type="submit"
+          formAction={requestAction}
+          className="text-text-secondary text-xs underline"
+        >
+          Neuen Code anfordern
+        </button>
+      </form>
     )
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-4">
+    <form action={requestAction} className="flex flex-col gap-4">
       <input
         type="email"
         name="email"
@@ -28,9 +62,9 @@ export function LoginForm() {
         required
         className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-sm"
       />
-      {state.error && <p className="text-sm text-red-600">{state.error}</p>}
-      <Button type="submit" isLoading={isPending}>
-        Senden
+      {requestState.error && <p className="text-sm text-red-600">{requestState.error}</p>}
+      <Button type="submit" isLoading={isRequesting}>
+        Code anfordern
       </Button>
     </form>
   )

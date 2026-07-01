@@ -20,10 +20,10 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Footer/Layout: `src/components/layout/Footer.tsx`
 - Shared Base Components (Button, Container, Section, Input, Textarea, Checkbox): `src/components/shared/`
 - Jobsuche-Komponenten (JobCard, JobSearchForm): `src/components/suche/`
-- Login (Magic Link): `src/app/login/page.tsx`, `src/components/auth/LoginForm.tsx`
-- Auth-Callback (Code-Exchange nach Magic-Link-Klick): `src/app/auth/callback/route.ts`
+- Login (6-stelliger E-Mail-Code, zweistufiges Formular): `src/app/login/page.tsx`, `src/components/auth/LoginForm.tsx`
+- Auth-Callback (Code-Exchange, nur noch Fallback für ältere Magic-Link-E-Mails): `src/app/auth/callback/route.ts`
 - Meine Bewerbungen (Liste mit Status-Badges): `src/app/bewerbungen/page.tsx`. `/favoriten` ist ein reiner Redirect dorthin (alte Links bleiben gültig)
-- Auth Server Actions (Magic Link senden, Logout): `src/actions/auth.actions.ts`
+- Auth Server Actions (Code anfordern via `signInWithOtp`, Code prüfen via `verifyOtp`, Logout): `src/actions/auth.actions.ts`
 - Arbeitsagentur-API-Anbindung: `src/lib/jobs/arbeitsagentur.ts`, `src/lib/jobs/arbeitsagentur-detail.ts`
 - Orte/PLZ-Lookup: `src/lib/jobs/openplz.ts`
 - Supabase Clients: `src/lib/supabase/`
