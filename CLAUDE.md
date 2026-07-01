@@ -10,7 +10,8 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 
 - Startseite: `src/app/page.tsx`
 - Jobsuche (Formular + Ergebnisliste): `src/app/suche/page.tsx`
-- Job-Detailseite: `src/app/suche/[refnr]/page.tsx`
+- Job-Detailseite: `src/app/suche/[refnr]/page.tsx` (eigener Loading-State: `src/app/suche/[refnr]/loading.tsx`)
+- Startseite Typing-Effekt (Headline/Subline): `src/components/home/TypingHeadline.tsx`
 - Impressum: `src/app/impressum/page.tsx`
 - Datenschutz: `src/app/datenschutz/page.tsx`
 - SEO (robots/sitemap): `src/app/robots.ts`, `src/app/sitemap.ts`

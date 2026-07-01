@@ -75,10 +75,7 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
   return (
     <Section className="py-10 lg:py-14">
       <Container>
-        <h1 className="text-foreground text-2xl lg:text-3xl">Jobsuche</h1>
-        <p className="text-text-secondary mt-1 mb-6 text-sm">
-          Durchsuche aktuelle Stellenangebote der Bundesagentur für Arbeit.
-        </p>
+        <h1 className="text-foreground mb-6 text-2xl lg:text-3xl">Jobsuche</h1>
 
         <JobSearchForm
           defaultWas={was}
