@@ -6,6 +6,7 @@ import { JobSearchForm } from '@/components/suche/JobSearchForm'
 import { JobCard } from '@/components/suche/JobCard'
 import { searchJobs } from '@/lib/jobs/arbeitsagentur'
 import { createClient } from '@/lib/supabase/server'
+import type { Arbeitszeit, Befristung } from '@/types/job.types'
 
 export const metadata: Metadata = {
   title: 'Jobsuche',
@@ -15,7 +16,14 @@ export const metadata: Metadata = {
 const PAGE_SIZE = 25
 
 interface SuchePageProps {
-  searchParams: Promise<{ was?: string; wo?: string; umkreis?: string; page?: string }>
+  searchParams: Promise<{
+    was?: string
+    wo?: string
+    umkreis?: string
+    page?: string
+    arbeitszeit?: string
+    befristung?: string
+  }>
 }
 
 export default async function SuchePage({ searchParams }: SuchePageProps) {
@@ -24,13 +32,23 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
   const wo = params.wo ?? ''
   const umkreis = Number(params.umkreis ?? 25)
   const page = Math.max(1, Number(params.page ?? 1))
+  const arbeitszeit = params.arbeitszeit as Arbeitszeit | undefined
+  const befristung = params.befristung as Befristung | undefined
 
   let result: Awaited<ReturnType<typeof searchJobs>> | null = null
   let searchFailed = false
 
   if (was) {
     try {
-      result = await searchJobs({ was, wo, umkreis, page, size: PAGE_SIZE })
+      result = await searchJobs({
+        was,
+        wo,
+        umkreis,
+        page,
+        size: PAGE_SIZE,
+        arbeitszeit: arbeitszeit || undefined,
+        befristung: befristung || undefined,
+      })
     } catch {
       searchFailed = true
     }
@@ -41,6 +59,8 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
   function pageHref(targetPage: number) {
     const query = new URLSearchParams({ was, umkreis: String(umkreis), page: String(targetPage) })
     if (wo) query.set('wo', wo)
+    if (arbeitszeit) query.set('arbeitszeit', arbeitszeit)
+    if (befristung) query.set('befristung', befristung)
     return `/suche?${query.toString()}`
   }
 
@@ -61,7 +81,13 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
         <h1 className="text-foreground text-4xl lg:text-5xl">Jobsuche</h1>
         <div className="bg-accent mt-4 mb-10 h-px w-16" />
 
-        <JobSearchForm defaultWas={was} defaultWo={wo} defaultUmkreis={umkreis} />
+        <JobSearchForm
+          defaultWas={was}
+          defaultWo={wo}
+          defaultUmkreis={umkreis}
+          defaultArbeitszeit={arbeitszeit}
+          defaultBefristung={befristung}
+        />
 
         {searchFailed && (
           <div className="border-border mt-12 border p-6">
