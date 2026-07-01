@@ -25,7 +25,17 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
   const umkreis = Number(params.umkreis ?? 25)
   const page = Math.max(1, Number(params.page ?? 1))
 
-  const result = was ? await searchJobs({ was, wo, umkreis, page, size: PAGE_SIZE }) : null
+  let result: Awaited<ReturnType<typeof searchJobs>> | null = null
+  let searchFailed = false
+
+  if (was) {
+    try {
+      result = await searchJobs({ was, wo, umkreis, page, size: PAGE_SIZE })
+    } catch {
+      searchFailed = true
+    }
+  }
+
   const totalPages = result ? Math.ceil(result.gesamtTreffer / PAGE_SIZE) : 0
 
   function pageHref(targetPage: number) {
@@ -52,6 +62,18 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
         <div className="bg-accent mt-4 mb-10 h-px w-16" />
 
         <JobSearchForm defaultWas={was} defaultWo={wo} defaultUmkreis={umkreis} />
+
+        {searchFailed && (
+          <div className="border-border mt-12 border p-6">
+            <p className="text-text-primary text-sm">
+              Die Jobsuche ist gerade nicht erreichbar. Das liegt in der Regel an der Schnittstelle
+              der Bundesagentur für Arbeit, nicht an deiner Eingabe.
+            </p>
+            <Link href={pageHref(page)} className="text-accent mt-2 inline-block text-sm underline">
+              Erneut versuchen
+            </Link>
+          </div>
+        )}
 
         {result && (
           <div className="mt-12">
