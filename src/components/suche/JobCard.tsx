@@ -1,15 +1,15 @@
 import Link from 'next/link'
 import { Calendar, MapPin } from 'lucide-react'
-import { FavoriteButton } from '@/components/suche/FavoriteButton'
+import { SaveJobButton } from '@/components/jobs/SaveJobButton'
 import type { JobListing } from '@/types/job.types'
 
 interface JobCardProps {
   job: JobListing
-  isFavorite?: boolean
+  isSaved?: boolean
   isAuthenticated?: boolean
 }
 
-export function JobCard({ job, isFavorite = false, isAuthenticated = false }: JobCardProps) {
+export function JobCard({ job, isSaved = false, isAuthenticated = false }: JobCardProps) {
   const detailParams = new URLSearchParams({
     titel: job.titel,
     arbeitgeber: job.arbeitgeber,
@@ -43,12 +43,12 @@ export function JobCard({ job, isFavorite = false, isAuthenticated = false }: Jo
         </div>
       </div>
 
-      <FavoriteButton
+      <SaveJobButton
         jobRefnr={job.refnr}
         titel={job.titel}
         arbeitgeber={job.arbeitgeber}
         ort={job.ort}
-        initialIsFavorite={isFavorite}
+        initialIsSaved={isSaved}
         isAuthenticated={isAuthenticated}
       />
     </div>
