@@ -11,13 +11,11 @@ export const metadata: Metadata = {
 export default function DatenschutzPage() {
   return (
     <main>
-      <Section className="pt-32">
+      <Section className="py-10 lg:py-14">
         <Container className="max-w-3xl">
-          <p className="text-text-secondary mb-4 text-xs tracking-[0.4em] uppercase">Rechtliches</p>
-          <h1 className="text-foreground text-5xl lg:text-6xl">Datenschutzerklärung</h1>
-          <div className="bg-accent mt-6 h-px w-16" />
+          <h1 className="text-foreground text-2xl lg:text-3xl">Datenschutzerklärung</h1>
 
-          <div className="text-text-primary mt-12 space-y-8 text-sm leading-relaxed">
+          <div className="text-text-primary mt-8 space-y-8 text-sm leading-relaxed">
             <section>
               <h2 className="mb-2 font-medium">1. Verantwortlicher</h2>
               <p>
