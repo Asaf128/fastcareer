@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Bookmark, Zap } from 'lucide-react'
+import { Bookmark } from 'lucide-react'
 import { APP_NAME } from '@/constants/config'
 import { logout } from '@/actions/auth.actions'
 import { createClient } from '@/lib/supabase/server'
@@ -13,8 +13,7 @@ export async function Header() {
   return (
     <header className="border-border bg-background/95 sticky top-0 z-20 border-b backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 sm:px-10 lg:px-16">
-        <Link href="/" className="text-foreground flex items-center gap-2 text-lg font-bold">
-          <Zap className="text-accent h-5 w-5" fill="currentColor" />
+        <Link href="/" className="text-foreground font-display text-xl font-semibold uppercase">
           {APP_NAME}
         </Link>
 

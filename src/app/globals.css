@@ -1,31 +1,31 @@
 @import 'tailwindcss';
 
-/* ─── Farb-Architektur ─────────────────────────────────────── */
+/* ─── Farb-Architektur (Warm Editorial) ────────────────────── */
 :root {
   /* Basis */
-  --background: #ffffff;
-  --foreground: #0f172a;
+  --background: #fbfaf8;
+  --foreground: #191919;
 
   /* Akzent (1 Farbe in 3 Stufen) — hier anpassen für gesamtes Farbschema */
-  --accent: #2563eb;
-  --accent-light: #93c5fd;
-  --accent-dark: #1d4ed8;
+  --accent: #cc785c;
+  --accent-light: #e8b8a4;
+  --accent-dark: #a35a41;
 
   /* Flächen */
-  --surface: #f8fafc;
-  --surface-2: #f1f5f9;
-  --surface-dark: #0f172a;
-  --surface-darker: #020617;
+  --surface: #f5f0e8;
+  --surface-2: #ece4d6;
+  --surface-dark: #191919;
+  --surface-darker: #0f0f0f;
 
   /* Text */
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --text-on-dark: #f8fafc;
-  --text-on-dark-muted: #94a3b8;
+  --text-primary: #191919;
+  --text-secondary: #6b6459;
+  --text-on-dark: #fbfaf8;
+  --text-on-dark-muted: #a39a8c;
 
   /* Borders */
-  --border: #e2e8f0;
-  --border-dark: #1e293b;
+  --border: #e4dcce;
+  --border-dark: #2a2a2a;
 
   /* Status */
   --success: #22c55e;
@@ -58,6 +58,7 @@
   --color-error: var(--error);
   --color-warning: var(--warning);
 
+  --font-display: var(--font-display);
   --font-body: var(--font-body);
 }
 
@@ -70,8 +71,8 @@ h1,
 h2,
 h3,
 h4 {
-  font-family: var(--font-body), sans-serif;
-  font-weight: 700;
+  font-family: var(--font-display), serif;
+  font-weight: 600;
   letter-spacing: -0.01em;
   line-height: 1.15;
 }
@@ -111,7 +112,7 @@ textarea:focus,
 select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px rgba(204, 120, 92, 0.15);
 }
 
 /* ─── Custom Animations ────────────────────────────────────── */
