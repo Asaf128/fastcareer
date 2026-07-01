@@ -1,5 +1,6 @@
 import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { summarizeJob } from '@/lib/ai/summarizeJob'
 import { isRateLimited } from '@/lib/ai/rateLimit'
 import type { JobSummary } from '@/types/ai.types'
@@ -51,14 +52,20 @@ export async function getOrCreateJobSummary(input: JobSummaryInput): Promise<Job
     return fallbackSummary(input)
   }
 
-  const { error: insertError } = await supabase.from('job_summaries').insert({
-    job_refnr: input.refnr,
-    summary: summary as unknown as Json,
-    model: 'gemini-2.5-flash',
-  })
-
-  if (insertError) {
-    console.error('Job-Zusammenfassung konnte nicht gecacht werden:', insertError.code)
+  // Insert über den Service-Role-Client — die offene INSERT-Policy wurde
+  // entfernt (Cache-Poisoning-Schutz), Clients können nicht mehr direkt schreiben.
+  try {
+    const admin = createAdminClient()
+    const { error: insertError } = await admin.from('job_summaries').insert({
+      job_refnr: input.refnr,
+      summary: summary as unknown as Json,
+      model: 'gemini-2.5-flash',
+    })
+    if (insertError) {
+      console.error('Job-Zusammenfassung konnte nicht gecacht werden:', insertError.code)
+    }
+  } catch (error) {
+    console.error('Admin-Client nicht verfügbar, Zusammenfassung nicht gecacht:', error)
   }
 
   return summary

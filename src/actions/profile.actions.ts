@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import { parseCv } from '@/lib/ai/parseCv'
+import { isRateLimited } from '@/lib/ai/rateLimit'
 import type { CvParseResult } from '@/types/ai.types'
 
 const workExperienceSchema = z.object({
@@ -64,6 +65,12 @@ export async function updateProfile(input: z.infer<typeof profileSchema>) {
 }
 
 const MAX_CV_SIZE_BYTES = 10 * 1024 * 1024
+const MAX_CV_PARSES_PER_MINUTE = 3
+
+function isPdfFile(buffer: Buffer): boolean {
+  // Magic Bytes statt Client-MIME-Type: echte PDFs beginnen mit "%PDF-"
+  return buffer.subarray(0, 5).toString('latin1') === '%PDF-'
+}
 
 export async function uploadAndParseCv(
   formData: FormData
@@ -74,13 +81,19 @@ export async function uploadAndParseCv(
   } = await supabase.auth.getUser()
   if (!user) return { error: 'Bitte zuerst anmelden.' }
 
+  if (isRateLimited(`cv:${user.id}`, MAX_CV_PARSES_PER_MINUTE)) {
+    return { error: 'Zu viele Uploads kurz hintereinander. Bitte warte eine Minute.' }
+  }
+
   const file = formData.get('cv')
   if (!(file instanceof File)) return { error: 'Keine Datei erhalten.' }
-  if (file.type !== 'application/pdf') return { error: 'Nur PDF-Dateien werden unterstützt.' }
   if (file.size > MAX_CV_SIZE_BYTES) return { error: 'Datei ist zu groß (max. 10 MB).' }
 
   const arrayBuffer = await file.arrayBuffer()
-  const base64 = Buffer.from(arrayBuffer).toString('base64')
+  const buffer = Buffer.from(arrayBuffer)
+  if (!isPdfFile(buffer)) return { error: 'Nur PDF-Dateien werden unterstützt.' }
+
+  const base64 = buffer.toString('base64')
 
   let parsed: CvParseResult
   try {
@@ -89,6 +102,13 @@ export async function uploadAndParseCv(
     console.error('Lebenslauf-Auslesen fehlgeschlagen:', error)
     return { error: 'Lebenslauf konnte nicht ausgelesen werden. Bitte versuche es erneut.' }
   }
+
+  const { data: existingProfile } = await supabase
+    .from('profiles')
+    .select('cv_path')
+    .eq('id', user.id)
+    .maybeSingle()
+  const oldCvPath = existingProfile?.cv_path ?? null
 
   const path = `${user.id}/${randomUUID()}.pdf`
   const { error: uploadError } = await supabase.storage
@@ -106,6 +126,12 @@ export async function uploadAndParseCv(
 
   if (profileError) {
     console.error('CV-Pfad konnte nicht gespeichert werden:', profileError.code)
+  } else if (oldCvPath && oldCvPath !== path) {
+    // Alten Lebenslauf entfernen — sonst sammeln sich Dateien im Bucket (DSGVO)
+    const { error: removeError } = await supabase.storage.from('cvs').remove([oldCvPath])
+    if (removeError) {
+      console.error('Alter Lebenslauf konnte nicht gelöscht werden:', removeError.message)
+    }
   }
 
   return { error: null, parsed }

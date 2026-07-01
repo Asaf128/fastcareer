@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { ProfileForm } from '@/components/profile/ProfileForm'
+import { DeleteAccountSection } from '@/components/profile/DeleteAccountSection'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default async function ProfilPage() {
         </p>
 
         <ProfileForm initialProfile={profile} />
+        <DeleteAccountSection />
       </Container>
     </Section>
   )
