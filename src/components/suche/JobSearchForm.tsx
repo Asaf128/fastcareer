@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { MapPin, Search } from 'lucide-react'
 import { Button } from '@/components/shared/Button'
 import { cn } from '@/lib/cn'
@@ -11,6 +11,7 @@ interface JobSearchFormProps {
   defaultWo: string
   defaultUmkreis: number
   defaultArbeitszeit?: string
+  popularSearches?: string[]
 }
 
 let debounceTimer: ReturnType<typeof setTimeout>
@@ -20,12 +21,20 @@ export function JobSearchForm({
   defaultWo,
   defaultUmkreis,
   defaultArbeitszeit = '',
+  popularSearches,
 }: JobSearchFormProps) {
+  const formRef = useRef<HTMLFormElement>(null)
+  const wasInputRef = useRef<HTMLInputElement>(null)
   const [wo, setWo] = useState(defaultWo)
   const [orte, setOrte] = useState<LocalitySuggestion[]>([])
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
   const [arbeitszeit, setArbeitszeit] = useState(defaultArbeitszeit)
   const isHomeOffice = arbeitszeit === 'ho'
+
+  function selectPopularSearch(suche: string) {
+    if (wasInputRef.current) wasInputRef.current.value = suche
+    formRef.current?.requestSubmit()
+  }
 
   function handleOrtChange(value: string) {
     setWo(value)
@@ -52,6 +61,7 @@ export function JobSearchForm({
 
   return (
     <form
+      ref={formRef}
       action="/suche"
       className="border-border bg-background rounded-xl border p-3 shadow-sm sm:p-4"
     >
@@ -59,6 +69,7 @@ export function JobSearchForm({
         <div className="relative sm:col-span-2">
           <Search className="text-text-secondary pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <input
+            ref={wasInputRef}
             type="text"
             name="was"
             aria-label="Beruf oder Stichwort"
@@ -137,6 +148,22 @@ export function JobSearchForm({
           Jobs suchen
         </Button>
       </div>
+
+      {popularSearches && popularSearches.length > 0 && (
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+          <span className="text-text-secondary text-sm">Beliebte Suchen:</span>
+          {popularSearches.map((suche) => (
+            <button
+              key={suche}
+              type="button"
+              onClick={() => selectPopularSearch(suche)}
+              className="border-border text-text-secondary hover:border-accent hover:text-accent rounded-full border px-3 py-1 text-sm transition-colors duration-150"
+            >
+              {suche}
+            </button>
+          ))}
+        </div>
+      )}
     </form>
   )
 }
