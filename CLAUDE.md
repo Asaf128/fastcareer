@@ -18,7 +18,7 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - API-Route Orte-Autocomplete: `src/app/api/orte/route.ts`
 - Header (Login-Status, Nav): `src/components/layout/Header.tsx`
 - Footer/Layout: `src/components/layout/Footer.tsx`
-- Shared Base Components (Button, Container, Section): `src/components/shared/`
+- Shared Base Components (Button, Container, Section, Input, Textarea, Checkbox): `src/components/shared/`
 - Jobsuche-Komponenten (JobCard, JobSearchForm, FavoriteButton): `src/components/suche/`
 - Login (Magic Link): `src/app/login/page.tsx`, `src/components/auth/LoginForm.tsx`
 - Auth-Callback (Code-Exchange nach Magic-Link-Klick): `src/app/auth/callback/route.ts`
@@ -37,6 +37,8 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Job-Zusammenfassung-Cache (Read-through, `job_summaries`-Tabelle): `src/lib/jobs/jobSummaryCache.ts`
 - Job-Detailseite-Komponenten (Kopf+Stern, KI-Zusammenfassung, Anschreiben, Bewerbungs-Checkliste, Original-Link): `src/components/jobs/`
 - Bewerbungen Server Actions (speichern/entfernen/Checkliste/Notizen/Anschreiben): `src/actions/applications.actions.ts`
+- Profil-Seite + Lebenslauf-Upload: `src/app/profil/page.tsx`, `src/components/profile/` (`ProfileForm`, `WorkExperienceFields`, `EducationFields`, `SkillsInput`, `CvUpload`)
+- Profil Server Actions (speichern, CV hochladen & auslesen): `src/actions/profile.actions.ts`
 - Navigation/Config: `src/constants/`
 
 (Pflege: bei jeder strukturrelevanten Änderung — neue Seite, neuer Feature-Ordner, verschobene Komponente — diesen Abschnitt im selben Schritt aktualisieren.)

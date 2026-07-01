@@ -4,6 +4,8 @@ import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { ClipboardList } from 'lucide-react'
 import { updateChecklist, saveNotes } from '@/actions/applications.actions'
+import { Checkbox } from '@/components/shared/Checkbox'
+import { Textarea } from '@/components/shared/Textarea'
 
 interface ApplicationChecklistProps {
   jobRefnr: string
@@ -72,40 +74,19 @@ export function ApplicationChecklist({
       <h2 className="text-foreground text-lg font-semibold">Dein Bewerbungsstand</h2>
 
       <div className="mt-4 flex flex-wrap gap-6">
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={applied}
-            onChange={toggleApplied}
-            className="border-border h-4 w-4 rounded"
-          />
-          Beworben
-        </label>
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={answered}
-            onChange={toggleAnswered}
-            className="border-border h-4 w-4 rounded"
-          />
-          Geantwortet
-        </label>
+        <Checkbox label="Beworben" checked={applied} onChange={toggleApplied} />
+        <Checkbox label="Geantwortet" checked={answered} onChange={toggleAnswered} />
       </div>
 
-      <label
-        htmlFor={`notes-${jobRefnr}`}
-        className="text-foreground mt-6 block text-sm font-medium"
-      >
-        Notizen
-      </label>
-      <textarea
+      <Textarea
+        label="Notizen"
         id={`notes-${jobRefnr}`}
         value={notes}
         onChange={(event) => setNotes(event.target.value)}
         onBlur={handleNotesBlur}
         rows={4}
         placeholder="z. B. Gehaltsvorstellung, Ansprechpartner, nächste Schritte …"
-        className="border-border bg-background text-text-primary mt-2 w-full rounded-lg border p-3 text-sm"
+        className="mt-6"
       />
     </div>
   )
