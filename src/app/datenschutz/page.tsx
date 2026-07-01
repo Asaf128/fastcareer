@@ -21,13 +21,13 @@ export default function DatenschutzPage() {
             <section>
               <h2 className="mb-2 font-medium">1. Verantwortlicher</h2>
               <p>
-                [DEIN VOR- UND NACHNAME]
+                Asaf Cebeci
                 <br />
-                [STRASSE UND HAUSNUMMER]
+                Seiboldsdorfer Feld 5
                 <br />
-                [PLZ UND ORT]
+                83278 Traunstein
                 <br />
-                E-Mail: [DEINE-EMAIL@BEISPIEL.DE]
+                E-Mail: ceb.asaf@gmail.com
               </p>
             </section>
 

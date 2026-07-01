@@ -21,20 +21,20 @@ export default function ImpressumPage() {
             <section>
               <h2 className="mb-2 font-medium">Angaben gemäß § 5 TMG</h2>
               <p>
-                [DEIN VOR- UND NACHNAME]
+                Asaf Cebeci
                 <br />
-                [STRASSE UND HAUSNUMMER]
+                Seiboldsdorfer Feld 5
                 <br />
-                [PLZ UND ORT]
+                83278 Traunstein
               </p>
             </section>
 
             <section>
               <h2 className="mb-2 font-medium">Kontakt</h2>
               <p>
-                E-Mail: [DEINE-EMAIL@BEISPIEL.DE]
+                E-Mail: ceb.asaf@gmail.com
                 <br />
-                Telefon: [OPTIONAL]
+                Telefon: +49 1794147574
               </p>
             </section>
 
@@ -43,11 +43,11 @@ export default function ImpressumPage() {
                 Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV
               </h2>
               <p>
-                [DEIN VOR- UND NACHNAME]
+                Asaf Cebeci
                 <br />
-                [STRASSE UND HAUSNUMMER]
+                Seiboldsdorfer Feld 5
                 <br />
-                [PLZ UND ORT]
+                83278 Traunstein
               </p>
             </section>
 
