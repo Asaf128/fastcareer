@@ -71,20 +71,23 @@ export function PopularSearchesCarousel({ searches, onSelect }: PopularSearchesC
     }
   }
 
-  function handlePointerUp() {
+  function handlePointerUp(e: React.PointerEvent<HTMLDivElement>) {
+    if (dragRef.current && !dragRef.current.moved) {
+      // setPointerCapture re-targets subsequent events to the container, so
+      // the button's own onClick doesn't reliably fire — resolve the actual
+      // element under the pointer instead.
+      const hit = document.elementFromPoint(e.clientX, e.clientY)
+      const suche = hit?.closest('button')?.dataset.suche
+      if (suche) onSelect(suche)
+    }
     dragRef.current = null
-  }
-
-  function handleItemClick(suche: string) {
-    if (dragRef.current?.moved) return
-    onSelect(suche)
   }
 
   return (
     <div className="mt-5">
       <p className="text-text-secondary mb-2 text-center text-sm">Beliebte Suchen:</p>
       <div
-        className="cursor-grab overflow-hidden active:cursor-grabbing"
+        className="min-w-0 cursor-grab overflow-hidden active:cursor-grabbing"
         style={{ touchAction: 'pan-y' }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
@@ -96,7 +99,7 @@ export function PopularSearchesCarousel({ searches, onSelect }: PopularSearchesC
             <button
               key={`${suche}-${index}`}
               type="button"
-              onClick={() => handleItemClick(suche)}
+              data-suche={suche}
               className="border-border text-text-secondary hover:border-accent hover:text-accent shrink-0 rounded-full border px-4 py-1.5 text-sm transition-colors duration-150"
             >
               {suche}
