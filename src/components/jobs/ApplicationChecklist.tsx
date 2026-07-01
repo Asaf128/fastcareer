@@ -73,7 +73,7 @@ export function ApplicationChecklist({
     <div className="border-border bg-background mt-6 rounded-xl border p-6 shadow-sm lg:p-8">
       <h2 className="text-foreground text-lg font-semibold">Dein Bewerbungsstand</h2>
 
-      <div className="mt-4 flex flex-wrap gap-6">
+      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-6">
         <Checkbox label="Beworben" checked={applied} onChange={toggleApplied} />
         <Checkbox label="Geantwortet" checked={answered} onChange={toggleAnswered} />
       </div>
@@ -86,7 +86,7 @@ export function ApplicationChecklist({
         onBlur={handleNotesBlur}
         rows={4}
         placeholder="z. B. Gehaltsvorstellung, Ansprechpartner, nächste Schritte …"
-        className="mt-6"
+        className="mt-8 sm:mt-6"
       />
     </div>
   )

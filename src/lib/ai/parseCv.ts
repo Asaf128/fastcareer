@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { Type } from '@google/genai'
 import { getGenAiClient, MODEL_CV } from './genai'
+import { normalizeIsoDate, normalizeMonthDate } from './normalizeCvDates'
 import type { CvParseResult } from '@/types/ai.types'
 
 const workExperienceSchema = z.object({
@@ -90,7 +91,7 @@ export async function parseCv(pdfBase64: string): Promise<CvParseResult> {
         parts: [
           { inlineData: { mimeType: 'application/pdf', data: pdfBase64 } },
           {
-            text: 'Lies diesen Lebenslauf aus und extrahiere die Profildaten strukturiert. birth_date im Format YYYY-MM-DD, falls erkennbar, sonst null. Erfinde keine Informationen — wenn ein Feld nicht im Lebenslauf steht, gib null bzw. ein leeres Array zurück.',
+            text: 'Lies diesen Lebenslauf aus und extrahiere die Profildaten strukturiert. birth_date im Format YYYY-MM-DD, falls erkennbar, sonst null. Alle "von"- und "bis"-Datumsfelder (Berufserfahrung, Ausbildung) ausschließlich im Format YYYY-MM (Jahr-Monat) angeben — falls nur ein Jahr bekannt ist, Januar als Monat annehmen (z. B. "2020" → "2020-01"). "bis" ist null, wenn die Station noch aktuell ist. Erfinde keine Informationen — wenn ein Feld nicht im Lebenslauf steht, gib null bzw. ein leeres Array zurück.',
           },
         ],
       },
@@ -107,5 +108,20 @@ export async function parseCv(pdfBase64: string): Promise<CvParseResult> {
   if (!text) throw new Error('Keine Antwort von Gemini erhalten.')
 
   const parsed: unknown = JSON.parse(text)
-  return cvParseSchema.parse(parsed)
+  const result = cvParseSchema.parse(parsed)
+
+  return {
+    ...result,
+    birth_date: normalizeIsoDate(result.birth_date),
+    work_experience: result.work_experience.map((entry) => ({
+      ...entry,
+      von: normalizeMonthDate(entry.von) ?? entry.von,
+      bis: normalizeMonthDate(entry.bis),
+    })),
+    education: result.education.map((entry) => ({
+      ...entry,
+      von: normalizeMonthDate(entry.von) ?? entry.von,
+      bis: normalizeMonthDate(entry.bis),
+    })),
+  }
 }
