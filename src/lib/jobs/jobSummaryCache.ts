@@ -40,7 +40,7 @@ export async function getOrCreateJobSummary(input: JobSummaryInput): Promise<Job
   const requestHeaders = await headers()
   const ip = requestHeaders.get('x-forwarded-for') ?? 'anonymous'
 
-  if (isRateLimited(`summary:${ip}`)) {
+  if (await isRateLimited(`summary:${ip}`)) {
     return fallbackSummary(input)
   }
 

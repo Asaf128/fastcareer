@@ -10,7 +10,6 @@ import { ApplicationChecklist } from '@/components/jobs/ApplicationChecklist'
 import { OriginalListing } from '@/components/jobs/OriginalListing'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
-import { generateCoverLetter } from '@/lib/ai/generateCoverLetter'
 import { createClient } from '@/lib/supabase/server'
 
 interface JobDetailPageProps {
@@ -67,21 +66,10 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
   const application = applicationResult.data
   const profile = profileResult.data
 
-  let coverLetter = application?.cover_letter ?? null
-  if (user && profile && !coverLetter && arbeitgeber) {
-    try {
-      coverLetter = await generateCoverLetter({
-        titel: resolvedTitel,
-        arbeitgeber: resolvedArbeitgeber,
-        ort: resolvedOrt,
-        summary,
-        profile,
-      })
-    } catch (error) {
-      console.error('Anschreiben-Generierung fehlgeschlagen:', error)
-      coverLetter = null
-    }
-  }
+  // Anschreiben wird nicht mehr beim Seitenaufbau generiert (teurer Pro-Call,
+  // blockierte das Rendering) — das passiert auf Klick im CoverLetterPanel
+  // und wird dort sofort gespeichert.
+  const coverLetter = application?.cover_letter ?? null
 
   return (
     <Section className="py-10 lg:py-14">

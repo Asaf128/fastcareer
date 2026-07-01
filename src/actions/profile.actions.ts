@@ -81,7 +81,7 @@ export async function uploadAndParseCv(
   } = await supabase.auth.getUser()
   if (!user) return { error: 'Bitte zuerst anmelden.' }
 
-  if (isRateLimited(`cv:${user.id}`, MAX_CV_PARSES_PER_MINUTE)) {
+  if (await isRateLimited(`cv:${user.id}`, MAX_CV_PARSES_PER_MINUTE)) {
     return { error: 'Zu viele Uploads kurz hintereinander. Bitte warte eine Minute.' }
   }
 
