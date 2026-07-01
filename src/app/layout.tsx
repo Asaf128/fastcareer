@@ -19,12 +19,13 @@ const bodyFont = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
-  title: { default: 'Starter — Projektbeschreibung', template: '%s | Starter' },
-  description: '150-160 Zeichen Beschreibung mit Hauptkeyword.',
+  title: { default: 'Fastcareer — Jobs finden in Sekunden', template: '%s | Fastcareer' },
+  description:
+    'Fastcareer durchsucht offene Stellen der Arbeitsagentur nach Beruf und Ort — schnell, übersichtlich, ohne Umwege.',
   openGraph: {
     type: 'website',
     locale: 'de_DE',
-    siteName: 'Starter',
+    siteName: 'Fastcareer',
     images: [{ url: '/images/og-default.jpg', width: 1200, height: 630 }],
   },
   twitter: { card: 'summary_large_image' },

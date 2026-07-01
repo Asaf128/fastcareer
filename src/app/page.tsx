@@ -1,14 +1,29 @@
+import { Container } from '@/components/shared/Container'
+import { Section } from '@/components/shared/Section'
+import { JobSearchForm } from '@/components/suche/JobSearchForm'
+
 export default function Home() {
   return (
-    <main className="bg-background flex min-h-screen flex-col items-center justify-center">
-      <div className="text-center">
-        <p className="text-text-secondary mb-4 text-xs tracking-[0.4em] uppercase">Template</p>
-        <h1 className="text-foreground text-6xl sm:text-7xl lg:text-8xl">Starter</h1>
-        <div className="bg-accent mx-auto mt-6 h-px w-16" />
-        <p className="text-text-secondary mt-6">
-          Bereit loszulegen. Ersetze diese Seite mit deinem Content.
-        </p>
-      </div>
+    <main className="bg-background min-h-screen">
+      <Section className="pt-32 lg:pt-40">
+        <Container>
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-text-secondary mb-4 text-xs tracking-[0.4em] uppercase">Jobsuche</p>
+            <h1 className="text-foreground text-5xl sm:text-6xl lg:text-7xl">
+              Finde deinen nächsten Job
+            </h1>
+            <div className="bg-accent mx-auto mt-6 h-px w-16" />
+            <p className="text-text-secondary mt-6">
+              Fastcareer durchsucht offene Stellen der Arbeitsagentur nach Beruf und Ort — schnell,
+              übersichtlich, ohne Umwege.
+            </p>
+          </div>
+
+          <div className="mx-auto mt-12 max-w-4xl">
+            <JobSearchForm defaultWas="" defaultWo="" defaultUmkreis={25} />
+          </div>
+        </Container>
+      </Section>
     </main>
   )
 }
