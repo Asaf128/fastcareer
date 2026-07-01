@@ -69,22 +69,17 @@ export async function generateAndSaveCoverLetter(
     return { error: 'Anschreiben konnte nicht erstellt werden. Bitte versuche es erneut.' }
   }
 
-  await supabase.from('applications').upsert(
+  const { error: saveError } = await supabase.from('applications').upsert(
     {
       user_id: user.id,
       job_refnr: jobRefnr,
       titel,
       arbeitgeber,
       ort: parsed.data.ort ?? null,
+      cover_letter: coverLetter,
     },
-    { onConflict: 'user_id,job_refnr', ignoreDuplicates: true }
+    { onConflict: 'user_id,job_refnr' }
   )
-
-  const { error: saveError } = await supabase
-    .from('applications')
-    .update({ cover_letter: coverLetter })
-    .eq('user_id', user.id)
-    .eq('job_refnr', jobRefnr)
 
   if (saveError) {
     console.error('Anschreiben konnte nicht gespeichert werden:', saveError.code)

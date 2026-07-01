@@ -11,7 +11,15 @@ const emailSchema = z.object({
 const codeSchema = z.object({
   email: z.string().email(),
   token: z.string().regex(/^\d{4,10}$/),
+  next: z.string().optional(),
 })
+
+// Nur app-interne Ziele zulassen — sonst wäre /login?next=https://boese.seite
+// ein Open-Redirect nach erfolgreichem Login.
+function safeRedirectTarget(next: string | undefined): string {
+  if (next && next.startsWith('/') && !next.startsWith('//')) return next
+  return '/bewerbungen'
+}
 
 export async function requestLoginCode(
   _prevState: { error: string | null; success: boolean; email: string },
@@ -45,6 +53,7 @@ export async function verifyLoginCode(_prevState: { error: string | null }, form
   const parsed = codeSchema.safeParse({
     email: formData.get('email'),
     token: formData.get('token'),
+    next: formData.get('next') ?? undefined,
   })
 
   if (!parsed.success) {
@@ -62,7 +71,7 @@ export async function verifyLoginCode(_prevState: { error: string | null }, form
     return { error: 'Code ungültig oder abgelaufen. Bitte neu anfordern.' }
   }
 
-  redirect('/bewerbungen')
+  redirect(safeRedirectTarget(parsed.data.next))
 }
 
 export async function logout() {

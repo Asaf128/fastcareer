@@ -4,7 +4,11 @@ import { useActionState } from 'react'
 import { requestLoginCode, verifyLoginCode } from '@/actions/auth.actions'
 import { Button } from '@/components/shared/Button'
 
-export function LoginForm() {
+interface LoginFormProps {
+  next?: string
+}
+
+export function LoginForm({ next }: LoginFormProps) {
   const [requestState, requestAction, isRequesting] = useActionState(requestLoginCode, {
     error: null,
     success: false,
@@ -21,6 +25,7 @@ export function LoginForm() {
     return (
       <form action={verifyAction} className="flex flex-col gap-4">
         <input type="hidden" name="email" value={requestState.email} />
+        {next && <input type="hidden" name="next" value={next} />}
         <p className="text-text-secondary text-sm">
           Code an <span className="text-foreground">{requestState.email}</span> geschickt — bitte
           eingeben.

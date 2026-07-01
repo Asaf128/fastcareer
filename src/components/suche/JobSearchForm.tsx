@@ -15,8 +15,6 @@ interface JobSearchFormProps {
   popularSearches?: string[]
 }
 
-let debounceTimer: ReturnType<typeof setTimeout>
-
 export function JobSearchForm({
   defaultWas,
   defaultWo,
@@ -26,6 +24,7 @@ export function JobSearchForm({
 }: JobSearchFormProps) {
   const formRef = useRef<HTMLFormElement>(null)
   const wasInputRef = useRef<HTMLInputElement>(null)
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
   const [wo, setWo] = useState(defaultWo)
   const [orte, setOrte] = useState<LocalitySuggestion[]>([])
   const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
@@ -39,7 +38,7 @@ export function JobSearchForm({
 
   function handleOrtChange(value: string) {
     setWo(value)
-    clearTimeout(debounceTimer)
+    clearTimeout(debounceTimerRef.current)
 
     if (value.trim().length < 2) {
       setOrte([])
@@ -47,7 +46,7 @@ export function JobSearchForm({
       return
     }
 
-    debounceTimer = setTimeout(async () => {
+    debounceTimerRef.current = setTimeout(async () => {
       const response = await fetch(`/api/orte?q=${encodeURIComponent(value)}`)
       const data = (await response.json()) as { orte: LocalitySuggestion[] }
       setOrte(data.orte)

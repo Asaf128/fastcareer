@@ -1,6 +1,6 @@
 'use client'
 
-import { forwardRef } from 'react'
+import { forwardRef, useId } from 'react'
 import { cn } from '@/lib/cn'
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -12,7 +12,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   { label, error, id, className, ...props },
   ref
 ) {
-  const textareaId = id ?? label.toLowerCase().replace(/\s+/g, '-')
+  const generatedId = useId()
+  const textareaId = id ?? generatedId
 
   return (
     <div>
@@ -22,7 +23,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
       <textarea
         ref={ref}
         id={textareaId}
-        aria-invalid={Boolean(error)}
+        aria-invalid={error ? 'true' : 'false'}
         className={cn(
           'border-border bg-background text-text-primary mt-1.5 w-full rounded-lg border px-3 py-2 text-sm',
           error && 'border-error',

@@ -13,21 +13,36 @@ const jobBaseSchema = z.object({
   ort: z.string().optional(),
 })
 
-async function ensureApplicationRow(
+type ApplicationExtra = Partial<{
+  applied: boolean
+  answered: boolean
+  notes: string
+  cover_letter: string
+}>
+
+// Ein einziger Upsert statt "Zeile sicherstellen + separates Update":
+// ohne extra-Felder wird eine bestehende Zeile nicht angefasst
+// (ignoreDuplicates), mit extra-Feldern werden genau diese aktualisiert.
+async function upsertApplication(
   supabase: SupabaseServerClient,
   userId: string,
-  job: z.infer<typeof jobBaseSchema>
+  job: z.infer<typeof jobBaseSchema>,
+  extra?: ApplicationExtra
 ) {
-  await supabase.from('applications').upsert(
+  const { error } = await supabase.from('applications').upsert(
     {
       user_id: userId,
       job_refnr: job.jobRefnr,
       titel: job.titel,
       arbeitgeber: job.arbeitgeber,
       ort: job.ort ?? null,
+      ...extra,
     },
-    { onConflict: 'user_id,job_refnr', ignoreDuplicates: true }
+    extra
+      ? { onConflict: 'user_id,job_refnr' }
+      : { onConflict: 'user_id,job_refnr', ignoreDuplicates: true }
   )
+  return error
 }
 
 export async function saveApplication(input: z.infer<typeof jobBaseSchema>) {
@@ -40,17 +55,7 @@ export async function saveApplication(input: z.infer<typeof jobBaseSchema>) {
   } = await supabase.auth.getUser()
   if (!user) return { error: 'Bitte zuerst anmelden.' }
 
-  const { error } = await supabase.from('applications').upsert(
-    {
-      user_id: user.id,
-      job_refnr: parsed.data.jobRefnr,
-      titel: parsed.data.titel,
-      arbeitgeber: parsed.data.arbeitgeber,
-      ort: parsed.data.ort ?? null,
-    },
-    { onConflict: 'user_id,job_refnr', ignoreDuplicates: true }
-  )
-
+  const error = await upsertApplication(supabase, user.id, parsed.data)
   if (error) return { error: 'Konnte nicht gespeichert werden.' }
 
   revalidatePath('/bewerbungen')
@@ -94,18 +99,11 @@ export async function updateChecklist(input: z.infer<typeof checklistSchema>) {
   } = await supabase.auth.getUser()
   if (!user) return { error: 'Bitte zuerst anmelden.' }
 
-  await ensureApplicationRow(supabase, user.id, parsed.data)
-
-  const updates: { applied?: boolean; answered?: boolean } = {}
+  const updates: ApplicationExtra = {}
   if (parsed.data.applied !== undefined) updates.applied = parsed.data.applied
   if (parsed.data.answered !== undefined) updates.answered = parsed.data.answered
 
-  const { error } = await supabase
-    .from('applications')
-    .update(updates)
-    .eq('user_id', user.id)
-    .eq('job_refnr', parsed.data.jobRefnr)
-
+  const error = await upsertApplication(supabase, user.id, parsed.data, updates)
   if (error) return { error: 'Konnte nicht gespeichert werden.' }
 
   revalidatePath('/bewerbungen')
@@ -126,14 +124,9 @@ export async function saveNotes(input: z.infer<typeof notesSchema>) {
   } = await supabase.auth.getUser()
   if (!user) return { error: 'Bitte zuerst anmelden.' }
 
-  await ensureApplicationRow(supabase, user.id, parsed.data)
-
-  const { error } = await supabase
-    .from('applications')
-    .update({ notes: parsed.data.notes })
-    .eq('user_id', user.id)
-    .eq('job_refnr', parsed.data.jobRefnr)
-
+  const error = await upsertApplication(supabase, user.id, parsed.data, {
+    notes: parsed.data.notes,
+  })
   if (error) return { error: 'Notizen konnten nicht gespeichert werden.' }
   return { error: null }
 }
@@ -152,14 +145,9 @@ export async function saveCoverLetter(input: z.infer<typeof coverLetterSchema>) 
   } = await supabase.auth.getUser()
   if (!user) return { error: 'Bitte zuerst anmelden.' }
 
-  await ensureApplicationRow(supabase, user.id, parsed.data)
-
-  const { error } = await supabase
-    .from('applications')
-    .update({ cover_letter: parsed.data.coverLetter })
-    .eq('user_id', user.id)
-    .eq('job_refnr', parsed.data.jobRefnr)
-
+  const error = await upsertApplication(supabase, user.id, parsed.data, {
+    cover_letter: parsed.data.coverLetter,
+  })
   if (error) return { error: 'Anschreiben konnte nicht gespeichert werden.' }
   return { error: null }
 }
