@@ -1,14 +1,25 @@
-// Einfacher In-Memory-Sliding-Window-Limiter für teure KI-Aufrufe ohne Login.
-// Der job_summaries-Cache begrenzt Gemini-Calls bereits auf 1x pro Job global —
-// dieser Guard schützt zusätzlich gegen kurzfristige Bursts über viele neue
-// Job-Refs. Zurückgesetzt bei Redeploy/Cold-Start; für höhere Anforderungen
-// auf Upstash Redis umstellen (siehe 03-security.md §6).
+import { Redis } from '@upstash/redis'
+
+// Rate-Limiter für teure KI-Aufrufe. Läuft über Upstash Redis (Fixed Window),
+// damit das Limit über alle Serverless-Instanzen hinweg gilt — eine In-Memory-
+// Map existiert pro Instanz und vervielfacht das Limit bei Traffic-Spitzen.
+// Ohne Upstash-Env-Vars (z. B. lokal) greift der In-Memory-Fallback.
 const WINDOW_MS = 60_000
 const MAX_REQUESTS_PER_WINDOW = 20
 
+let redisClient: Redis | null = null
+
+function getRedis(): Redis | null {
+  const url = process.env.UPSTASH_REDIS_REST_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+  if (!url || !token) return null
+  redisClient ??= new Redis({ url, token })
+  return redisClient
+}
+
 const requestLog = new Map<string, number[]>()
 
-export function isRateLimited(key: string, maxRequests = MAX_REQUESTS_PER_WINDOW): boolean {
+function isRateLimitedInMemory(key: string, maxRequests: number): boolean {
   const now = Date.now()
   const timestamps = (requestLog.get(key) ?? []).filter((t) => now - t < WINDOW_MS)
 
@@ -20,4 +31,26 @@ export function isRateLimited(key: string, maxRequests = MAX_REQUESTS_PER_WINDOW
   timestamps.push(now)
   requestLog.set(key, timestamps)
   return false
+}
+
+export async function isRateLimited(
+  key: string,
+  maxRequests = MAX_REQUESTS_PER_WINDOW
+): Promise<boolean> {
+  const redis = getRedis()
+  if (redis) {
+    try {
+      const bucket = `ratelimit:${key}:${Math.floor(Date.now() / WINDOW_MS)}`
+      const count = await redis.incr(bucket)
+      if (count === 1) {
+        // TTL großzügiger als das Fenster, damit der Key sicher aufgeräumt wird
+        await redis.expire(bucket, Math.ceil((WINDOW_MS / 1000) * 2))
+      }
+      return count > maxRequests
+    } catch (error) {
+      console.error('Upstash-Rate-Limit fehlgeschlagen, nutze In-Memory-Fallback:', error)
+    }
+  }
+
+  return isRateLimitedInMemory(key, maxRequests)
 }
