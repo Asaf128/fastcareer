@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { ArrowLeft, Building2, ExternalLink, MapPin } from 'lucide-react'
+import { Building2, ExternalLink, MapPin } from 'lucide-react'
+import { BackButton } from '@/components/shared/BackButton'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { FavoriteButton } from '@/components/suche/FavoriteButton'
@@ -48,13 +48,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
   return (
     <Section className="py-10 lg:py-14">
       <Container className="max-w-3xl">
-        <Link
-          href="/suche"
-          className="text-text-secondary hover:text-foreground flex items-center gap-1.5 text-sm transition-colors duration-150"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Zurück zur Suche
-        </Link>
+        <BackButton fallbackHref="/suche">Zurück zur Suche</BackButton>
 
         <div className="border-border bg-background mt-4 rounded-xl border p-6 shadow-sm lg:p-8">
           <div className="flex items-start justify-between gap-4">
