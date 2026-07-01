@@ -87,7 +87,7 @@ export function PopularSearchesCarousel({ searches, onSelect }: PopularSearchesC
     <div className="mt-5">
       <p className="text-text-secondary mb-2 text-center text-sm">Beliebte Suchen:</p>
       <div
-        className="min-w-0 cursor-grab overflow-hidden active:cursor-grabbing"
+        className="w-full min-w-0 cursor-grab overflow-hidden active:cursor-grabbing"
         style={{ touchAction: 'pan-y' }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}

@@ -23,19 +23,19 @@ export function LoginForm() {
         <input type="hidden" name="email" value={requestState.email} />
         <p className="text-text-secondary text-sm">
           Code an <span className="text-foreground">{requestState.email}</span> geschickt — bitte
-          die 6 Ziffern eingeben.
+          eingeben.
         </p>
         <input
           type="text"
           name="token"
           inputMode="numeric"
-          pattern="\d{6}"
-          maxLength={6}
-          aria-label="6-stelliger Anmelde-Code"
+          pattern="\d{4,10}"
+          maxLength={10}
+          aria-label="Anmelde-Code"
           placeholder="123456"
           required
           autoFocus
-          className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-center text-lg tracking-[0.5em]"
+          className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-center text-lg tracking-[0.3em]"
         />
         {verifyState.error && <p className="text-sm text-red-600">{verifyState.error}</p>}
         <Button type="submit" isLoading={isVerifying}>
