@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { ArrowLeft, Building2, ExternalLink, MapPin } from 'lucide-react'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { FavoriteButton } from '@/components/suche/FavoriteButton'
@@ -45,54 +46,75 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
   }
 
   return (
-    <Section className="py-16 lg:py-24">
+    <Section className="py-10 lg:py-14">
       <Container className="max-w-3xl">
-        <div className="flex items-start justify-between gap-4">
-          <Link href="/suche" className="text-text-secondary text-xs tracking-[0.2em] uppercase">
-            ← Zurück zur Suche
-          </Link>
-          {titel && arbeitgeber && (
-            <FavoriteButton
-              jobRefnr={refnr}
-              titel={titel}
-              arbeitgeber={arbeitgeber}
-              ort={ort ?? ''}
-              initialIsFavorite={isFavorite}
-              isAuthenticated={!!user}
-            />
-          )}
-        </div>
+        <Link
+          href="/suche"
+          className="text-text-secondary hover:text-foreground flex items-center gap-1.5 text-sm transition-colors duration-150"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Zurück zur Suche
+        </Link>
 
-        <h1 className="text-foreground mt-6 text-3xl lg:text-4xl">{titel ?? 'Stellenangebot'}</h1>
-        {arbeitgeber && <p className="text-text-secondary mt-2 text-sm">{arbeitgeber}</p>}
-        <div className="bg-accent mt-4 mb-8 h-px w-16" />
+        <div className="border-border bg-background mt-4 rounded-xl border p-6 shadow-sm lg:p-8">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-foreground text-2xl lg:text-3xl">{titel ?? 'Stellenangebot'}</h1>
+              <div className="text-text-secondary mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+                {arbeitgeber && (
+                  <span className="flex items-center gap-1.5">
+                    <Building2 className="h-4 w-4" />
+                    {arbeitgeber}
+                  </span>
+                )}
+                {ort && (
+                  <span className="flex items-center gap-1.5">
+                    <MapPin className="h-4 w-4" />
+                    {ort}
+                  </span>
+                )}
+              </div>
+            </div>
+            {titel && arbeitgeber && (
+              <FavoriteButton
+                jobRefnr={refnr}
+                titel={titel}
+                arbeitgeber={arbeitgeber}
+                ort={ort ?? ''}
+                initialIsFavorite={isFavorite}
+                isAuthenticated={!!user}
+              />
+            )}
+          </div>
 
-        <p className="text-text-primary text-sm whitespace-pre-line">
-          {detail.beschreibung || 'Keine Beschreibung verfügbar.'}
-        </p>
+          <p className="text-text-primary mt-6 text-sm whitespace-pre-line">
+            {detail.beschreibung || 'Keine Beschreibung verfügbar.'}
+          </p>
 
-        <div className="border-border mt-10 border-t pt-8">
-          <h2 className="text-lg">Kontakt & Bewerbung</h2>
-          {detail.kontaktEmail ? (
-            <p className="mt-2 text-sm">
-              <a href={`mailto:${detail.kontaktEmail}`} className="text-accent underline">
-                {detail.kontaktEmail}
-              </a>
-            </p>
-          ) : (
-            <p className="text-text-secondary mt-2 text-sm">
-              Der Arbeitgeber hat die Kontaktdaten auf der Arbeitsagentur-Seite gesichert. Bitte
-              öffne das Original-Stellenangebot, um dich zu bewerben.
-            </p>
-          )}
-          <a
-            href={detail.quelleUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-foreground text-text-on-dark mt-4 inline-block px-6 py-3 text-sm font-medium tracking-[0.15em] uppercase shadow-lg transition-all duration-300 hover:bg-[var(--surface-dark)] hover:shadow-xl"
-          >
-            Original-Stellenangebot öffnen
-          </a>
+          <div className="border-border mt-8 border-t pt-6">
+            <h2 className="text-base font-semibold">Kontakt &amp; Bewerbung</h2>
+            {detail.kontaktEmail ? (
+              <p className="mt-2 text-sm">
+                <a href={`mailto:${detail.kontaktEmail}`} className="text-accent hover:underline">
+                  {detail.kontaktEmail}
+                </a>
+              </p>
+            ) : (
+              <p className="text-text-secondary mt-2 text-sm">
+                Der Arbeitgeber hat die Kontaktdaten auf der Arbeitsagentur-Seite gesichert. Bitte
+                öffne das Original-Stellenangebot, um dich zu bewerben.
+              </p>
+            )}
+            <a
+              href={detail.quelleUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-foreground hover:bg-surface-dark mt-4 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-[background-color,transform] duration-150 ease-out active:scale-[0.97]"
+            >
+              Original-Stellenangebot öffnen
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          </div>
         </div>
       </Container>
     </Section>
