@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { AlertCircle, ChevronLeft, ChevronRight, SearchX } from 'lucide-react'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { JobSearchForm } from '@/components/suche/JobSearchForm'
@@ -72,10 +73,12 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
   }
 
   return (
-    <Section className="py-16 lg:py-24">
+    <Section className="py-10 lg:py-14">
       <Container>
-        <h1 className="text-foreground text-4xl lg:text-5xl">Jobsuche</h1>
-        <div className="bg-accent mt-4 mb-10 h-px w-16" />
+        <h1 className="text-foreground text-2xl lg:text-3xl">Jobsuche</h1>
+        <p className="text-text-secondary mt-1 mb-6 text-sm">
+          Durchsuche aktuelle Stellenangebote der Bundesagentur für Arbeit.
+        </p>
 
         <JobSearchForm
           defaultWas={was}
@@ -85,24 +88,27 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
         />
 
         {searchFailed && (
-          <div className="border-border mt-12 border p-6">
-            <p className="text-text-primary text-sm">
-              Die Jobsuche ist gerade nicht erreichbar. Das liegt in der Regel an der Schnittstelle
-              der Bundesagentur für Arbeit, nicht an deiner Eingabe.
-            </p>
-            <Link href={pageHref(page)} className="text-accent mt-2 inline-block text-sm underline">
-              Erneut versuchen
-            </Link>
+          <div className="border-border bg-surface mt-8 flex items-start gap-3 rounded-xl border p-5">
+            <AlertCircle className="text-error mt-0.5 h-5 w-5 shrink-0" />
+            <div>
+              <p className="text-text-primary text-sm">
+                Die Jobsuche ist gerade nicht erreichbar. Das liegt in der Regel an der
+                Schnittstelle der Bundesagentur für Arbeit, nicht an deiner Eingabe.
+              </p>
+              <Link href={pageHref(page)} className="text-accent mt-2 inline-block text-sm">
+                Erneut versuchen
+              </Link>
+            </div>
           </div>
         )}
 
         {result && (
-          <div className="mt-12">
-            <p className="text-text-secondary mb-6 text-sm">
+          <div className="mt-8">
+            <p className="text-text-secondary mb-4 text-sm">
               {result.gesamtTreffer.toLocaleString('de-DE')} Treffer für &quot;{was}&quot;
               {wo && ` in ${wo}`}
             </p>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {result.treffer.map((job) => (
                 <JobCard
                   key={job.refnr}
@@ -113,22 +119,26 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
               ))}
             </div>
             {result.treffer.length === 0 && (
-              <p className="text-text-secondary">
-                Keine Treffer gefunden. Versuche einen anderen Suchbegriff.
-              </p>
+              <div className="border-border bg-surface flex flex-col items-center gap-3 rounded-xl border p-10 text-center">
+                <SearchX className="text-text-secondary h-8 w-8" />
+                <p className="text-text-secondary text-sm">
+                  Keine Treffer gefunden. Versuche einen anderen Suchbegriff.
+                </p>
+              </div>
             )}
 
             {totalPages > 1 && (
               <nav
                 aria-label="Seiten"
-                className="mt-10 flex items-center justify-between gap-4 text-xs tracking-[0.15em] uppercase"
+                className="mt-8 flex items-center justify-between gap-4 text-sm"
               >
                 {page > 1 ? (
                   <Link
                     href={pageHref(page - 1)}
-                    className="border-border hover:border-accent hover:text-accent border px-4 py-2"
+                    className="border-border hover:border-accent hover:text-accent flex items-center gap-1 rounded-lg border px-3 py-2 transition-colors duration-150"
                   >
-                    ← Zurück
+                    <ChevronLeft className="h-4 w-4" />
+                    Zurück
                   </Link>
                 ) : (
                   <span />
@@ -139,9 +149,10 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
                 {page < totalPages ? (
                   <Link
                     href={pageHref(page + 1)}
-                    className="border-border hover:border-accent hover:text-accent border px-4 py-2"
+                    className="border-border hover:border-accent hover:text-accent flex items-center gap-1 rounded-lg border px-3 py-2 transition-colors duration-150"
                   >
-                    Weiter →
+                    Weiter
+                    <ChevronRight className="h-4 w-4" />
                   </Link>
                 ) : (
                   <span />
