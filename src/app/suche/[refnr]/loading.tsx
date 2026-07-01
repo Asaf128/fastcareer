@@ -1,10 +1,12 @@
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
+import { AiLoadingToast } from '@/components/jobs/AiLoadingToast'
 
 export default function Loading() {
   return (
     <Section className="py-10 lg:py-14" aria-busy="true">
       <Container className="max-w-3xl">
+        <AiLoadingToast />
         <span className="sr-only" role="status">
           Stellenangebot wird geladen …
         </span>

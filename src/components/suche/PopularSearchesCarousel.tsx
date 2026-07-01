@@ -81,6 +81,7 @@ export function PopularSearchesCarousel({ searches, onSelect }: PopularSearchesC
       if (suche) onSelect(suche)
     }
     dragRef.current = null
+    isPausedRef.current = false
   }
 
   return (
@@ -88,7 +89,7 @@ export function PopularSearchesCarousel({ searches, onSelect }: PopularSearchesC
       <p className="text-text-secondary mb-2 text-center text-sm">Beliebte Suchen:</p>
       <div
         className="w-full min-w-0 cursor-grab overflow-hidden active:cursor-grabbing"
-        style={{ touchAction: 'pan-y' }}
+        style={{ touchAction: 'none' }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}

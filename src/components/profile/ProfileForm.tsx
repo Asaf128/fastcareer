@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition, type FormEvent } from 'react'
+import { toast } from 'sonner'
 import { updateProfile } from '@/actions/profile.actions'
 import { Input } from '@/components/shared/Input'
 import { Textarea } from '@/components/shared/Textarea'
@@ -30,7 +31,6 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
   )
   const [skills, setSkills] = useState<string[]>(initialProfile?.skills ?? [])
   const [languages, setLanguages] = useState<string[]>(initialProfile?.languages ?? [])
-  const [status, setStatus] = useState<'idle' | 'saved' | 'error'>('idle')
   const [isPending, startTransition] = useTransition()
 
   function applyCvParseResult(parsed: CvParseResult) {
@@ -47,7 +47,6 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault()
-    setStatus('idle')
 
     startTransition(async () => {
       const result = await updateProfile({
@@ -61,7 +60,11 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
         skills,
         languages,
       })
-      setStatus(result.error ? 'error' : 'saved')
+      if (result.error) {
+        toast.error('Fehler beim Speichern.')
+      } else {
+        toast.success('Profil gespeichert.')
+      }
     })
   }
 
@@ -102,8 +105,6 @@ export function ProfileForm({ initialProfile }: ProfileFormProps) {
         <Button type="submit" isLoading={isPending}>
           Profil speichern
         </Button>
-        {status === 'saved' && <span className="text-success text-sm">Gespeichert.</span>}
-        {status === 'error' && <span className="text-error text-sm">Fehler beim Speichern.</span>}
       </div>
     </form>
   )
