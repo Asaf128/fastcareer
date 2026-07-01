@@ -1,5 +1,4 @@
 export type Arbeitszeit = 'vz' | 'tz' | 'snw' | 'ho'
-export type Befristung = '1' | '2'
 
 export interface JobSearchParams {
   was: string
@@ -8,7 +7,6 @@ export interface JobSearchParams {
   page?: number
   size?: number
   arbeitszeit?: Arbeitszeit
-  befristung?: Befristung
 }
 
 export interface JobListing {

@@ -6,7 +6,7 @@ import { JobSearchForm } from '@/components/suche/JobSearchForm'
 import { JobCard } from '@/components/suche/JobCard'
 import { searchJobs } from '@/lib/jobs/arbeitsagentur'
 import { createClient } from '@/lib/supabase/server'
-import type { Arbeitszeit, Befristung } from '@/types/job.types'
+import type { Arbeitszeit } from '@/types/job.types'
 
 export const metadata: Metadata = {
   title: 'Jobsuche',
@@ -22,7 +22,6 @@ interface SuchePageProps {
     umkreis?: string
     page?: string
     arbeitszeit?: string
-    befristung?: string
   }>
 }
 
@@ -33,7 +32,6 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
   const umkreis = Number(params.umkreis ?? 25)
   const page = Math.max(1, Number(params.page ?? 1))
   const arbeitszeit = params.arbeitszeit as Arbeitszeit | undefined
-  const befristung = params.befristung as Befristung | undefined
 
   let result: Awaited<ReturnType<typeof searchJobs>> | null = null
   let searchFailed = false
@@ -47,7 +45,6 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
         page,
         size: PAGE_SIZE,
         arbeitszeit: arbeitszeit || undefined,
-        befristung: befristung || undefined,
       })
     } catch {
       searchFailed = true
@@ -60,7 +57,6 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
     const query = new URLSearchParams({ was, umkreis: String(umkreis), page: String(targetPage) })
     if (wo) query.set('wo', wo)
     if (arbeitszeit) query.set('arbeitszeit', arbeitszeit)
-    if (befristung) query.set('befristung', befristung)
     return `/suche?${query.toString()}`
   }
 
@@ -86,7 +82,6 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
           defaultWo={wo}
           defaultUmkreis={umkreis}
           defaultArbeitszeit={arbeitszeit}
-          defaultBefristung={befristung}
         />
 
         {searchFailed && (
