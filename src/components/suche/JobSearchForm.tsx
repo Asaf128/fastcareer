@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import { MapPin, Search } from 'lucide-react'
+import { ChevronDown, MapPin, Search } from 'lucide-react'
 import { Button } from '@/components/shared/Button'
 import { cn } from '@/lib/cn'
 import type { LocalitySuggestion } from '@/types/job.types'
@@ -65,8 +65,8 @@ export function JobSearchForm({
       action="/suche"
       className="border-border bg-background rounded-xl border p-3 shadow-sm sm:p-4"
     >
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-        <div className="relative sm:col-span-2">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="relative col-span-2">
           <Search className="text-text-secondary pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <input
             ref={wasInputRef}
@@ -76,11 +76,11 @@ export function JobSearchForm({
             defaultValue={defaultWas}
             placeholder="Beruf oder Stichwort"
             required
-            className="border-border bg-surface text-foreground w-full rounded-lg border py-2.5 pr-4 pl-9 text-sm"
+            className="border-border bg-surface text-foreground w-full rounded-lg border py-2.5 pr-4 pl-9 text-base sm:text-sm"
           />
         </div>
 
-        <div className="relative">
+        <div className="relative col-span-2 sm:col-span-1">
           <MapPin className="text-text-secondary pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <input
             type="text"
@@ -93,7 +93,7 @@ export function JobSearchForm({
             placeholder={isHomeOffice ? 'Bundesweit' : 'Ort oder PLZ'}
             autoComplete="off"
             disabled={isHomeOffice}
-            className="border-border bg-surface text-foreground w-full rounded-lg border py-2.5 pr-4 pl-9 text-sm disabled:opacity-50"
+            className="border-border bg-surface text-foreground w-full rounded-lg border py-2.5 pr-4 pl-9 text-base disabled:opacity-50 sm:text-sm"
           />
           {isSuggestionsOpen && orte.length > 0 && (
             <ul className="border-border bg-background animate-scale-in absolute z-10 mt-1 w-full rounded-lg border py-1 shadow-lg">
@@ -115,35 +115,41 @@ export function JobSearchForm({
           )}
         </div>
 
-        <select
-          name="umkreis"
-          aria-label="Umkreis"
-          defaultValue={defaultUmkreis}
-          disabled={isHomeOffice}
-          className="border-border bg-surface text-foreground rounded-lg border px-3 py-2.5 text-sm disabled:opacity-50"
-        >
-          <option value={5}>5 km</option>
-          <option value={10}>10 km</option>
-          <option value={25}>25 km</option>
-          <option value={50}>50 km</option>
-          <option value={100}>100 km</option>
-        </select>
+        <div className="relative">
+          <select
+            name="umkreis"
+            aria-label="Umkreis"
+            defaultValue={defaultUmkreis}
+            disabled={isHomeOffice}
+            className="border-border bg-surface text-foreground w-full appearance-none rounded-lg border py-2.5 pr-8 pl-3 text-base disabled:opacity-50 sm:text-sm"
+          >
+            <option value={5}>5 km</option>
+            <option value={10}>10 km</option>
+            <option value={25}>25 km</option>
+            <option value={50}>50 km</option>
+            <option value={100}>100 km</option>
+          </select>
+          <ChevronDown className="text-text-secondary pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2" />
+        </div>
 
-        <select
-          name="arbeitszeit"
-          aria-label="Arbeitszeit"
-          value={arbeitszeit}
-          onChange={(e) => setArbeitszeit(e.target.value)}
-          className="border-border bg-surface text-foreground rounded-lg border px-3 py-2.5 text-sm sm:col-span-2"
-        >
-          <option value="">Arbeitszeit: alle</option>
-          <option value="vz">Vollzeit</option>
-          <option value="tz">Teilzeit</option>
-          <option value="ho">Home-Office</option>
-          <option value="snw">Schicht/Nacht/Wochenende</option>
-        </select>
+        <div className="relative sm:col-span-2">
+          <select
+            name="arbeitszeit"
+            aria-label="Arbeitszeit"
+            value={arbeitszeit}
+            onChange={(e) => setArbeitszeit(e.target.value)}
+            className="border-border bg-surface text-foreground w-full appearance-none rounded-lg border py-2.5 pr-8 pl-3 text-base sm:text-sm"
+          >
+            <option value="">Arbeitszeit: alle</option>
+            <option value="vz">Vollzeit</option>
+            <option value="tz">Teilzeit</option>
+            <option value="ho">Home-Office</option>
+            <option value="snw">Schicht/Nacht/Wochenende</option>
+          </select>
+          <ChevronDown className="text-text-secondary pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2" />
+        </div>
 
-        <Button type="submit" className="sm:col-span-2">
+        <Button type="submit" className="col-span-2">
           <Search className="h-4 w-4" />
           Jobs suchen
         </Button>

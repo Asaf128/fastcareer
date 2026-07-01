@@ -15,11 +15,11 @@ const POPULAR_SEARCHES = [
 export default function Home() {
   return (
     <main className="bg-background flex flex-1 flex-col justify-center">
-      <Section className="flex flex-col justify-center py-14 lg:py-20">
+      <Section className="flex flex-col justify-center py-8 lg:py-20">
         <Container>
           <TypingHeadline />
 
-          <div className="mx-auto mt-8 max-w-4xl">
+          <div className="mx-auto mt-6 max-w-4xl lg:mt-8">
             <JobSearchForm
               defaultWas=""
               defaultWo=""
