@@ -45,6 +45,21 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Immer über PR auf main — nie direkt pushen
 - Nach jeder abgeschlossenen Änderung automatisch committen und pushen
 
+## Pre-Commit-Checks (Pflicht vor JEDEM Commit)
+
+Bevor committet/gepusht wird, IMMER lokal durchlaufen lassen und Fehler VORHER fixen — nicht erst die CI melden lassen:
+
+```bash
+pnpm format:check   # Prettier — bei Fehlern: pnpm format, dann Diff prüfen
+pnpm lint           # ESLint --max-warnings=0
+pnpm typecheck      # tsc --noEmit
+pnpm build          # nur bei Änderungen die den Build beeinflussen könnten
+```
+
+Zusätzlich bei UI-Änderungen: kurz auf offensichtliche Accessibility-Fehler prüfen (fehlende `aria-label`/`label` bei `input`/`select`, fehlende `alt`-Texte) — diese Dinge fallen sonst erst durch Tools wie axe/Edge DevTools auf, nicht durch `pnpm build`.
+
+Alle 4 Checks müssen sauber durchlaufen, bevor committet wird. Erst dann `git add` + `git commit` + `git push`.
+
 ## Auto-Commit
 
 Nach JEDER abgeschlossenen Änderung automatisch committen und pushen ohne dass der User es extra sagen muss. Mit `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>` am Ende.
