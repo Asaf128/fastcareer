@@ -26,7 +26,9 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Auth Server Actions (Code anfordern via `signInWithOtp`, Code prüfen via `verifyOtp`, Logout): `src/actions/auth.actions.ts`
 - Arbeitsagentur-API-Anbindung: `src/lib/jobs/arbeitsagentur.ts`, `src/lib/jobs/arbeitsagentur-detail.ts`
 - Orte/PLZ-Lookup: `src/lib/jobs/openplz.ts`
-- Supabase Clients: `src/lib/supabase/`
+- Supabase Clients: `src/lib/supabase/` (`server.ts` Session-Client, `admin.ts` Service-Role-Client für Cache-Inserts & Konto-Löschung — nie im Client importieren)
+- Konto-Löschung (DSGVO — Storage + DB + Auth-User): `src/actions/account.actions.ts`, UI: `src/components/profile/DeleteAccountSection.tsx`
+- SQL-Migrationen (werden via PR reviewt, dann manuell/per MCP angewendet): `supabase/migrations/`
 - Supabase-Projekt: geteilt mit "Aurum Watches" (Free-Tier-Limit); Tabellen `applications`, `profiles`, `job_summaries` sowie Storage-Bucket `cvs` gehören zu Fastcareer. `favorites` ist die alte Vorgänger-Tabelle von `applications` — Daten migriert, kein Code referenziert sie mehr, Tabelle bleibt vorerst als DB-Backup bestehen
 - Job-Types: `src/types/job.types.ts`
 - Bewerbungs-Types: `src/types/application.types.ts`

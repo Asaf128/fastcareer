@@ -8,11 +8,11 @@ const MAX_REQUESTS_PER_WINDOW = 20
 
 const requestLog = new Map<string, number[]>()
 
-export function isRateLimited(key: string): boolean {
+export function isRateLimited(key: string, maxRequests = MAX_REQUESTS_PER_WINDOW): boolean {
   const now = Date.now()
   const timestamps = (requestLog.get(key) ?? []).filter((t) => now - t < WINDOW_MS)
 
-  if (timestamps.length >= MAX_REQUESTS_PER_WINDOW) {
+  if (timestamps.length >= maxRequests) {
     requestLog.set(key, timestamps)
     return true
   }
