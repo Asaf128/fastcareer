@@ -9,20 +9,6 @@ interface JobCardProps {
   isAuthenticated?: boolean
 }
 
-const AVATAR_COLORS = [
-  'bg-blue-100 text-blue-700',
-  'bg-emerald-100 text-emerald-700',
-  'bg-amber-100 text-amber-700',
-  'bg-violet-100 text-violet-700',
-  'bg-rose-100 text-rose-700',
-  'bg-cyan-100 text-cyan-700',
-]
-
-function avatarColor(name: string) {
-  const index = name.charCodeAt(0) % AVATAR_COLORS.length
-  return AVATAR_COLORS[index]
-}
-
 export function JobCard({ job, isFavorite = false, isAuthenticated = false }: JobCardProps) {
   const detailParams = new URLSearchParams({
     titel: job.titel,
@@ -38,12 +24,6 @@ export function JobCard({ job, isFavorite = false, isAuthenticated = false }: Jo
       >
         <span className="sr-only">{job.titel} ansehen</span>
       </Link>
-
-      <div
-        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-base font-semibold ${avatarColor(job.arbeitgeber)}`}
-      >
-        {job.arbeitgeber.charAt(0).toUpperCase()}
-      </div>
 
       <div className="min-w-0 flex-1">
         <p className="text-text-secondary text-xs font-medium">{job.beruf}</p>

@@ -11,19 +11,6 @@ export const metadata: Metadata = {
   title: 'Meine Merkliste',
 }
 
-const AVATAR_COLORS = [
-  'bg-blue-100 text-blue-700',
-  'bg-emerald-100 text-emerald-700',
-  'bg-amber-100 text-amber-700',
-  'bg-violet-100 text-violet-700',
-  'bg-rose-100 text-rose-700',
-  'bg-cyan-100 text-cyan-700',
-]
-
-function avatarColor(name: string) {
-  return AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length]
-}
-
 export default async function FavoritenPage() {
   const supabase = await createClient()
   const {
@@ -69,12 +56,6 @@ export default async function FavoritenPage() {
                 >
                   <span className="sr-only">{favorite.titel} ansehen</span>
                 </Link>
-
-                <div
-                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-base font-semibold ${avatarColor(favorite.arbeitgeber)}`}
-                >
-                  {favorite.arbeitgeber.charAt(0).toUpperCase()}
-                </div>
 
                 <div className="min-w-0 flex-1">
                   <h3 className="text-foreground truncate text-base font-semibold">
