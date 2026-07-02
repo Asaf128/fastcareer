@@ -1,6 +1,9 @@
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Container } from '@/components/shared/Container'
-import { ShowcaseStep } from '@/components/home/showcase/ShowcaseStep'
+import { cn } from '@/lib/cn'
 import {
   BoardVisual,
   LetterVisual,
@@ -38,38 +41,107 @@ const STEPS = [
 ] as const
 
 /**
- * Scroll-Experience zwischen Suche und FAQ: stellt die Funktionen der
- * Plattform Schritt für Schritt vor, während die Abschnitte beim Scrollen
- * sanft einblenden.
+ * Pinned-Scroll-Experience (DJI-Stil): Die Sektion bleibt beim Scrollen im
+ * Viewport stehen, während die Schritte nacheinander von unten einfaden und
+ * nach oben wieder verschwinden. Der aktive Schritt wird aus dem
+ * Scroll-Fortschritt über der hohen Track-Fläche berechnet.
  */
 export function ScrollShowcase() {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const [active, setActive] = useState(0)
+
+  useEffect(() => {
+    let frame = 0
+
+    function update() {
+      frame = 0
+      const track = trackRef.current
+      if (!track) return
+      const rect = track.getBoundingClientRect()
+      const range = rect.height - window.innerHeight
+      if (range <= 0) return
+      const progress = Math.min(1, Math.max(0, -rect.top / range))
+      setActive(Math.round(progress * (STEPS.length - 1)))
+    }
+
+    function onScroll() {
+      if (frame === 0) frame = requestAnimationFrame(update)
+    }
+
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+      if (frame !== 0) cancelAnimationFrame(frame)
+    }
+  }, [])
+
   return (
-    <section className="bg-surface-dark overflow-hidden">
-      <Container className="py-20 lg:py-28">
+    <section className="bg-surface border-border border-t">
+      <Container className="pt-16 pb-4 lg:pt-24">
         <p className="text-accent text-center text-sm font-semibold tracking-widest uppercase">
           So funktioniert&apos;s
         </p>
-        <h2 className="text-text-on-dark mt-3 text-center text-3xl lg:text-4xl">
+        <h2 className="text-foreground mt-3 text-center text-3xl lg:text-4xl">
           Von der Suche zur Bewerbung
         </h2>
-        <p className="text-text-on-dark-muted mx-auto mt-3 max-w-xl text-center text-sm lg:text-base">
+        <p className="text-text-secondary mx-auto mt-3 max-w-xl text-center text-sm lg:text-base">
           Fastcareer nimmt dir die mühsamen Teile der Bewerbung ab — in fünf Schritten vom
           Stellenangebot zum fertigen Anschreiben.
         </p>
+      </Container>
 
-        {STEPS.map((step, index) => (
-          <ShowcaseStep
-            key={step.title}
-            step={index + 1}
-            title={step.title}
-            text={step.text}
-            reverse={index % 2 === 1}
-          >
-            {step.visual}
-          </ShowcaseStep>
-        ))}
+      {/* Hoher Track: 100svh Scrollweg pro Schritt, darin klebt der Viewport */}
+      <div ref={trackRef} className="relative h-[500svh]">
+        <div className="sticky top-0 flex h-svh items-center overflow-hidden">
+          {STEPS.map((step, index) => (
+            <div
+              key={step.title}
+              aria-hidden={index !== active ? 'true' : 'false'}
+              className={cn(
+                'absolute inset-0 flex items-center transition-[opacity,transform] duration-500 ease-out',
+                index === active && 'translate-y-0 opacity-100',
+                index < active && 'pointer-events-none -translate-y-16 opacity-0',
+                index > active && 'pointer-events-none translate-y-16 opacity-0'
+              )}
+            >
+              <Container className="w-full">
+                <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
+                  <div className={cn(index % 2 === 1 && 'lg:order-2')}>
+                    <span className="text-accent font-display text-sm font-semibold tracking-widest">
+                      {String(index + 1).padStart(2, '0')} / {String(STEPS.length).padStart(2, '0')}
+                    </span>
+                    <h3 className="text-foreground mt-2 text-2xl lg:text-3xl">{step.title}</h3>
+                    <p className="text-text-secondary mt-3 max-w-md text-sm leading-relaxed lg:text-base">
+                      {step.text}
+                    </p>
+                  </div>
+                  {/* UI-Mock ist rein dekorativ — Screenreader lesen nur den Text */}
+                  <div aria-hidden>{step.visual}</div>
+                </div>
+              </Container>
+            </div>
+          ))}
 
-        <p className="text-text-on-dark-muted mt-4 text-center text-sm">
+          {/* Fortschritts-Punkte */}
+          <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
+            {STEPS.map((step, index) => (
+              <span
+                key={step.title}
+                className={cn(
+                  'h-1.5 rounded-full transition-all duration-300',
+                  index === active ? 'bg-accent w-6' : 'bg-border w-1.5'
+                )}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Container className="pt-4 pb-16 lg:pb-24">
+        <p className="text-text-secondary text-center text-sm">
           Kostenlos und ohne Passwort —{' '}
           <Link href="/login" className="text-accent hover:underline">
             mit E-Mail-Code anmelden
