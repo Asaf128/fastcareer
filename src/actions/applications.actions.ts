@@ -61,12 +61,34 @@ export async function saveApplication(input: z.infer<typeof jobBaseSchema>) {
   return { error: null }
 }
 
-export async function removeApplication(jobRefnr: string) {
+export async function removeApplication(jobRefnr: string, options?: { force?: boolean }) {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) return { error: 'Bitte zuerst anmelden.' }
+
+  // Schutz vor versehentlichem Stern-Klick: Steckt in der Bewerbung bereits
+  // Arbeit (Anschreiben, Match, Notizen, fortgeschrittener Status), wird erst
+  // eine Bestätigung verlangt — leere Bewerbungen gehen weiter ohne Reibung.
+  if (!options?.force) {
+    const { data: existing } = await supabase
+      .from('applications')
+      .select('cover_letter, match_score, notes, status')
+      .eq('user_id', user.id)
+      .eq('job_refnr', jobRefnr)
+      .maybeSingle()
+
+    const hasContent =
+      Boolean(existing?.cover_letter) ||
+      existing?.match_score != null ||
+      Boolean(existing?.notes) ||
+      (existing?.status != null && existing.status !== 'gespeichert')
+
+    if (hasContent) {
+      return { error: null, requiresConfirmation: true }
+    }
+  }
 
   const { error } = await supabase
     .from('applications')
