@@ -3,6 +3,8 @@ import { Section } from '@/components/shared/Section'
 import { JobSearchForm } from '@/components/suche/JobSearchForm'
 import { TypingHeadline } from '@/components/home/TypingHeadline'
 import { RecentSearches } from '@/components/home/RecentSearches'
+import { FeatureSection } from '@/components/home/FeatureSection'
+import { FaqSection } from '@/components/home/FaqSection'
 
 const POPULAR_SEARCHES = [
   'Verkäufer',
@@ -15,8 +17,8 @@ const POPULAR_SEARCHES = [
 
 export default function Home() {
   return (
-    <main className="bg-background flex flex-1 flex-col justify-center">
-      <Section className="flex flex-col justify-center py-8 lg:py-20">
+    <main className="bg-background flex flex-1 flex-col">
+      <Section className="flex min-h-[70vh] flex-col justify-center py-8 lg:py-20">
         <Container>
           <TypingHeadline />
 
@@ -31,6 +33,9 @@ export default function Home() {
           </div>
         </Container>
       </Section>
+
+      <FeatureSection />
+      <FaqSection />
     </main>
   )
 }

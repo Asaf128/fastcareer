@@ -10,6 +10,11 @@ export interface JobSummary {
   unternehmen: string
 }
 
+export interface MatchScoreResult {
+  score: number
+  begruendung: string[]
+}
+
 export interface CvParseResult {
   full_name: string | null
   birth_date: string | null

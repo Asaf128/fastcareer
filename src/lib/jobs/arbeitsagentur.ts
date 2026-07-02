@@ -31,6 +31,8 @@ export async function searchJobs(params: JobSearchParams): Promise<JobSearchResu
   if (params.wo) query.set('wo', params.wo)
   if (params.umkreis) query.set('umkreis', String(params.umkreis))
   if (params.arbeitszeit) query.set('arbeitszeit', params.arbeitszeit)
+  if (params.veroeffentlichtSeit)
+    query.set('veroeffentlichtseit', String(params.veroeffentlichtSeit))
 
   const response = await fetch(`${API_BASE}?${query.toString()}`, {
     headers: { 'X-API-Key': API_KEY },

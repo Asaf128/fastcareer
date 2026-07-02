@@ -5,6 +5,7 @@ import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { JobSearchForm } from '@/components/suche/JobSearchForm'
 import { JobCard } from '@/components/suche/JobCard'
+import { SaveAlertButton } from '@/components/suche/SaveAlertButton'
 import { searchJobs } from '@/lib/jobs/arbeitsagentur'
 import { createClient } from '@/lib/supabase/server'
 import type { Arbeitszeit } from '@/types/job.types'
@@ -101,10 +102,20 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
 
         {result && (
           <div className="mt-8">
-            <p className="text-text-secondary mb-4 text-sm">
-              {result.gesamtTreffer.toLocaleString('de-DE')} Treffer für &quot;{was}&quot;
-              {wo && ` in ${wo}`}
-            </p>
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <p className="text-text-secondary text-sm">
+                {result.gesamtTreffer.toLocaleString('de-DE')} Treffer für &quot;{was}&quot;
+                {wo && ` in ${wo}`}
+              </p>
+              {user && (
+                <SaveAlertButton
+                  was={was}
+                  wo={wo}
+                  umkreis={umkreis}
+                  arbeitszeit={arbeitszeit ?? ''}
+                />
+              )}
+            </div>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {result.treffer.map((job) => (
                 <JobCard
