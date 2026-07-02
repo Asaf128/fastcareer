@@ -1,8 +1,9 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { cn } from '@/lib/cn'
 import {
   APPLICATION_STATUSES,
   APPLICATION_STATUS_LABELS,
@@ -31,13 +32,16 @@ function pageHref(status: ApplicationStatus | null): string {
 export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerProps) {
   const router = useRouter()
   const touchStartRef = useRef<{ x: number; y: number } | null>(null)
+  // Merkt sich die Wechselrichtung — die neue Liste gleitet passend dazu ein
+  const [direction, setDirection] = useState<'prev' | 'next' | null>(null)
 
   const index = PAGES.indexOf(activeFilter)
   const prev = index > 0 ? PAGES[index - 1] : undefined
   const next = index < PAGES.length - 1 ? PAGES[index + 1] : undefined
 
-  function goTo(status: ApplicationStatus | null | undefined) {
+  function goTo(status: ApplicationStatus | null | undefined, towards: 'prev' | 'next') {
     if (status === undefined) return
+    setDirection(towards)
     router.push(pageHref(status))
   }
 
@@ -55,7 +59,8 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
     const dy = touch.clientY - start.y
     // Nur klar horizontale Gesten zählen — vertikales Scrollen nicht abfangen
     if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy) * 1.5) return
-    goTo(dx < 0 ? next : prev)
+    if (dx < 0) goTo(next, 'next')
+    else goTo(prev, 'prev')
   }
 
   return (
@@ -63,7 +68,7 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
       <div className="mb-6 flex items-center justify-between gap-2 sm:hidden">
         <button
           type="button"
-          onClick={() => goTo(prev)}
+          onClick={() => goTo(prev, 'prev')}
           aria-label="Vorherige Kategorie"
           className={
             prev === undefined
@@ -83,7 +88,7 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
 
         <button
           type="button"
-          onClick={() => goTo(next)}
+          onClick={() => goTo(next, 'next')}
           aria-label="Nächste Kategorie"
           className={
             next === undefined
@@ -95,7 +100,17 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
         </button>
       </div>
 
-      {children}
+      {/* key remountet beim Statuswechsel — die neue Liste gleitet aus der
+          Swipe-Richtung ein statt hart umzuspringen */}
+      <div
+        key={activeFilter ?? 'alle'}
+        className={cn(
+          direction === 'next' && 'animate-slide-in-right',
+          direction === 'prev' && 'animate-slide-in-left'
+        )}
+      >
+        {children}
+      </div>
     </div>
   )
 }

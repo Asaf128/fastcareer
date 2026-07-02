@@ -33,7 +33,7 @@ export function JobSearchForm({
   defaultWas,
   defaultWo,
   defaultUmkreis,
-  defaultArbeitszeit = '',
+  defaultArbeitszeit = 'vz',
   popularSearches,
 }: JobSearchFormProps) {
   const formRef = useRef<HTMLFormElement>(null)
@@ -158,11 +158,9 @@ export function JobSearchForm({
               onChange={(e) => setArbeitszeit(e.target.value)}
               className="border-border bg-surface text-foreground w-full appearance-none rounded-lg border py-2.5 pr-8 pl-3 text-base sm:text-sm"
             >
-              <option value="">Arbeitszeit: alle</option>
               <option value="vz">Vollzeit</option>
               <option value="tz">Teilzeit</option>
               <option value="ho">Home-Office</option>
-              <option value="snw">Schicht/Nacht/Wochenende</option>
             </select>
             <ChevronDown className="text-text-secondary pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2" />
           </div>

@@ -80,6 +80,9 @@ h4 {
 /* ─── Basis ────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
+  /* Sanftes Einrasten an Snap-Punkten (nur wo snap-align gesetzt ist,
+     z. B. die Schritt-Grenzen der ScrollShowcase) */
+  scroll-snap-type: y proximity;
 }
 
 body {
@@ -154,6 +157,35 @@ select:focus {
 .animate-scale-in {
   animation: scaleIn 0.15s var(--ease-out);
   transform-origin: top;
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInFromRight 0.35s var(--ease-out);
+}
+.animate-slide-in-left {
+  animation: slideInFromLeft 0.35s var(--ease-out);
 }
 
 @keyframes starPop {
