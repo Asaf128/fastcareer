@@ -43,12 +43,14 @@ const STEPS = [
 /**
  * Pinned-Scroll-Experience (DJI-Stil): Die Sektion bleibt beim Scrollen im
  * Viewport stehen, während die Schritte nacheinander von unten einfaden und
- * nach oben wieder verschwinden. Der aktive Schritt wird aus dem
- * Scroll-Fortschritt über der hohen Track-Fläche berechnet.
+ * nach oben wieder verschwinden. Opacity und Position hängen kontinuierlich
+ * am Scroll-Fortschritt (kein diskretes Umschalten mit Transition) — dadurch
+ * folgt die Animation dem Finger/Mausrad framegenau statt zu "hängen".
  */
 export function ScrollShowcase() {
   const trackRef = useRef<HTMLDivElement>(null)
-  const [active, setActive] = useState(0)
+  // Kontinuierlicher Fortschritt 0 … STEPS.length-1
+  const [raw, setRaw] = useState(0)
 
   useEffect(() => {
     let frame = 0
@@ -61,7 +63,7 @@ export function ScrollShowcase() {
       const range = rect.height - window.innerHeight
       if (range <= 0) return
       const progress = Math.min(1, Math.max(0, -rect.top / range))
-      setActive(Math.round(progress * (STEPS.length - 1)))
+      setRaw(progress * (STEPS.length - 1))
     }
 
     function onScroll() {
@@ -78,65 +80,50 @@ export function ScrollShowcase() {
     }
   }, [])
 
+  const active = Math.round(raw)
+
   return (
     <section className="bg-surface border-border border-t">
-      <Container className="pt-16 pb-4 lg:pt-24">
-        <p className="text-accent text-center text-sm font-semibold tracking-widest uppercase">
-          So funktioniert&apos;s
-        </p>
-        <h2 className="text-foreground mt-3 text-center text-3xl lg:text-4xl">
-          Von der Suche zur Bewerbung
-        </h2>
-        <p className="text-text-secondary mx-auto mt-3 max-w-xl text-center text-sm lg:text-base">
-          Fastcareer nimmt dir die mühsamen Teile der Bewerbung ab — in fünf Schritten vom
-          Stellenangebot zum fertigen Anschreiben.
-        </p>
-      </Container>
-
       {/* Hoher Track: 100svh Scrollweg pro Schritt, darin klebt der Viewport */}
       <div ref={trackRef} className="relative h-[500svh]">
         <div className="sticky top-0 flex h-svh items-center overflow-hidden">
-          {STEPS.map((step, index) => (
-            <div
-              key={step.title}
-              aria-hidden={index !== active ? 'true' : 'false'}
-              className={cn(
-                'absolute inset-0 flex items-center transition-[opacity,transform] duration-500 ease-out',
-                index === active && 'translate-y-0 opacity-100',
-                index < active && 'pointer-events-none -translate-y-16 opacity-0',
-                index > active && 'pointer-events-none translate-y-16 opacity-0'
-              )}
-            >
-              <Container className="w-full">
-                <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
-                  <div className={cn(index % 2 === 1 && 'lg:order-2')}>
-                    <span className="text-accent font-display text-sm font-semibold tracking-widest">
-                      {String(index + 1).padStart(2, '0')} / {String(STEPS.length).padStart(2, '0')}
-                    </span>
-                    <h3 className="text-foreground mt-2 text-2xl lg:text-3xl">{step.title}</h3>
-                    <p className="text-text-secondary mt-3 max-w-md text-sm leading-relaxed lg:text-base">
-                      {step.text}
-                    </p>
-                  </div>
-                  {/* UI-Mock ist rein dekorativ — Screenreader lesen nur den Text */}
-                  <div aria-hidden>{step.visual}</div>
-                </div>
-              </Container>
-            </div>
-          ))}
-
-          {/* Fortschritts-Punkte */}
-          <div className="absolute bottom-6 left-1/2 flex -translate-x-1/2 gap-2">
-            {STEPS.map((step, index) => (
-              <span
+          {STEPS.map((step, index) => {
+            // Abstand zum aktiven Punkt: 0 = voll sichtbar, ±1 = ausgeblendet
+            const distance = raw - index
+            const opacity = Math.min(1, Math.max(0, 1 - Math.abs(distance) * 1.4))
+            const translateY = distance * -70
+            return (
+              <div
                 key={step.title}
+                aria-hidden={index !== active ? 'true' : 'false'}
+                // Scroll-getriebene Werte müssen inline gesetzt werden —
+                // sie ändern sich mit jedem Frame
+                style={{ opacity, transform: `translateY(${translateY}px)` }}
                 className={cn(
-                  'h-1.5 rounded-full transition-all duration-300',
-                  index === active ? 'bg-accent w-6' : 'bg-border w-1.5'
+                  'absolute inset-0 flex items-center will-change-[opacity,transform]',
+                  opacity === 0 && 'invisible',
+                  index !== active && 'pointer-events-none'
                 )}
-              />
-            ))}
-          </div>
+              >
+                <Container className="w-full">
+                  <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
+                    <div className={cn(index % 2 === 1 && 'lg:order-2')}>
+                      <span className="text-accent font-display text-sm font-semibold tracking-widest">
+                        {String(index + 1).padStart(2, '0')} /{' '}
+                        {String(STEPS.length).padStart(2, '0')}
+                      </span>
+                      <h3 className="text-foreground mt-2 text-2xl lg:text-3xl">{step.title}</h3>
+                      <p className="text-text-secondary mt-3 max-w-md text-sm leading-relaxed lg:text-base">
+                        {step.text}
+                      </p>
+                    </div>
+                    {/* UI-Mock ist rein dekorativ — Screenreader lesen nur den Text */}
+                    <div aria-hidden>{step.visual}</div>
+                  </div>
+                </Container>
+              </div>
+            )
+          })}
         </div>
       </div>
 
