@@ -69,10 +69,7 @@ export function MobileProfileMenu({ onClose }: MobileProfileMenuProps) {
         ))}
 
         <form action={logout}>
-          <button
-            type="submit"
-            className="text-text-secondary flex items-center gap-3 text-2xl font-medium"
-          >
+          <button type="submit" className="text-error flex items-center gap-3 text-2xl font-medium">
             <LogOut className="h-6 w-6" />
             Abmelden
           </button>

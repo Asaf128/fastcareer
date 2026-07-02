@@ -8,7 +8,12 @@ import { saveCoverLetter } from '@/actions/applications.actions'
 import { generateAndSaveCoverLetter } from '@/actions/coverLetter.actions'
 import { Button } from '@/components/shared/Button'
 import { CoverLetterHeadFields } from '@/components/jobs/CoverLetterHeadFields'
+import { AiThinkingMascot } from '@/components/jobs/AiThinkingMascot'
 import { buildLetterDate, downloadCoverLetterPdf } from '@/components/jobs/coverLetterPdf'
+
+// Wie lange die Sprechblase nach Abschluss noch "Fertig!" zeigt, bevor sie
+// dem echten Anschreiben-Feld weicht
+const MASCOT_DONE_DISPLAY_MS = 1100
 
 interface CoverLetterPanelProps {
   jobRefnr: string
@@ -53,6 +58,9 @@ export function CoverLetterPanel({
   const [isCopied, setIsCopied] = useState(false)
   const [isSaving, startSaving] = useTransition()
   const [isGenerating, startGenerating] = useTransition()
+  // Getrennt von isGenerating: bleibt nach Abschluss noch kurz aktiv, damit
+  // die Sprechblase "Fertig!" zeigen kann, statt sofort zu verschwinden
+  const [showMascot, setShowMascot] = useState(false)
 
   if (!isAuthenticated) {
     return (
@@ -77,14 +85,17 @@ export function CoverLetterPanel({
   }
 
   function handleGenerate() {
+    setShowMascot(true)
     startGenerating(async () => {
       const result = await generateAndSaveCoverLetter({ jobRefnr, titel, arbeitgeber, ort })
       if (result.error !== null) {
         toast.error(result.error)
+        setShowMascot(false)
         return
       }
       setText(result.coverLetter)
       toast.success('Anschreiben erstellt und gespeichert.')
+      setTimeout(() => setShowMascot(false), MASCOT_DONE_DISPLAY_MS)
     })
   }
 
@@ -117,7 +128,7 @@ export function CoverLetterPanel({
     ? `mailto:${kontaktEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text.slice(0, 1800))}`
     : null
 
-  if (!text && !isGenerating) {
+  if (!text && !showMascot) {
     return (
       <div className="border-border bg-background mt-6 rounded-xl border p-6 shadow-sm lg:p-8">
         <h2 className="text-foreground text-lg font-semibold">Dein Anschreiben</h2>
@@ -148,16 +159,16 @@ export function CoverLetterPanel({
         </button>
       </div>
 
-      {isGenerating ? (
-        <div className="mt-4 space-y-2" role="status" aria-label="Anschreiben wird erstellt">
-          <div className="bg-surface h-3 w-full animate-pulse rounded" />
-          <div className="bg-surface h-3 w-full animate-pulse rounded" />
-          <div className="bg-surface h-3 w-5/6 animate-pulse rounded" />
-          <div className="bg-surface h-3 w-full animate-pulse rounded" />
-          <div className="bg-surface h-3 w-2/3 animate-pulse rounded" />
-          <p className="text-text-secondary pt-2 text-xs">
-            Die KI schreibt dein Anschreiben — einen Moment …
-          </p>
+      {showMascot ? (
+        <div className="mt-8">
+          <AiThinkingMascot phase={isGenerating ? 'thinking' : 'done'} />
+          <div className="border-border bg-surface space-y-2 rounded-lg border p-4">
+            <div className="bg-surface-2 h-3 w-full animate-pulse rounded" />
+            <div className="bg-surface-2 h-3 w-full animate-pulse rounded" />
+            <div className="bg-surface-2 h-3 w-5/6 animate-pulse rounded" />
+            <div className="bg-surface-2 h-3 w-full animate-pulse rounded" />
+            <div className="bg-surface-2 h-3 w-2/3 animate-pulse rounded" />
+          </div>
         </div>
       ) : (
         <>
