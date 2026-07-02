@@ -161,7 +161,11 @@ export function CoverLetterPanel({
 
       {showMascot ? (
         <div className="mt-8">
-          <AiThinkingMascot phase={isGenerating ? 'thinking' : 'done'} />
+          <AiThinkingMascot
+            phase={isGenerating ? 'thinking' : 'done'}
+            titel={titel}
+            arbeitgeber={arbeitgeber}
+          />
           <div className="border-border bg-surface space-y-2 rounded-lg border p-4">
             <div className="bg-surface-2 h-3 w-full animate-pulse rounded" />
             <div className="bg-surface-2 h-3 w-full animate-pulse rounded" />

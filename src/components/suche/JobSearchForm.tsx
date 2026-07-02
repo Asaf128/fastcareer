@@ -165,7 +165,7 @@ export function JobSearchForm({
             <ChevronDown className="text-text-secondary pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2" />
           </div>
 
-          <Button type="submit" className="col-span-2">
+          <Button type="submit" variant="accent" className="col-span-2">
             <Search className="h-4 w-4" />
             Jobs suchen
           </Button>
