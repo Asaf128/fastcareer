@@ -9,6 +9,11 @@ interface PopularSearchesCarouselProps {
 
 const SPEED_PX_PER_SECOND = 28
 const DRAG_CLICK_THRESHOLD = 6
+// Genug Kopien, dass eine Listen-Periode auch auf breiten Containern nie
+// ausläuft — sonst sieht man am Zyklusende den Neustart
+const COPIES = 4
+// Muss zur gap-2 (0.5rem) des Tracks passen
+const GAP_PX = 8
 
 function wrap(value: number, width: number) {
   if (width <= 0) return value
@@ -25,7 +30,10 @@ export function PopularSearchesCarousel({ searches, onSelect }: PopularSearchesC
 
   useEffect(() => {
     if (trackRef.current) {
-      trackWidthRef.current = trackRef.current.scrollWidth / 2
+      // Exakte Periode einer Listen-Kopie inkl. Gap: scrollWidth enthält
+      // (COPIES*N - 1) Gaps, eine Periode aber N Gaps — ohne die Korrektur
+      // driftet der Loop pro Umlauf um eine Gap-Breite und man sieht die Naht
+      trackWidthRef.current = (trackRef.current.scrollWidth + GAP_PX) / COPIES
     }
   }, [searches])
 
@@ -105,16 +113,18 @@ export function PopularSearchesCarousel({ searches, onSelect }: PopularSearchesC
         onPointerCancel={handlePointerCancel}
       >
         <div ref={trackRef} className="flex w-max gap-2 will-change-transform">
-          {[...searches, ...searches].map((suche, index) => (
-            <button
-              key={`${suche}-${index}`}
-              type="button"
-              data-suche={suche}
-              className="border-border text-text-secondary hover:border-accent hover:text-accent shrink-0 rounded-full border px-4 py-1.5 text-sm transition-colors duration-150"
-            >
-              {suche}
-            </button>
-          ))}
+          {Array.from({ length: COPIES }, () => searches)
+            .flat()
+            .map((suche, index) => (
+              <button
+                key={`${suche}-${index}`}
+                type="button"
+                data-suche={suche}
+                className="border-border text-text-secondary hover:border-accent hover:text-accent shrink-0 rounded-full border px-4 py-1.5 text-sm transition-colors duration-150"
+              >
+                {suche}
+              </button>
+            ))}
         </div>
       </div>
     </div>
