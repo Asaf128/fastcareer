@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { Star } from 'lucide-react'
+import { toast } from 'sonner'
 import { saveApplication, removeApplication } from '@/actions/applications.actions'
 import { cn } from '@/lib/cn'
 
@@ -28,16 +29,44 @@ export function SaveJobButton({
 
   if (!isAuthenticated) return null
 
+  function forceRemove() {
+    setIsSaved(false)
+    startTransition(async () => {
+      const result = await removeApplication(jobRefnr, { force: true })
+      if (result.error) {
+        setIsSaved(true)
+        toast.error(result.error)
+      }
+    })
+  }
+
   function toggle() {
     const next = !isSaved
     setIsSaved(next)
     if (next) setIsPopping(true)
 
     startTransition(async () => {
-      const result = next
-        ? await saveApplication({ jobRefnr, titel, arbeitgeber, ort })
-        : await removeApplication(jobRefnr)
-      if (result.error) setIsSaved(!next)
+      if (next) {
+        const result = await saveApplication({ jobRefnr, titel, arbeitgeber, ort })
+        if (result.error) setIsSaved(false)
+        return
+      }
+
+      const result = await removeApplication(jobRefnr)
+      if (result.error) {
+        setIsSaved(true)
+        return
+      }
+      if (result.requiresConfirmation) {
+        // Es steckt Arbeit in der Bewerbung — Stern bleibt gesetzt,
+        // gelöscht wird erst nach ausdrücklicher Bestätigung
+        setIsSaved(true)
+        toast.warning('Diese Bewerbung enthält Anschreiben, Match oder Notizen.', {
+          description: 'Beim Entfernen geht das unwiderruflich verloren.',
+          action: { label: 'Trotzdem entfernen', onClick: forceRemove },
+          duration: 8000,
+        })
+      }
     })
   }
 
