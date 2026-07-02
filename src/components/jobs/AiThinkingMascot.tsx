@@ -92,10 +92,12 @@ export function AiThinkingMascot({ phase, titel, arbeitgeber }: AiThinkingMascot
       className="relative z-10 flex justify-center"
     >
       <div className="relative -mb-7 flex flex-col items-center">
-        <div className="border-border bg-background relative mb-1.5 max-w-72 rounded-2xl border px-4 py-2 shadow-md">
+        {/* Feste Breite + Höhe: die Blase darf beim Gedankenwechsel nicht
+            wachsen/schrumpfen, sonst wirkt es wie ein Neuladen */}
+        <div className="border-border bg-background relative mb-1.5 flex h-14 w-72 items-center justify-center rounded-2xl border px-4 shadow-md">
           <p
             key={phase === 'done' ? 'done' : thoughtIndex}
-            className="text-foreground animate-fade-in text-center text-sm font-medium"
+            className="text-foreground animate-thought-fade text-center text-sm font-medium"
           >
             {phase === 'done' ? 'Fertig!' : thoughts[thoughtIndex]}
           </p>
