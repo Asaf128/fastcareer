@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { Check, Copy, FileText, Sparkles } from 'lucide-react'
+import { Check, Copy, Download, FileText, Send, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { saveCoverLetter } from '@/actions/applications.actions'
 import { generateAndSaveCoverLetter } from '@/actions/coverLetter.actions'
@@ -13,6 +13,7 @@ interface CoverLetterPanelProps {
   titel: string
   arbeitgeber: string
   ort: string
+  kontaktEmail: string | null
   isAuthenticated: boolean
   hasProfile: boolean
   initialCoverLetter: string | null
@@ -32,6 +33,7 @@ export function CoverLetterPanel({
   titel,
   arbeitgeber,
   ort,
+  kontaktEmail,
   isAuthenticated,
   hasProfile,
   initialCoverLetter,
@@ -86,6 +88,29 @@ export function CoverLetterPanel({
     setIsCopied(true)
     setTimeout(() => setIsCopied(false), 2000)
   }
+
+  async function downloadPdf() {
+    // jspdf erst beim Klick laden — hält es aus dem initialen Bundle raus
+    const { jsPDF } = await import('jspdf')
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(11)
+    const lines = doc.splitTextToSize(text, 170) as string[]
+    let y = 25
+    for (const line of lines) {
+      if (y > 272) {
+        doc.addPage()
+        y = 25
+      }
+      doc.text(line, 20, y)
+      y += 5.5
+    }
+    doc.save(`Anschreiben-${arbeitgeber.replace(/[^\wäöüÄÖÜß-]+/g, '_').slice(0, 50)}.pdf`)
+  }
+
+  const mailtoHref = kontaktEmail
+    ? `mailto:${kontaktEmail}?subject=${encodeURIComponent(`Bewerbung als ${titel}`)}&body=${encodeURIComponent(text.slice(0, 1800))}`
+    : null
 
   if (!text && !isGenerating) {
     return (
@@ -143,6 +168,22 @@ export function CoverLetterPanel({
             disabled={isSaving}
             className="border-border bg-background text-text-primary mt-4 w-full rounded-lg border p-4 text-sm leading-relaxed disabled:opacity-70"
           />
+
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+            <Button variant="secondary" size="sm" onClick={downloadPdf}>
+              <Download className="h-4 w-4" />
+              Als PDF herunterladen
+            </Button>
+            {mailtoHref && (
+              <a
+                href={mailtoHref}
+                className="bg-accent hover:bg-accent-dark inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-[background-color,transform] duration-150 ease-out active:scale-[0.97]"
+              >
+                <Send className="h-4 w-4" />
+                Per E-Mail bewerben
+              </a>
+            )}
+          </div>
         </>
       )}
     </div>

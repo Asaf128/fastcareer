@@ -3,9 +3,15 @@
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { ClipboardList } from 'lucide-react'
-import { updateChecklist, saveNotes } from '@/actions/applications.actions'
-import { Checkbox } from '@/components/shared/Checkbox'
+import { toast } from 'sonner'
+import { updateStatus, saveNotes } from '@/actions/applications.actions'
 import { Textarea } from '@/components/shared/Textarea'
+import { cn } from '@/lib/cn'
+import {
+  APPLICATION_STATUSES,
+  APPLICATION_STATUS_LABELS,
+  type ApplicationStatus,
+} from '@/types/application.types'
 
 interface ApplicationChecklistProps {
   jobRefnr: string
@@ -13,8 +19,7 @@ interface ApplicationChecklistProps {
   arbeitgeber: string
   ort: string
   isAuthenticated: boolean
-  initialApplied: boolean
-  initialAnswered: boolean
+  initialStatus: ApplicationStatus
   initialNotes: string
 }
 
@@ -24,12 +29,10 @@ export function ApplicationChecklist({
   arbeitgeber,
   ort,
   isAuthenticated,
-  initialApplied,
-  initialAnswered,
+  initialStatus,
   initialNotes,
 }: ApplicationChecklistProps) {
-  const [applied, setApplied] = useState(initialApplied)
-  const [answered, setAnswered] = useState(initialAnswered)
+  const [status, setStatus] = useState<ApplicationStatus>(initialStatus)
   const [notes, setNotes] = useState(initialNotes)
   const [, startTransition] = useTransition()
 
@@ -47,19 +50,15 @@ export function ApplicationChecklist({
     )
   }
 
-  function toggleApplied() {
-    const next = !applied
-    setApplied(next)
+  function selectStatus(next: ApplicationStatus) {
+    const previous = status
+    setStatus(next)
     startTransition(async () => {
-      await updateChecklist({ jobRefnr, titel, arbeitgeber, ort, applied: next })
-    })
-  }
-
-  function toggleAnswered() {
-    const next = !answered
-    setAnswered(next)
-    startTransition(async () => {
-      await updateChecklist({ jobRefnr, titel, arbeitgeber, ort, answered: next })
+      const result = await updateStatus({ jobRefnr, titel, arbeitgeber, ort, status: next })
+      if (result.error) {
+        setStatus(previous)
+        toast.error(result.error)
+      }
     })
   }
 
@@ -73,9 +72,23 @@ export function ApplicationChecklist({
     <div className="border-border bg-background mt-6 rounded-xl border p-6 shadow-sm lg:p-8">
       <h2 className="text-foreground text-lg font-semibold">Dein Bewerbungsstand</h2>
 
-      <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:gap-6">
-        <Checkbox label="Beworben" checked={applied} onChange={toggleApplied} />
-        <Checkbox label="Geantwortet" checked={answered} onChange={toggleAnswered} />
+      <div className="mt-4 flex flex-wrap gap-2" role="group" aria-label="Bewerbungsstatus">
+        {APPLICATION_STATUSES.map((value) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => selectStatus(value)}
+            aria-pressed={status === value ? 'true' : 'false'}
+            className={cn(
+              'rounded-full border px-3.5 py-1.5 text-sm transition-colors duration-150',
+              status === value
+                ? 'border-accent bg-accent text-white'
+                : 'border-border text-text-secondary hover:border-accent hover:text-accent'
+            )}
+          >
+            {APPLICATION_STATUS_LABELS[value]}
+          </button>
+        ))}
       </div>
 
       <Textarea

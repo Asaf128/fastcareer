@@ -5,6 +5,7 @@ import { ChevronDown, MapPin, Search } from 'lucide-react'
 import { Button } from '@/components/shared/Button'
 import { cn } from '@/lib/cn'
 import { PopularSearchesCarousel } from '@/components/suche/PopularSearchesCarousel'
+import { saveRecentSearch } from '@/lib/recentSearches'
 import type { LocalitySuggestion } from '@/types/job.types'
 
 interface JobSearchFormProps {
@@ -36,6 +37,11 @@ export function JobSearchForm({
     formRef.current?.requestSubmit()
   }
 
+  function handleSubmit() {
+    // Läuft vor der GET-Navigation zu /suche — merkt sich die Suche lokal
+    saveRecentSearch({ was: wasInputRef.current?.value.trim() ?? '', wo: isHomeOffice ? '' : wo })
+  }
+
   function handleOrtChange(value: string) {
     setWo(value)
     clearTimeout(debounceTimerRef.current)
@@ -64,6 +70,7 @@ export function JobSearchForm({
       <form
         ref={formRef}
         action="/suche"
+        onSubmit={handleSubmit}
         className="border-border bg-background rounded-xl border p-3 shadow-sm sm:p-4"
       >
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
