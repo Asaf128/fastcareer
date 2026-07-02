@@ -158,33 +158,19 @@ select:focus {
   transform-origin: top;
 }
 
-@keyframes slideInFromRight {
+/* Reiner Opacity-Fade ohne Verschiebung — für Textwechsel in fixen Boxen
+   (z. B. die Gedanken-Sprechblase), wo nichts "springen" darf */
+@keyframes thoughtFade {
   from {
     opacity: 0;
-    transform: translateX(28px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
   }
 }
 
-@keyframes slideInFromLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-.animate-slide-in-right {
-  animation: slideInFromRight 0.35s var(--ease-out);
-}
-.animate-slide-in-left {
-  animation: slideInFromLeft 0.35s var(--ease-out);
+.animate-thought-fade {
+  animation: thoughtFade 0.3s var(--ease-out);
 }
 
 @keyframes starPop {

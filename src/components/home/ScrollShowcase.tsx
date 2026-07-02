@@ -4,41 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { Container } from '@/components/shared/Container'
 import { cn } from '@/lib/cn'
-import {
-  BoardVisual,
-  LetterVisual,
-  PdfVisual,
-  SearchVisual,
-  SummaryVisual,
-} from '@/components/home/showcase/visuals'
-
-const STEPS = [
-  {
-    title: 'Finde deinen Job',
-    text: 'Fastcareer durchsucht die offiziellen Stellen der Bundesagentur für Arbeit — nach Beruf, Ort und Arbeitszeit, mit Vorschlägen schon beim Tippen.',
-    visual: <SearchVisual />,
-  },
-  {
-    title: 'Verstehe die Stelle in Sekunden',
-    text: 'Statt langer Anzeigentexte fasst die KI das Wesentliche zusammen: Aufgaben, Anforderungen, Benefits — und wie gut die Stelle zu deinem Profil passt.',
-    visual: <SummaryVisual />,
-  },
-  {
-    title: 'Anschreiben auf Knopfdruck',
-    text: 'Aus deinem Profil und den Anforderungen der Stelle entsteht ein maßgeschneidertes Anschreiben — bereit zum Anpassen in deinem Ton.',
-    visual: <LetterVisual />,
-  },
-  {
-    title: 'Fertig als PDF-Brief',
-    text: 'Betreff, Datum und Anschrift kontrollierst du selbst — dann lädst du dein Anschreiben im DIN-Briefformat herunter oder bewirbst dich direkt per E-Mail.',
-    visual: <PdfVisual />,
-  },
-  {
-    title: 'Behalte den Überblick',
-    text: 'Von "Gespeichert" über "Interview" bis zur Zusage: Verfolge jeden Bewerbungsstand mit Notizen und Checkliste an einem Ort.',
-    visual: <BoardVisual />,
-  },
-] as const
+import { SHOWCASE_STEPS as STEPS } from '@/components/home/showcase/steps'
 
 const STEP_COUNT = STEPS.length
 // Wie nah (px) über/unter der Sektion ein Scroll-Impuls das Betreten auslöst —
@@ -54,8 +20,12 @@ const SAME_DIR_COOLDOWN_MS = 450
 // Ab dieser Wisch-Distanz (px) löst eine Touch-Geste einen Schritt aus
 const TOUCH_TRIGGER_DELTA = 24
 const GLIDE_MS = 600
-// Ruhezeit, nach der eine frei gescrollte Zwischenposition einrastet
-const SETTLE_MS = 350
+// Prüf-Intervall + Bewegungs-Schwelle fürs Einrasten: sobald sich die Seite
+// innerhalb eines Ticks kaum noch bewegt (iOS-Momentum klingt aus), wird
+// sofort eingerastet — ein Timer, der bei jedem Scroll-Event neu startet,
+// würde erst Sekunden nach dem Ausrollen greifen
+const SETTLE_POLL_MS = 100
+const SETTLE_SPEED_PX = 8
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(max, Math.max(min, value))
@@ -94,7 +64,8 @@ export function ScrollShowcase() {
     let wheelAccum = 0
     let wheelDir = 0
     let lastWheelAt = 0
-    let settleTimer: ReturnType<typeof setTimeout> | undefined
+    let settlePoll: ReturnType<typeof setInterval> | undefined
+    let lastPollY = 0
     let touchY: number | null = null
     let touchDone = false
 
@@ -119,10 +90,7 @@ export function ScrollShowcase() {
 
     function onScroll() {
       if (scrollFrame === 0) scrollFrame = requestAnimationFrame(render)
-      if (!isGliding) {
-        clearTimeout(settleTimer)
-        settleTimer = setTimeout(settle, SETTLE_MS)
-      }
+      if (!isGliding) startSettlePoll()
     }
 
     function glideTo(step: number, g: Geometry) {
@@ -151,15 +119,38 @@ export function ScrollShowcase() {
       glideFrame = requestAnimationFrame(frame)
     }
 
-    // Frei erreichte Zwischenposition (Scrollbar-Drag, Tastatur, iOS-Momentum
-    // von außerhalb) sanft auf den nächstgelegenen Schritt ziehen
-    function settle() {
-      if (isGliding) return
-      const g = getGeometry()
-      if (!g) return
-      const p = (window.scrollY - g.top) / g.range
-      if (p <= 0 || p >= 1) return
-      glideTo(Math.round(p * (STEP_COUNT - 1)), g)
+    function stopSettlePoll() {
+      clearInterval(settlePoll)
+      settlePoll = undefined
+    }
+
+    // Frei erreichte Zwischenposition (iOS-Momentum, Scrollbar-Drag, Tastatur)
+    // einrasten, sobald die Bewegung fast abgeklungen ist — nicht erst, wenn
+    // das letzte Momentum-Event verhallt ist
+    function startSettlePoll() {
+      if (settlePoll !== undefined) return
+      lastPollY = window.scrollY
+      settlePoll = setInterval(() => {
+        const y = window.scrollY
+        const moved = Math.abs(y - lastPollY)
+        lastPollY = y
+        if (isGliding) return
+        const g = getGeometry()
+        if (!g) {
+          stopSettlePoll()
+          return
+        }
+        const p = (y - g.top) / g.range
+        if (p <= 0 || p >= 1) {
+          stopSettlePoll()
+          return
+        }
+        // Bei ruhendem Finger nicht gegen die aktive Touch-Geste anrasten
+        if (moved < SETTLE_SPEED_PX && touchY === null) {
+          stopSettlePoll()
+          glideTo(Math.round(p * (STEP_COUNT - 1)), g)
+        }
+      }, SETTLE_POLL_MS)
     }
 
     function zoneFor(dir: number, g: Geometry): Zone {
@@ -271,7 +262,7 @@ export function ScrollShowcase() {
       window.removeEventListener('touchmove', onTouchMove)
       window.removeEventListener('touchend', onTouchEnd)
       window.removeEventListener('touchcancel', onTouchEnd)
-      clearTimeout(settleTimer)
+      stopSettlePoll()
       cancelAnimationFrame(scrollFrame)
       cancelAnimationFrame(glideFrame)
     }
