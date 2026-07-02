@@ -34,14 +34,31 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
   const touchStartRef = useRef<{ x: number; y: number } | null>(null)
   // Merkt sich die Wechselrichtung — die neue Liste gleitet passend dazu ein
   const [direction, setDirection] = useState<'prev' | 'next' | null>(null)
+  // Optimistischer Anzeige-Status: die Pille wechselt SOFORT beim Klick/Swipe,
+  // statt auf die Server-Navigation zu warten (die spürbar hinterherhinkte).
+  // `undefined` = kein Override aktiv, dann zählt der echte activeFilter.
+  const [optimisticFilter, setOptimisticFilter] = useState<ApplicationStatus | null | undefined>(
+    undefined
+  )
+  // "State während des Renderns anpassen"-Pattern statt useEffect: sobald die
+  // Server-Navigation (z. B. auch der Zurück-Button) den echten activeFilter
+  // ändert, verwirft React das Override im selben Render, ohne einen
+  // zusätzlichen Effekt-Durchlauf zu brauchen
+  const [lastActiveFilter, setLastActiveFilter] = useState(activeFilter)
+  if (activeFilter !== lastActiveFilter) {
+    setLastActiveFilter(activeFilter)
+    setOptimisticFilter(undefined)
+  }
+  const displayedFilter = optimisticFilter !== undefined ? optimisticFilter : activeFilter
 
-  const index = PAGES.indexOf(activeFilter)
+  const index = PAGES.indexOf(displayedFilter)
   const prev = index > 0 ? PAGES[index - 1] : undefined
   const next = index < PAGES.length - 1 ? PAGES[index + 1] : undefined
 
   function goTo(status: ApplicationStatus | null | undefined, towards: 'prev' | 'next') {
     if (status === undefined) return
     setDirection(towards)
+    setOptimisticFilter(status)
     router.push(pageHref(status))
   }
 
@@ -83,7 +100,7 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
           aria-live="polite"
           className="border-accent bg-accent rounded-full border px-5 py-1.5 text-sm font-medium text-white"
         >
-          {activeFilter ? APPLICATION_STATUS_LABELS[activeFilter] : 'Alle'}
+          {displayedFilter ? APPLICATION_STATUS_LABELS[displayedFilter] : 'Alle'}
         </span>
 
         <button

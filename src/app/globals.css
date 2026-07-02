@@ -78,9 +78,11 @@ h4 {
 }
 
 /* ─── Basis ────────────────────────────────────────────────── */
-html {
-  scroll-behavior: smooth;
-}
+/* Bewusst KEIN globales scroll-behavior:smooth — das ließ Next.js'
+   Scroll-Reset auf Seitenwechseln nicht sauber ganz oben ankommen
+   (die Animation zu einem inzwischen verschobenen Ziel-Offset lief ins
+   Leere) und störte auch die JS-gesteuerten Scroll-Animationen. Wo
+   Smooth-Scroll gewünscht ist, wird es gezielt per JS gesteuert. */
 
 body {
   background: var(--background);
@@ -203,6 +205,20 @@ select:focus {
 .animate-star-pop {
   animation: starPop 0.4s var(--ease-out);
   color: var(--warning);
+}
+
+@keyframes mascotBob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-mascot-bob {
+  animation: mascotBob 1.8s ease-in-out infinite;
 }
 
 /* ─── Text-Gradient ────────────────────────────────────────── */
