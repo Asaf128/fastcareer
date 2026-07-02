@@ -21,6 +21,7 @@ interface ProfileFormProps {
 export function ProfileForm({ initialProfile, cvUrl }: ProfileFormProps) {
   const [fullName, setFullName] = useState(initialProfile?.full_name ?? '')
   const [birthDate, setBirthDate] = useState(initialProfile?.birth_date ?? '')
+  const [street, setStreet] = useState(initialProfile?.street ?? '')
   const [location, setLocation] = useState(initialProfile?.location ?? '')
   const [headline, setHeadline] = useState(initialProfile?.headline ?? '')
   const [about, setAbout] = useState(initialProfile?.about ?? '')
@@ -37,6 +38,7 @@ export function ProfileForm({ initialProfile, cvUrl }: ProfileFormProps) {
   function applyCvParseResult(parsed: CvParseResult) {
     if (parsed.full_name) setFullName(parsed.full_name)
     if (parsed.birth_date) setBirthDate(parsed.birth_date)
+    if (parsed.street) setStreet(parsed.street)
     if (parsed.location) setLocation(parsed.location)
     if (parsed.headline) setHeadline(parsed.headline)
     if (parsed.about) setAbout(parsed.about)
@@ -53,6 +55,7 @@ export function ProfileForm({ initialProfile, cvUrl }: ProfileFormProps) {
       const result = await updateProfile({
         fullName,
         birthDate,
+        street,
         location,
         headline,
         about,
@@ -85,7 +88,12 @@ export function ProfileForm({ initialProfile, cvUrl }: ProfileFormProps) {
           value={birthDate}
           onChange={(e) => setBirthDate(e.target.value)}
         />
-        <Input label="Ort" value={location} onChange={(e) => setLocation(e.target.value)} />
+        <Input
+          label="Straße & Hausnummer"
+          value={street}
+          onChange={(e) => setStreet(e.target.value)}
+        />
+        <Input label="PLZ & Ort" value={location} onChange={(e) => setLocation(e.target.value)} />
         <Input label="Kurzprofil" value={headline} onChange={(e) => setHeadline(e.target.value)} />
       </div>
 

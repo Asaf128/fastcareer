@@ -18,6 +18,7 @@ export interface MatchScoreResult {
 export interface CvParseResult {
   full_name: string | null
   birth_date: string | null
+  street: string | null
   location: string | null
   headline: string | null
   about: string | null

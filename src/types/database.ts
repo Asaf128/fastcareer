@@ -315,6 +315,7 @@ export type Database = {
           languages: string[]
           location: string | null
           skills: string[]
+          street: string | null
           updated_at: string
           work_experience: Json
         }
@@ -330,6 +331,7 @@ export type Database = {
           languages?: string[]
           location?: string | null
           skills?: string[]
+          street?: string | null
           updated_at?: string
           work_experience?: Json
         }
@@ -345,6 +347,7 @@ export type Database = {
           languages?: string[]
           location?: string | null
           skills?: string[]
+          street?: string | null
           updated_at?: string
           work_experience?: Json
         }

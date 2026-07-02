@@ -26,6 +26,7 @@ const educationSchema = z.object({
 const profileSchema = z.object({
   fullName: z.string().max(200),
   birthDate: z.string().max(20),
+  street: z.string().max(200),
   location: z.string().max(200),
   headline: z.string().max(200),
   about: z.string().max(2000),
@@ -49,6 +50,7 @@ export async function updateProfile(input: z.infer<typeof profileSchema>) {
     id: user.id,
     full_name: parsed.data.fullName || null,
     birth_date: parsed.data.birthDate || null,
+    street: parsed.data.street || null,
     location: parsed.data.location || null,
     headline: parsed.data.headline || null,
     about: parsed.data.about || null,

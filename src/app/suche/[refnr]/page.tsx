@@ -123,6 +123,9 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
           isAuthenticated={Boolean(user)}
           hasProfile={Boolean(profile)}
           initialCoverLetter={coverLetter}
+          senderName={profile?.full_name ?? null}
+          senderStreet={profile?.street ?? null}
+          senderLocation={profile?.location ?? null}
         />
 
         <ApplicationChecklist
