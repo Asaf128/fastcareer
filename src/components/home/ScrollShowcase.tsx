@@ -54,28 +54,92 @@ export function ScrollShowcase() {
 
   useEffect(() => {
     let frame = 0
+    let settleTimer: ReturnType<typeof setTimeout> | undefined
+    let snapFrame = 0
+    let isSnapping = false
+
+    function metrics() {
+      const track = trackRef.current
+      if (!track) return null
+      const rect = track.getBoundingClientRect()
+      const range = rect.height - window.innerHeight
+      if (range <= 0) return null
+      return { top: rect.top, range, absTop: window.scrollY + rect.top }
+    }
 
     function update() {
       frame = 0
-      const track = trackRef.current
-      if (!track) return
-      const rect = track.getBoundingClientRect()
-      const range = rect.height - window.innerHeight
-      if (range <= 0) return
-      const progress = Math.min(1, Math.max(0, -rect.top / range))
+      const m = metrics()
+      if (!m) return
+      const progress = Math.min(1, Math.max(0, -m.top / m.range))
       setRaw(progress * (STEPS.length - 1))
+    }
+
+    function cancelSnap() {
+      if (snapFrame !== 0) cancelAnimationFrame(snapFrame)
+      snapFrame = 0
+      isSnapping = false
+    }
+
+    // Stopper: Sobald das Scrollen kurz zur Ruhe kommt und wir mitten in der
+    // Sektion stehen, gleitet die Seite sanft zum nächstgelegenen Schritt —
+    // das freie Scroll-Mapping (die Smoothness) bleibt dabei unangetastet.
+    function snapToNearestStep() {
+      const m = metrics()
+      if (!m) return
+      const progress = -m.top / m.range
+      if (progress <= 0 || progress >= 1) return
+      const nearest = Math.round(progress * (STEPS.length - 1))
+      const targetY = m.absTop + (nearest / (STEPS.length - 1)) * m.range
+      const startY = window.scrollY
+      const distance = targetY - startY
+      if (Math.abs(distance) < 2) return
+
+      const duration = 450
+      const startTime = performance.now()
+      isSnapping = true
+
+      function glide(now: number) {
+        const t = Math.min(1, (now - startTime) / duration)
+        const eased = 1 - Math.pow(1 - t, 3)
+        // behavior: instant — sonst würde das globale scroll-behavior:smooth
+        // jeden einzelnen Frame nochmal animieren
+        window.scrollTo({ top: startY + distance * eased, behavior: 'instant' })
+        if (t < 1) {
+          snapFrame = requestAnimationFrame(glide)
+        } else {
+          snapFrame = 0
+          isSnapping = false
+        }
+      }
+      snapFrame = requestAnimationFrame(glide)
     }
 
     function onScroll() {
       if (frame === 0) frame = requestAnimationFrame(update)
+      if (!isSnapping) {
+        clearTimeout(settleTimer)
+        settleTimer = setTimeout(snapToNearestStep, 140)
+      }
+    }
+
+    // Neue Nutzereingabe unterbricht einen laufenden Snap sofort
+    function onUserInput() {
+      cancelSnap()
     }
 
     update()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onScroll)
+    window.addEventListener('wheel', onUserInput, { passive: true })
+    window.addEventListener('touchstart', onUserInput, { passive: true })
     return () => {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
+      window.removeEventListener('wheel', onUserInput)
+      window.removeEventListener('touchstart', onUserInput)
+      clearTimeout(settleTimer)
+      cancelSnap()
       if (frame !== 0) cancelAnimationFrame(frame)
     }
   }, [])
@@ -86,17 +150,6 @@ export function ScrollShowcase() {
     <section className="bg-surface border-border border-t">
       {/* Hoher Track: 100svh Scrollweg pro Schritt, darin klebt der Viewport */}
       <div ref={trackRef} className="relative h-[500svh]">
-        {/* Unsichtbare Snap-Punkte an jeder Schritt-Grenze: snap-always
-            stoppt auch kräftige Scroll-Gesten am nächsten Schritt, statt
-            mehrere zu überspringen — Position muss inline gesetzt werden */}
-        {STEPS.map((step, index) => (
-          <div
-            key={step.title}
-            aria-hidden
-            className="absolute h-svh w-full snap-start snap-always"
-            style={{ top: `${index * 100}svh` }}
-          />
-        ))}
         <div className="sticky top-0 flex h-svh items-center overflow-hidden">
           {STEPS.map((step, index) => {
             // Abstand zum aktiven Punkt: 0 = voll sichtbar, ±1 = ausgeblendet
