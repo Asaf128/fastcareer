@@ -26,7 +26,7 @@ cp .env.example .env.local
 # → Werte im Supabase Dashboard ausfüllen
 
 # 3. Dev-Server starten
-pnpm devv
+pnpm dev
 ```
 
 ## Scripts
