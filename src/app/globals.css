@@ -80,9 +80,6 @@ h4 {
 /* ─── Basis ────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
-  /* Sanftes Einrasten an Snap-Punkten (nur wo snap-align gesetzt ist,
-     z. B. die Schritt-Grenzen der ScrollShowcase) */
-  scroll-snap-type: y proximity;
 }
 
 body {
@@ -216,14 +213,6 @@ select:focus {
   background-clip: text;
 }
 
-/* ─── Reduzierte Bewegung ──────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
+/* Hinweis: bewusst KEIN prefers-reduced-motion-Override — die Animationen
+   sind Teil des Produkterlebnisses und sollen auch mit iOS
+   "Bewegung reduzieren" sichtbar bleiben (Entscheidung des Betreibers). */
