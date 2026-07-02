@@ -19,9 +19,13 @@ interface JobDetailPageProps {
   searchParams: Promise<{ titel?: string; arbeitgeber?: string; ort?: string }>
 }
 
-export async function generateMetadata({ params }: JobDetailPageProps): Promise<Metadata> {
-  const { refnr } = await params
-  return { title: `Stellenangebot ${refnr}` }
+export async function generateMetadata({ searchParams }: JobDetailPageProps): Promise<Metadata> {
+  const { titel, arbeitgeber } = await searchParams
+  // Interne Stellen-ID gehört nicht in den Browser-Tab — stattdessen
+  // "Jobtitel | Arbeitgeber" (das "| Fastcareer" hängt das Layout-Template an)
+  if (!titel) return { title: 'Stellenangebot' }
+  const parts = [titel.slice(0, 60), arbeitgeber?.slice(0, 40)].filter(Boolean)
+  return { title: parts.join(' | ') }
 }
 
 export default async function JobDetailPage({ params, searchParams }: JobDetailPageProps) {

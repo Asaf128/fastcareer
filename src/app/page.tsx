@@ -3,7 +3,7 @@ import { Section } from '@/components/shared/Section'
 import { JobSearchForm } from '@/components/suche/JobSearchForm'
 import { TypingHeadline } from '@/components/home/TypingHeadline'
 import { RecentSearches } from '@/components/home/RecentSearches'
-import { FeatureSection } from '@/components/home/FeatureSection'
+import { ScrollShowcase } from '@/components/home/ScrollShowcase'
 import { FaqSection } from '@/components/home/FaqSection'
 
 const POPULAR_SEARCHES = [
@@ -36,7 +36,7 @@ export default function Home() {
         </Container>
       </Section>
 
-      <FeatureSection />
+      <ScrollShowcase />
       <FaqSection />
     </main>
   )
