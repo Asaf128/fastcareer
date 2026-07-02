@@ -22,6 +22,7 @@ const educationSchema = z.object({
 const cvParseSchema = z.object({
   full_name: z.string().nullable(),
   birth_date: z.string().nullable(),
+  street: z.string().nullable(),
   location: z.string().nullable(),
   headline: z.string().nullable(),
   about: z.string().nullable(),
@@ -59,6 +60,7 @@ const responseSchema = {
   properties: {
     full_name: { type: Type.STRING, nullable: true },
     birth_date: { type: Type.STRING, nullable: true },
+    street: { type: Type.STRING, nullable: true },
     location: { type: Type.STRING, nullable: true },
     headline: { type: Type.STRING, nullable: true },
     about: { type: Type.STRING, nullable: true },
@@ -70,6 +72,7 @@ const responseSchema = {
   required: [
     'full_name',
     'birth_date',
+    'street',
     'location',
     'headline',
     'about',
@@ -91,7 +94,7 @@ export async function parseCv(pdfBase64: string): Promise<CvParseResult> {
         parts: [
           { inlineData: { mimeType: 'application/pdf', data: pdfBase64 } },
           {
-            text: 'Lies diesen Lebenslauf aus und extrahiere die Profildaten strukturiert. birth_date im Format YYYY-MM-DD, falls erkennbar, sonst null. Alle "von"- und "bis"-Datumsfelder (Berufserfahrung, Ausbildung) ausschließlich im Format YYYY-MM (Jahr-Monat) angeben — falls nur ein Jahr bekannt ist, Januar als Monat annehmen (z. B. "2020" → "2020-01"). "bis" ist null, wenn die Station noch aktuell ist. Das Feld "beschreibung" jeder Berufserfahrungs-Station IMMER befüllen: fasse die im Lebenslauf genannten Tätigkeiten/Stichpunkte dieser Station in 1–3 vollständigen Sätzen zusammen; nur wenn der Lebenslauf wirklich gar nichts zu den Tätigkeiten sagt, leite eine knappe, typische Tätigkeitsbeschreibung aus der Positionsbezeichnung ab. Erfinde sonst keine Informationen — wenn ein Feld nicht im Lebenslauf steht, gib null bzw. ein leeres Array zurück.',
+            text: 'Lies diesen Lebenslauf aus und extrahiere die Profildaten strukturiert. street = Straße und Hausnummer (ohne PLZ/Ort), location = PLZ und Ort. birth_date im Format YYYY-MM-DD, falls erkennbar, sonst null. Alle "von"- und "bis"-Datumsfelder (Berufserfahrung, Ausbildung) ausschließlich im Format YYYY-MM (Jahr-Monat) angeben — falls nur ein Jahr bekannt ist, Januar als Monat annehmen (z. B. "2020" → "2020-01"). "bis" ist null, wenn die Station noch aktuell ist. Das Feld "beschreibung" jeder Berufserfahrungs-Station IMMER befüllen: fasse die im Lebenslauf genannten Tätigkeiten/Stichpunkte dieser Station in 1–3 vollständigen Sätzen zusammen; nur wenn der Lebenslauf wirklich gar nichts zu den Tätigkeiten sagt, leite eine knappe, typische Tätigkeitsbeschreibung aus der Positionsbezeichnung ab. Erfinde sonst keine Informationen — wenn ein Feld nicht im Lebenslauf steht, gib null bzw. ein leeres Array zurück.',
           },
         ],
       },

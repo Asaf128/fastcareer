@@ -17,6 +17,9 @@ interface CoverLetterPanelProps {
   isAuthenticated: boolean
   hasProfile: boolean
   initialCoverLetter: string | null
+  senderName: string | null
+  senderStreet: string | null
+  senderLocation: string | null
 }
 
 function Teaser({ children }: { children: React.ReactNode }) {
@@ -37,6 +40,9 @@ export function CoverLetterPanel({
   isAuthenticated,
   hasProfile,
   initialCoverLetter,
+  senderName,
+  senderStreet,
+  senderLocation,
 }: CoverLetterPanelProps) {
   const [text, setText] = useState(initialCoverLetter ?? '')
   const [isCopied, setIsCopied] = useState(false)
@@ -95,16 +101,64 @@ export function CoverLetterPanel({
     const doc = new jsPDF({ unit: 'mm', format: 'a4' })
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(11)
-    const lines = doc.splitTextToSize(text, 170) as string[]
-    let y = 25
-    for (const line of lines) {
-      if (y > 272) {
-        doc.addPage()
-        y = 25
-      }
-      doc.text(line, 20, y)
-      y += 5.5
+
+    // DIN-5008-nahes Layout: einfacher Zeilenabstand, kein Absatzabstand
+    const marginLeft = 25
+    const marginRight = 20
+    const pageWidth = 210
+    const rightEdge = pageWidth - marginRight
+    const lineHeight = 5
+    const maxY = 277
+    let y = 20
+
+    // Eigene Anschrift — oben rechts
+    const senderLines = [senderName, senderStreet, senderLocation].filter((line): line is string =>
+      Boolean(line)
+    )
+    for (const line of senderLines) {
+      doc.text(line, rightEdge, y, { align: 'right' })
+      y += lineHeight
     }
+
+    // 3 Leerzeilen, dann Empfänger links
+    y += 3 * lineHeight
+    const recipientLines = [arbeitgeber, ort].filter(Boolean)
+    for (const line of recipientLines) {
+      doc.text(line, marginLeft, y)
+      y += lineHeight
+    }
+
+    // 2 Leerzeilen, dann Datum rechts (Ort aus der eigenen Anschrift, ohne PLZ)
+    y += 2 * lineHeight
+    const city = senderLocation?.replace(/^\d{4,5}\s*/, '').trim()
+    const today = new Date().toLocaleDateString('de-DE', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
+    doc.text(city ? `${city}, ${today}` : today, rightEdge, y, { align: 'right' })
+    y += lineHeight
+
+    // 2 Leerzeilen, dann Betreff fett links
+    y += 2 * lineHeight
+    doc.setFont('helvetica', 'bold')
+    doc.text(`Bewerbung als ${titel}`, marginLeft, y)
+    doc.setFont('helvetica', 'normal')
+    y += lineHeight
+
+    // 2 Leerzeilen, dann der Brieftext
+    y += 2 * lineHeight
+    const bodyWidth = pageWidth - marginLeft - marginRight
+    const bodyLines = doc.splitTextToSize(text.replace(/\*\*/g, ''), bodyWidth) as string[]
+    for (const line of bodyLines) {
+      if (y > maxY) {
+        doc.addPage()
+        y = 20
+      }
+      doc.text(line, marginLeft, y)
+      y += lineHeight
+    }
+
     doc.save(`Anschreiben-${arbeitgeber.replace(/[^\wäöüÄÖÜß-]+/g, '_').slice(0, 50)}.pdf`)
   }
 
