@@ -283,7 +283,9 @@ export function ScrollShowcase() {
     <section className="bg-surface border-border border-t">
       {/* Hoher Track: 100svh Scrollweg pro Schritt, darin klebt der Viewport */}
       <div ref={trackRef} className="relative h-[500svh]">
-        <div className="sticky top-0 flex h-svh items-center overflow-hidden">
+        {/* h-dvh statt svh: füllt den echten sichtbaren Viewport, auch wenn
+            die mobile URL-Leiste einklappt — sonst bleibt unten Leerraum */}
+        <div className="sticky top-0 h-dvh overflow-hidden">
           {STEPS.map((step, index) => {
             // Abstand zum Fortschritt: 0 = voll sichtbar, ±1 = ausgeblendet —
             // der Glide zieht diese Werte weich durch (der feine Fade-Effekt)
@@ -297,8 +299,11 @@ export function ScrollShowcase() {
                 // Scroll-getriebene Werte müssen inline gesetzt werden —
                 // sie ändern sich mit jedem Frame
                 style={{ opacity, transform: `translateY(${translateY}px)` }}
+                // top-16 = Header-Höhe: der Content zentriert sich im Bereich
+                // UNTER der Navbar — dadurch beginnt jeder Schritt auf gleicher
+                // Höhe und sitzt optisch mittig statt zu tief
                 className={cn(
-                  'absolute inset-0 flex items-center will-change-[opacity,transform]',
+                  'absolute inset-x-0 top-16 bottom-0 flex items-center will-change-[opacity,transform]',
                   opacity === 0 && 'invisible',
                   index !== active && 'pointer-events-none'
                 )}

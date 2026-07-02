@@ -50,6 +50,10 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
     setOptimisticFilter(undefined)
   }
   const displayedFilter = optimisticFilter !== undefined ? optimisticFilter : activeFilter
+  // Solange die Server-Navigation läuft, zeigt der Wrapper noch den ALTEN
+  // Inhalt — die Slide-Klasse darf erst mit dem neuen Inhalt (Remount über
+  // key) kommen, sonst faded erst der alte und dann der neue Inhalt doppelt
+  const isNavigationPending = optimisticFilter !== undefined
 
   const index = PAGES.indexOf(displayedFilter)
   const prev = index > 0 ? PAGES[index - 1] : undefined
@@ -122,8 +126,8 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
       <div
         key={activeFilter ?? 'alle'}
         className={cn(
-          direction === 'next' && 'animate-slide-in-right',
-          direction === 'prev' && 'animate-slide-in-left'
+          !isNavigationPending && direction === 'next' && 'animate-slide-in-right',
+          !isNavigationPending && direction === 'prev' && 'animate-slide-in-left'
         )}
       >
         {children}
