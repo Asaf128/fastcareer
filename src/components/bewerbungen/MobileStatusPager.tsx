@@ -37,9 +37,9 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
   // Optimistischer Anzeige-Status: die Pille wechselt SOFORT beim Klick/Swipe,
   // statt auf die Server-Navigation zu warten (die spürbar hinterherhinkte).
   // `undefined` = kein Override aktiv, dann zählt der echte activeFilter.
-  const [optimisticFilter, setOptimisticFilter] = useState<
-    ApplicationStatus | null | undefined
-  >(undefined)
+  const [optimisticFilter, setOptimisticFilter] = useState<ApplicationStatus | null | undefined>(
+    undefined
+  )
   // "State während des Renderns anpassen"-Pattern statt useEffect: sobald die
   // Server-Navigation (z. B. auch der Zurück-Button) den echten activeFilter
   // ändert, verwirft React das Override im selben Render, ohne einen
