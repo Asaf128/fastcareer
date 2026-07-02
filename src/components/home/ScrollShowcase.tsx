@@ -86,6 +86,17 @@ export function ScrollShowcase() {
     <section className="bg-surface border-border border-t">
       {/* Hoher Track: 100svh Scrollweg pro Schritt, darin klebt der Viewport */}
       <div ref={trackRef} className="relative h-[500svh]">
+        {/* Unsichtbare Snap-Punkte an jeder Schritt-Grenze: snap-always
+            stoppt auch kräftige Scroll-Gesten am nächsten Schritt, statt
+            mehrere zu überspringen — Position muss inline gesetzt werden */}
+        {STEPS.map((step, index) => (
+          <div
+            key={step.title}
+            aria-hidden
+            className="absolute h-svh w-full snap-start snap-always"
+            style={{ top: `${index * 100}svh` }}
+          />
+        ))}
         <div className="sticky top-0 flex h-svh items-center overflow-hidden">
           {STEPS.map((step, index) => {
             // Abstand zum aktiven Punkt: 0 = voll sichtbar, ±1 = ausgeblendet

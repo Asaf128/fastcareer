@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
-import { Bookmark, LogOut, User, X } from 'lucide-react'
+import { Bookmark, LogOut, User } from 'lucide-react'
 import { logout } from '@/actions/auth.actions'
 
 interface MobileProfileMenuProps {
@@ -16,9 +16,11 @@ const MENU_LINKS = [
 ] as const
 
 /**
- * Vollbild-Overlay mit verblurrtem Seitenhintergrund. Wichtig: per Portal
- * direkt in <body> — im Header würde dessen backdrop-blur das fixed-Overlay
- * einfangen und es öffnete sich innerhalb der Navbar.
+ * Overlay mit verblurrtem Seitenhintergrund, beginnt unterhalb der Navbar —
+ * der Fastcareer-Schriftzug bleibt sichtbar, geschlossen wird über das
+ * X in der Navbar (HeaderNav) oder Escape. Wichtig: per Portal direkt in
+ * <body> — im Header würde dessen backdrop-blur das fixed-Overlay einfangen
+ * und es öffnete sich innerhalb der Navbar.
  */
 export function MobileProfileMenu({ onClose }: MobileProfileMenuProps) {
   useEffect(() => {
@@ -50,20 +52,9 @@ export function MobileProfileMenu({ onClose }: MobileProfileMenuProps) {
       role="dialog"
       aria-modal="true"
       aria-label="Profilmenü"
-      className="bg-background/60 animate-fade-in fixed inset-0 z-50 flex flex-col backdrop-blur-xl sm:hidden"
+      // top-[65px] = Header-Höhe (h-16 + 1px Border) — die Navbar bleibt frei
+      className="bg-background/60 animate-fade-in fixed inset-x-0 top-[65px] bottom-0 z-40 flex flex-col backdrop-blur-xl sm:hidden"
     >
-      <div className="flex items-center justify-between px-6 py-4">
-        <span className="text-foreground font-display text-xl font-semibold uppercase">Menü</span>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Menü schließen"
-          className="text-text-secondary hover:text-foreground rounded-lg p-1.5 transition-colors duration-150"
-        >
-          <X className="h-6 w-6" />
-        </button>
-      </div>
-
       <nav className="flex flex-1 flex-col items-center justify-center gap-9 pb-16">
         {MENU_LINKS.map(({ href, label, icon: Icon }) => (
           <Link

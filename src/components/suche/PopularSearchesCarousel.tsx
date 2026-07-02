@@ -84,16 +84,25 @@ export function PopularSearchesCarousel({ searches, onSelect }: PopularSearchesC
     isPausedRef.current = false
   }
 
+  // Browser bricht die Geste ab (z. B. vertikales Scrollen auf Touch) —
+  // ohne Reset bliebe das Karussell dauerhaft pausiert stehen
+  function handlePointerCancel() {
+    dragRef.current = null
+    isPausedRef.current = false
+  }
+
   return (
     <div className="mt-5">
       <p className="text-text-secondary mb-2 text-center text-sm">Beliebte Suchen:</p>
+      {/* touch-action: pan-y statt none — die Seite bleibt vertikal
+          scrollbar, nur horizontale Gesten steuern das Karussell */}
       <div
-        className="w-full min-w-0 cursor-grab overflow-hidden active:cursor-grabbing"
-        style={{ touchAction: 'none' }}
+        className="w-full min-w-0 cursor-grab touch-pan-y overflow-hidden select-none active:cursor-grabbing"
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onPointerLeave={handlePointerUp}
+        onPointerLeave={handlePointerCancel}
+        onPointerCancel={handlePointerCancel}
       >
         <div ref={trackRef} className="flex w-max gap-2 will-change-transform">
           {[...searches, ...searches].map((suche, index) => (

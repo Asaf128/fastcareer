@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { UserCircle } from 'lucide-react'
+import { UserCircle, X } from 'lucide-react'
 import { logout } from '@/actions/auth.actions'
 import { MobileProfileMenu } from '@/components/layout/MobileProfileMenu'
 
@@ -51,13 +51,15 @@ export function HeaderNav({ isAuthenticated }: HeaderNavProps) {
         </form>
       </nav>
 
+      {/* Umschalter: das Menü liegt unterhalb der Navbar, geschlossen wird hier */}
       <button
         type="button"
-        onClick={() => setIsMenuOpen(true)}
-        aria-label="Profilmenü öffnen"
+        onClick={() => setIsMenuOpen((open) => !open)}
+        aria-label={isMenuOpen ? 'Profilmenü schließen' : 'Profilmenü öffnen'}
+        aria-expanded={isMenuOpen}
         className="text-text-secondary hover:text-foreground flex items-center justify-center sm:hidden"
       >
-        <UserCircle className="h-6 w-6" />
+        {isMenuOpen ? <X className="h-6 w-6" /> : <UserCircle className="h-6 w-6" />}
       </button>
 
       {isMenuOpen && <MobileProfileMenu onClose={() => setIsMenuOpen(false)} />}

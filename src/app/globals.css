@@ -80,6 +80,9 @@ h4 {
 /* ─── Basis ────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
+  /* Sanftes Einrasten an Snap-Punkten (nur wo snap-align gesetzt ist,
+     z. B. die Schritt-Grenzen der ScrollShowcase) */
+  scroll-snap-type: y proximity;
 }
 
 body {
