@@ -72,7 +72,10 @@ export default function DatenschutzPage() {
                 Anmelde-Code zuzusenden und dein Konto zu erstellen bzw. wiederzuerkennen. Merkst du
                 dir ein Stellenangebot, speichern wir die Referenznummer, den Titel und den
                 Arbeitgeber der Stelle, verknüpft mit deinem Konto, damit du sie in deiner Merkliste
-                wiederfindest. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Erfüllung des
+                wiederfindest. Legst du ein Profil an oder lädst deinen Lebenslauf hoch, speichern
+                wir auch diese Daten (Profildaten, Lebenslauf-PDF) bei Supabase — zugriffsgeschützt
+                und nur für dich abrufbar; beim Hochladen eines neuen Lebenslaufs wird der alte
+                gelöscht. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Erfüllung des
                 Nutzungsvertrags). Diese Daten werden gelöscht, wenn du dein Konto löschen lässt
                 oder einzelne Einträge aus deiner Merkliste entfernst. Der Zugriff auf deine Daten
                 ist technisch (Row Level Security) auf dein eigenes Konto beschränkt.
@@ -80,7 +83,37 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">6. Schriftarten (Google Fonts)</h2>
+              <h2 className="mb-2 font-medium">
+                6. E-Mail-Versand: Anmelde-Codes &amp; Job-Alerts (Resend)
+              </h2>
+              <p>
+                Für den Versand von Anmelde-Codes und Job-Alert-Benachrichtigungen nutzen wir den
+                Versanddienstleister Resend (Resend, Inc.), Serverstandort EU. Dabei wird deine
+                E-Mail-Adresse an Resend übermittelt. Job-Alerts erhältst du nur, wenn du eine Suche
+                ausdrücklich als Alert gespeichert hast; wir speichern dazu deine Suchkriterien
+                (Suchbegriff, Ort, Umkreis, Arbeitszeit) verknüpft mit deinem Konto und senden dir
+                höchstens einmal täglich neue passende Stellenangebote. Rechtsgrundlage ist Art. 6
+                Abs. 1 lit. b DSGVO (Erfüllung des Nutzungsvertrags). Du kannst jeden Job-Alert
+                jederzeit in deinem Profil löschen — damit endet der Versand sofort.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="mb-2 font-medium">7. KI-Funktionen (Google Cloud Vertex AI)</h2>
+              <p>
+                Für die KI-Funktionen — Zusammenfassen von Stellenanzeigen, Auslesen deines
+                hochgeladenen Lebenslaufs, Erstellen von Anschreiben und Match-Score — nutzen wir
+                Google Cloud Vertex AI (Google Ireland Ltd.), Serverstandort EU. Dabei werden die
+                jeweils nötigen Daten (Stellenbeschreibung, dein Lebenslauf bzw. deine Profildaten)
+                zur Verarbeitung an Google übermittelt; sie werden dort nicht zum Training von
+                KI-Modellen verwendet. Die KI-Funktionen auf Basis deiner Profildaten nutzt du nur,
+                wenn du sie aktiv auslöst (Upload bzw. Klick). Rechtsgrundlage ist Art. 6 Abs. 1
+                lit. b DSGVO (Erfüllung des Nutzungsvertrags).
+              </p>
+            </section>
+
+            <section>
+              <h2 className="mb-2 font-medium">8. Schriftarten (Google Fonts)</h2>
               <p>
                 Die verwendeten Schriftarten werden über <code>next/font</code> beim Build in die
                 Website eingebunden und lokal von unserem Server ausgeliefert. Beim Aufruf der Seite
@@ -90,7 +123,7 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">7. Deine Rechte</h2>
+              <h2 className="mb-2 font-medium">9. Deine Rechte</h2>
               <p>
                 Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der
                 Verarbeitung, Datenübertragbarkeit sowie Widerspruch gegen die Verarbeitung deiner
