@@ -3,8 +3,9 @@
 import { useRef, useState } from 'react'
 import { ChevronDown, MapPin, Search } from 'lucide-react'
 import { Button } from '@/components/shared/Button'
-import { cn } from '@/lib/cn'
 import { PopularSearchesCarousel } from '@/components/suche/PopularSearchesCarousel'
+import { SuggestionList } from '@/components/suche/SuggestionList'
+import { useSuggestions } from '@/hooks/useSuggestions'
 import { saveRecentSearch } from '@/lib/recentSearches'
 import type { LocalitySuggestion } from '@/types/job.types'
 
@@ -16,6 +17,18 @@ interface JobSearchFormProps {
   popularSearches?: string[]
 }
 
+async function fetchBerufe(query: string): Promise<string[]> {
+  const response = await fetch(`/api/berufe?q=${encodeURIComponent(query)}`)
+  const data = (await response.json()) as { berufe: string[] }
+  return data.berufe
+}
+
+async function fetchOrte(query: string): Promise<LocalitySuggestion[]> {
+  const response = await fetch(`/api/orte?q=${encodeURIComponent(query)}`)
+  const data = (await response.json()) as { orte: LocalitySuggestion[] }
+  return data.orte
+}
+
 export function JobSearchForm({
   defaultWas,
   defaultWo,
@@ -25,44 +38,26 @@ export function JobSearchForm({
 }: JobSearchFormProps) {
   const formRef = useRef<HTMLFormElement>(null)
   const wasInputRef = useRef<HTMLInputElement>(null)
-  const debounceTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const [was, setWas] = useState(defaultWas)
   const [wo, setWo] = useState(defaultWo)
-  const [orte, setOrte] = useState<LocalitySuggestion[]>([])
-  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false)
   const [arbeitszeit, setArbeitszeit] = useState(defaultArbeitszeit)
+  const berufe = useSuggestions(fetchBerufe)
+  const orte = useSuggestions(fetchOrte)
   const isHomeOffice = arbeitszeit === 'ho'
 
   function selectPopularSearch(suche: string) {
+    setWas(suche)
+    // DOM-Wert direkt setzen: der Submit läuft, bevor React neu gerendert hat
     if (wasInputRef.current) wasInputRef.current.value = suche
     formRef.current?.requestSubmit()
   }
 
   function handleSubmit() {
     // Läuft vor der GET-Navigation zu /suche — merkt sich die Suche lokal
-    saveRecentSearch({ was: wasInputRef.current?.value.trim() ?? '', wo: isHomeOffice ? '' : wo })
-  }
-
-  function handleOrtChange(value: string) {
-    setWo(value)
-    clearTimeout(debounceTimerRef.current)
-
-    if (value.trim().length < 2) {
-      setOrte([])
-      setIsSuggestionsOpen(false)
-      return
-    }
-
-    debounceTimerRef.current = setTimeout(async () => {
-      const response = await fetch(`/api/orte?q=${encodeURIComponent(value)}`)
-      const data = (await response.json()) as { orte: LocalitySuggestion[] }
-      setOrte(data.orte)
-      setIsSuggestionsOpen(true)
-    }, 300)
-  }
-
-  function selectOrt(suggestion: LocalitySuggestion) {
-    setWo(suggestion.ort)
-    setIsSuggestionsOpen(false)
+    saveRecentSearch({
+      was: wasInputRef.current?.value.trim() ?? was.trim(),
+      wo: isHomeOffice ? '' : wo,
+    })
   }
 
   return (
@@ -81,11 +76,27 @@ export function JobSearchForm({
               type="text"
               name="was"
               aria-label="Beruf oder Stichwort"
-              defaultValue={defaultWas}
+              value={was}
+              onChange={(e) => {
+                setWas(e.target.value)
+                berufe.onQueryChange(e.target.value)
+              }}
+              onFocus={berufe.openIfAvailable}
+              onBlur={() => setTimeout(berufe.close, 150)}
               placeholder="Beruf oder Stichwort"
+              autoComplete="off"
               required
               className="border-border bg-surface text-foreground w-full rounded-lg border py-2.5 pr-4 pl-9 text-base sm:text-sm"
             />
+            {berufe.isOpen && (
+              <SuggestionList
+                items={berufe.suggestions.map((beruf) => ({ key: beruf, label: beruf }))}
+                onSelect={(beruf) => {
+                  setWas(beruf)
+                  berufe.close()
+                }}
+              />
+            )}
           </div>
 
           <div className="relative col-span-2 sm:col-span-1">
@@ -95,31 +106,30 @@ export function JobSearchForm({
               name="wo"
               aria-label="Ort oder PLZ"
               value={isHomeOffice ? '' : wo}
-              onChange={(e) => handleOrtChange(e.target.value)}
-              onFocus={() => orte.length > 0 && setIsSuggestionsOpen(true)}
-              onBlur={() => setTimeout(() => setIsSuggestionsOpen(false), 150)}
+              onChange={(e) => {
+                setWo(e.target.value)
+                orte.onQueryChange(e.target.value)
+              }}
+              onFocus={orte.openIfAvailable}
+              onBlur={() => setTimeout(orte.close, 150)}
               placeholder={isHomeOffice ? 'Bundesweit' : 'Ort oder PLZ'}
               autoComplete="off"
               disabled={isHomeOffice}
               className="border-border bg-surface text-foreground w-full rounded-lg border py-2.5 pr-4 pl-9 text-base disabled:opacity-50 sm:text-sm"
             />
-            {isSuggestionsOpen && orte.length > 0 && (
-              <ul className="border-border bg-background animate-scale-in absolute z-10 mt-1 w-full rounded-lg border py-1 shadow-lg">
-                {orte.map((ort) => (
-                  <li key={`${ort.ort}-${ort.plz}`}>
-                    <button
-                      type="button"
-                      onClick={() => selectOrt(ort)}
-                      className={cn(
-                        'hover:bg-surface w-full px-4 py-2 text-left text-sm transition-colors duration-150',
-                        'text-text-secondary'
-                      )}
-                    >
-                      {ort.ort} <span className="text-xs">({ort.plz})</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
+            {orte.isOpen && (
+              <SuggestionList
+                items={orte.suggestions.map((ort) => ({
+                  key: `${ort.ort}-${ort.plz}`,
+                  label: ort.ort,
+                  hint: `(${ort.plz})`,
+                  value: ort.ort,
+                }))}
+                onSelect={(ortName) => {
+                  setWo(ortName)
+                  orte.close()
+                }}
+              />
             )}
           </div>
 

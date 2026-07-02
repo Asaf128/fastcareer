@@ -13,20 +13,21 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Job-Detailseite: `src/app/suche/[refnr]/page.tsx` (eigener Loading-State: `src/app/suche/[refnr]/loading.tsx`)
 - Startseite Typing-Effekt (Headline/Subline): `src/components/home/TypingHeadline.tsx`
 - Letzte Suchen (localStorage): `src/components/home/RecentSearches.tsx`, `src/lib/recentSearches.ts` (Speichern beim Submit im JobSearchForm)
-- Startseiten-Sektionen (Features, FAQ mit JSON-LD): `src/components/home/FeatureSection.tsx`, `src/components/home/FaqSection.tsx`
+- Startseiten-Sektionen (Scroll-Experience "So funktioniert's", FAQ mit JSON-LD): `src/components/home/ScrollShowcase.tsx` + `src/components/home/showcase/` (ShowcaseStep mit IntersectionObserver, UI-Mock-Visuals), `src/components/home/FaqSection.tsx`
 - Match-Score (KI vergleicht Profil mit Anforderungen, on demand): `src/lib/ai/matchScore.ts`, `src/actions/matchScore.actions.ts`, `src/components/jobs/MatchScore.tsx`
 - Job-Alerts (gespeicherte Suchen, täglicher Mail-Versand): Tabelle `job_alerts`, `src/actions/alerts.actions.ts`, `src/components/suche/SaveAlertButton.tsx`, `src/components/profile/JobAlertsSection.tsx`, Cron-Route `src/app/api/alerts/run/route.ts` (Vercel Cron 07:00, CRON_SECRET + RESEND_API_KEY nötig), Zeitplan in `vercel.json`
 - Impressum: `src/app/impressum/page.tsx`
 - Datenschutz: `src/app/datenschutz/page.tsx`
 - SEO (robots/sitemap): `src/app/robots.ts`, `src/app/sitemap.ts`
 - API-Route Orte-Autocomplete: `src/app/api/orte/route.ts`
+- API-Route Berufe-Autocomplete (BA-Suggest-Service): `src/app/api/berufe/route.ts`, `src/lib/jobs/berufe.ts`; gemeinsamer Debounce-Hook `src/hooks/useSuggestions.ts`, Dropdown `src/components/suche/SuggestionList.tsx`
 - Header (Login-Status, Nav): `src/components/layout/Header.tsx` — delegiert an `HeaderNav.tsx` (Desktop-Inline-Links / Mobil-Profil-Icon) und `MobileProfileMenu.tsx` (Vollbild-Overlay: Profil/Bewerbungen/Abmelden)
 - Footer/Layout: `src/components/layout/Footer.tsx`
 - Shared Base Components (Button, Container, Section, Input, Textarea, Checkbox): `src/components/shared/`
 - Jobsuche-Komponenten (JobCard, JobSearchForm): `src/components/suche/`
 - Login (6-stelliger E-Mail-Code, zweistufiges Formular): `src/app/login/page.tsx`, `src/components/auth/LoginForm.tsx`
 - Auth-Callback (Code-Exchange, nur noch Fallback für ältere Magic-Link-E-Mails): `src/app/auth/callback/route.ts`
-- Meine Bewerbungen (Status-Pipeline gespeichert/beworben/interview/zusage/absage, Filter-Chips, Badges): `src/app/bewerbungen/page.tsx`; Status-Typen/Labels in `src/types/application.types.ts`. `/favoriten` ist ein reiner Redirect dorthin (alte Links bleiben gültig)
+- Meine Bewerbungen (Status-Pipeline gespeichert/beworben/interview/zusage/absage, Filter-Chips, Badges): `src/app/bewerbungen/page.tsx`; Status-Typen/Labels in `src/types/application.types.ts`. `/favoriten` ist ein reiner Redirect dorthin (alte Links bleiben gültig); mobiler Kategorie-Wechsler (Pfeile + Swipe): `src/components/bewerbungen/MobileStatusPager.tsx`
 - Auth Server Actions (Code anfordern via `signInWithOtp`, Code prüfen via `verifyOtp`, Logout): `src/actions/auth.actions.ts`
 - Arbeitsagentur-API-Anbindung: `src/lib/jobs/arbeitsagentur.ts`, `src/lib/jobs/arbeitsagentur-detail.ts`
 - Orte/PLZ-Lookup: `src/lib/jobs/openplz.ts`
@@ -41,7 +42,8 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - KI-Anbindung (Google Gemini via Vertex AI — **nicht** Claude/Anthropic, siehe Projekt-Memory): `src/lib/ai/` (`genai.ts` Client, `summarizeJob.ts`, `generateCoverLetter.ts`, `parseCv.ts` + `normalizeCvDates.ts`, `rateLimit.ts` — async, Upstash Redis mit In-Memory-Fallback)
 - Anschreiben-Generierung on demand (auf Klick, sofort gespeichert — nie beim Seitenaufbau): `src/actions/coverLetter.actions.ts`
 - Job-Zusammenfassung-Cache (Read-through, `job_summaries`-Tabelle): `src/lib/jobs/jobSummaryCache.ts`
-- Job-Detailseite-Komponenten (Kopf+Stern, KI-Zusammenfassung, Anschreiben, Bewerbungs-Checkliste, Original-Link): `src/components/jobs/`
+- Job-Detailseite-Komponenten (Kopf+Stern, KI-Zusammenfassung, Anschreiben inkl. editierbarem Briefkopf `CoverLetterHeadFields` und PDF-Erzeugung `coverLetterPdf.ts`, Bewerbungs-Checkliste, Original-Link): `src/components/jobs/`
+- Favicon: `src/app/icon.svg` (FAST/CAREER-Schriftzug in Brand-Farben)
 - Bewerbungen Server Actions (speichern/entfernen/Checkliste/Notizen/Anschreiben): `src/actions/applications.actions.ts`
 - Profil-Seite + Lebenslauf-Upload: `src/app/profil/page.tsx`, `src/components/profile/` (`ProfileForm`, `WorkExperienceFields`, `EducationFields`, `SkillsInput`, `CvUpload`)
 - Profil Server Actions (speichern, CV hochladen & auslesen): `src/actions/profile.actions.ts`

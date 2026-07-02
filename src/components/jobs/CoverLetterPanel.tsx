@@ -7,6 +7,8 @@ import { toast } from 'sonner'
 import { saveCoverLetter } from '@/actions/applications.actions'
 import { generateAndSaveCoverLetter } from '@/actions/coverLetter.actions'
 import { Button } from '@/components/shared/Button'
+import { CoverLetterHeadFields } from '@/components/jobs/CoverLetterHeadFields'
+import { buildLetterDate, downloadCoverLetterPdf } from '@/components/jobs/coverLetterPdf'
 
 interface CoverLetterPanelProps {
   jobRefnr: string
@@ -45,6 +47,9 @@ export function CoverLetterPanel({
   senderLocation,
 }: CoverLetterPanelProps) {
   const [text, setText] = useState(initialCoverLetter ?? '')
+  const [subject, setSubject] = useState(`Bewerbung als ${titel}`)
+  const [date, setDate] = useState(() => buildLetterDate(senderLocation))
+  const [recipient, setRecipient] = useState([arbeitgeber, ort].filter(Boolean).join('\n'))
   const [isCopied, setIsCopied] = useState(false)
   const [isSaving, startSaving] = useTransition()
   const [isGenerating, startGenerating] = useTransition()
@@ -96,74 +101,20 @@ export function CoverLetterPanel({
   }
 
   async function downloadPdf() {
-    // jspdf erst beim Klick laden — hält es aus dem initialen Bundle raus
-    const { jsPDF } = await import('jspdf')
-    const doc = new jsPDF({ unit: 'mm', format: 'a4' })
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(11)
-
-    // DIN-5008-nahes Layout: einfacher Zeilenabstand, kein Absatzabstand
-    const marginLeft = 25
-    const marginRight = 20
-    const pageWidth = 210
-    const rightEdge = pageWidth - marginRight
-    const lineHeight = 5
-    const maxY = 277
-    let y = 20
-
-    // Eigene Anschrift — oben rechts
-    const senderLines = [senderName, senderStreet, senderLocation].filter((line): line is string =>
-      Boolean(line)
-    )
-    for (const line of senderLines) {
-      doc.text(line, rightEdge, y, { align: 'right' })
-      y += lineHeight
-    }
-
-    // 3 Leerzeilen, dann Empfänger links
-    y += 3 * lineHeight
-    const recipientLines = [arbeitgeber, ort].filter(Boolean)
-    for (const line of recipientLines) {
-      doc.text(line, marginLeft, y)
-      y += lineHeight
-    }
-
-    // 2 Leerzeilen, dann Datum rechts (Ort aus der eigenen Anschrift, ohne PLZ)
-    y += 2 * lineHeight
-    const city = senderLocation?.replace(/^\d{4,5}\s*/, '').trim()
-    const today = new Date().toLocaleDateString('de-DE', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
+    await downloadCoverLetterPdf({
+      senderName,
+      senderStreet,
+      senderLocation,
+      recipient,
+      date,
+      subject,
+      bodyText: text,
+      arbeitgeber,
     })
-    doc.text(city ? `${city}, ${today}` : today, rightEdge, y, { align: 'right' })
-    y += lineHeight
-
-    // 2 Leerzeilen, dann Betreff fett links
-    y += 2 * lineHeight
-    doc.setFont('helvetica', 'bold')
-    doc.text(`Bewerbung als ${titel}`, marginLeft, y)
-    doc.setFont('helvetica', 'normal')
-    y += lineHeight
-
-    // 2 Leerzeilen, dann der Brieftext
-    y += 2 * lineHeight
-    const bodyWidth = pageWidth - marginLeft - marginRight
-    const bodyLines = doc.splitTextToSize(text.replace(/\*\*/g, ''), bodyWidth) as string[]
-    for (const line of bodyLines) {
-      if (y > maxY) {
-        doc.addPage()
-        y = 20
-      }
-      doc.text(line, marginLeft, y)
-      y += lineHeight
-    }
-
-    doc.save(`Anschreiben-${arbeitgeber.replace(/[^\wäöüÄÖÜß-]+/g, '_').slice(0, 50)}.pdf`)
   }
 
   const mailtoHref = kontaktEmail
-    ? `mailto:${kontaktEmail}?subject=${encodeURIComponent(`Bewerbung als ${titel}`)}&body=${encodeURIComponent(text.slice(0, 1800))}`
+    ? `mailto:${kontaktEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text.slice(0, 1800))}`
     : null
 
   if (!text && !isGenerating) {
@@ -210,6 +161,15 @@ export function CoverLetterPanel({
         </div>
       ) : (
         <>
+          <CoverLetterHeadFields
+            subject={subject}
+            date={date}
+            recipient={recipient}
+            onSubjectChange={setSubject}
+            onDateChange={setDate}
+            onRecipientChange={setRecipient}
+          />
+
           <label htmlFor={`cover-letter-${jobRefnr}`} className="sr-only">
             Anschreiben bearbeiten
           </label>
