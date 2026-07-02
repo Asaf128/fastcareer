@@ -114,13 +114,18 @@ export default async function BewerbungenPage({ searchParams }: BewerbungenPageP
               const status = isApplicationStatus(application.status)
                 ? application.status
                 : 'gespeichert'
+              const detailQuery = new URLSearchParams({
+                titel: application.titel,
+                arbeitgeber: application.arbeitgeber,
+                ort: application.ort ?? '',
+              })
               return (
                 <div
                   key={application.id}
                   className="border-border bg-background relative flex items-start gap-4 rounded-xl border p-5 shadow-sm transition-[box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <Link
-                    href={`/suche/${encodeURIComponent(application.job_refnr)}`}
+                    href={`/suche/${encodeURIComponent(application.job_refnr)}?${detailQuery.toString()}`}
                     className="absolute inset-0"
                   >
                     <span className="sr-only">{application.titel} ansehen</span>

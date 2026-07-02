@@ -35,16 +35,12 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
     notFound()
   }
 
-  const resolvedTitel = titel ?? 'Stellenangebot'
-  const resolvedArbeitgeber = arbeitgeber ?? ''
-  const resolvedOrt = ort ?? ''
-
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const [applicationResult, profileResult, summary] = await Promise.all([
+  const [applicationResult, profileResult] = await Promise.all([
     user
       ? supabase
           .from('applications')
@@ -56,17 +52,25 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
     user
       ? supabase.from('profiles').select('*').eq('id', user.id).maybeSingle()
       : Promise.resolve({ data: null }),
-    getOrCreateJobSummary({
-      refnr,
-      titel: resolvedTitel,
-      arbeitgeber: resolvedArbeitgeber,
-      ort: resolvedOrt,
-      beschreibung: detail.beschreibung,
-    }),
   ])
 
   const application = applicationResult.data
   const profile = profileResult.data
+
+  // Fallback auf die gespeicherte Bewerbung: Links aus "Meine Bewerbungen"
+  // tragen keine titel/arbeitgeber-Query-Params — ohne Fallback schlugen
+  // dort Anschreiben- und Match-Generierung fehl ("Ungültige Job-Daten")
+  const resolvedTitel = titel ?? application?.titel ?? 'Stellenangebot'
+  const resolvedArbeitgeber = arbeitgeber ?? application?.arbeitgeber ?? ''
+  const resolvedOrt = ort ?? application?.ort ?? ''
+
+  const summary = await getOrCreateJobSummary({
+    refnr,
+    titel: resolvedTitel,
+    arbeitgeber: resolvedArbeitgeber,
+    ort: resolvedOrt,
+    beschreibung: detail.beschreibung,
+  })
 
   // Anschreiben wird nicht mehr beim Seitenaufbau generiert (teurer Pro-Call,
   // blockierte das Rendering) — das passiert auf Klick im CoverLetterPanel
@@ -100,6 +104,14 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
           ort={resolvedOrt}
           isAuthenticated={Boolean(user)}
           hasProfile={Boolean(profile)}
+          initialResult={
+            application?.match_score != null
+              ? {
+                  score: application.match_score,
+                  begruendung: (application.match_begruendung as string[] | null) ?? [],
+                }
+              : null
+          }
         />
 
         <CoverLetterPanel

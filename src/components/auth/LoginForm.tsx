@@ -48,17 +48,17 @@ export function LoginForm({ next }: LoginFormProps) {
         {next && <input type="hidden" name="next" value={next} />}
         <p className="text-text-secondary text-sm">
           Code an <span className="text-foreground">{requestState.email}</span> geschickt — bitte
-          eingeben.
+          die 8 Ziffern eingeben.
         </p>
         <input
           type="text"
           name="token"
           inputMode="numeric"
           autoComplete="one-time-code"
-          pattern="\d{4,10}"
-          maxLength={10}
-          aria-label="Anmelde-Code"
-          placeholder="123456"
+          pattern="\d{8}"
+          maxLength={8}
+          aria-label="8-stelliger Anmelde-Code"
+          placeholder="12345678"
           required
           autoFocus
           onChange={(event) => handleTokenChange(event.target.value)}

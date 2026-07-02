@@ -15,6 +15,7 @@ interface MatchScoreProps {
   ort: string
   isAuthenticated: boolean
   hasProfile: boolean
+  initialResult: MatchScoreResult | null
 }
 
 function scoreColorClass(score: number): string {
@@ -30,8 +31,9 @@ export function MatchScore({
   ort,
   isAuthenticated,
   hasProfile,
+  initialResult,
 }: MatchScoreProps) {
-  const [result, setResult] = useState<MatchScoreResult | null>(null)
+  const [result, setResult] = useState<MatchScoreResult | null>(initialResult)
   const [isPending, startTransition] = useTransition()
 
   // Ohne Login/Profil keinen Teaser zeigen — dafür werben schon
