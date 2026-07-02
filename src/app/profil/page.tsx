@@ -4,6 +4,7 @@ import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { ProfileForm } from '@/components/profile/ProfileForm'
 import { DeleteAccountSection } from '@/components/profile/DeleteAccountSection'
+import { JobAlertsSection } from '@/components/profile/JobAlertsSection'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
@@ -33,6 +34,12 @@ export default async function ProfilPage() {
     cvUrl = signed?.signedUrl ?? null
   }
 
+  const { data: alerts } = await supabase
+    .from('job_alerts')
+    .select('id, was, wo, arbeitszeit')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+
   return (
     <Section className="py-10 lg:py-14">
       <Container className="max-w-2xl">
@@ -42,6 +49,7 @@ export default async function ProfilPage() {
         </p>
 
         <ProfileForm initialProfile={profile} cvUrl={cvUrl} />
+        <JobAlertsSection alerts={alerts ?? []} />
         <DeleteAccountSection />
       </Container>
     </Section>

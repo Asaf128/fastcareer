@@ -5,6 +5,7 @@ import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { JobHeader } from '@/components/jobs/JobHeader'
 import { JobSummary } from '@/components/jobs/JobSummary'
+import { MatchScore } from '@/components/jobs/MatchScore'
 import { CoverLetterPanel } from '@/components/jobs/CoverLetterPanel'
 import { ApplicationChecklist } from '@/components/jobs/ApplicationChecklist'
 import { OriginalListing } from '@/components/jobs/OriginalListing'
@@ -91,6 +92,15 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
         </div>
 
         <JobSummary summary={summary} />
+
+        <MatchScore
+          jobRefnr={refnr}
+          titel={resolvedTitel}
+          arbeitgeber={resolvedArbeitgeber}
+          ort={resolvedOrt}
+          isAuthenticated={Boolean(user)}
+          hasProfile={Boolean(profile)}
+        />
 
         <CoverLetterPanel
           jobRefnr={refnr}

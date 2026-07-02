@@ -7,6 +7,8 @@ export interface JobSearchParams {
   page?: number
   size?: number
   arbeitszeit?: Arbeitszeit
+  /** Nur Angebote der letzten N Tage (Arbeitsagentur-Param veroeffentlichtseit) */
+  veroeffentlichtSeit?: number
 }
 
 export interface JobListing {

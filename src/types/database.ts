@@ -59,6 +59,39 @@ export type Database = {
         }
         Relationships: []
       }
+      job_alerts: {
+        Row: {
+          arbeitszeit: string
+          created_at: string
+          id: string
+          last_sent_at: string | null
+          umkreis: number
+          user_id: string
+          was: string
+          wo: string
+        }
+        Insert: {
+          arbeitszeit?: string
+          created_at?: string
+          id?: string
+          last_sent_at?: string | null
+          umkreis?: number
+          user_id: string
+          was: string
+          wo?: string
+        }
+        Update: {
+          arbeitszeit?: string
+          created_at?: string
+          id?: string
+          last_sent_at?: string | null
+          umkreis?: number
+          user_id?: string
+          was?: string
+          wo?: string
+        }
+        Relationships: []
+      }
       favorites: {
         Row: {
           arbeitgeber: string
