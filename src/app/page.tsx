@@ -18,7 +18,9 @@ const POPULAR_SEARCHES = [
 export default function Home() {
   return (
     <main className="bg-background flex flex-1 flex-col">
-      <Section className="flex min-h-[70vh] flex-col justify-center py-8 lg:py-20">
+      {/* 4.5rem ≈ Höhe des sticky Headers — Hero füllt den restlichen Viewport,
+          sodass die Feature-Sektion erst beim Scrollen erscheint (auch mobil, svh) */}
+      <Section className="flex min-h-[calc(100svh-4.5rem)] flex-col justify-center py-8 lg:py-12">
         <Container>
           <TypingHeadline />
 

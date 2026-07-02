@@ -56,11 +56,31 @@ export async function getMatchScore(
     beschreibung,
   })
 
+  let result: MatchScoreResult
   try {
-    const result = await calculateMatchScore({ titel: parsed.data.titel, summary, profile })
-    return { error: null, result }
+    result = await calculateMatchScore({ titel: parsed.data.titel, summary, profile })
   } catch (error) {
     console.error('Match-Score fehlgeschlagen:', error)
     return { error: 'Match-Score konnte nicht berechnet werden. Bitte versuche es erneut.' }
   }
+
+  // Sofort speichern — ein erneuter Seitenbesuch kostet dann keinen zweiten
+  // Gemini-Call mehr (gleiche Logik wie beim Anschreiben)
+  const { error: saveError } = await supabase.from('applications').upsert(
+    {
+      user_id: user.id,
+      job_refnr: parsed.data.jobRefnr,
+      titel: parsed.data.titel,
+      arbeitgeber: parsed.data.arbeitgeber,
+      ort: parsed.data.ort ?? null,
+      match_score: result.score,
+      match_begruendung: result.begruendung,
+    },
+    { onConflict: 'user_id,job_refnr' }
+  )
+  if (saveError) {
+    console.error('Match-Score konnte nicht gespeichert werden:', saveError.code)
+  }
+
+  return { error: null, result }
 }

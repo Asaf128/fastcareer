@@ -41,7 +41,7 @@ export function FaqSection() {
   }
 
   return (
-    <Section className="border-border border-t py-16 lg:py-24">
+    <Section className="border-border flex min-h-svh flex-col justify-center border-t py-16 lg:py-24">
       <Container className="max-w-3xl">
         <h2 className="text-foreground text-center text-2xl lg:text-3xl">Häufige Fragen</h2>
 

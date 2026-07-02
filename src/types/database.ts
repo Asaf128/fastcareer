@@ -20,6 +20,8 @@ export type Database = {
           created_at: string
           id: string
           job_refnr: string
+          match_begruendung: Json | null
+          match_score: number | null
           notes: string
           ort: string | null
           status: string
@@ -35,6 +37,8 @@ export type Database = {
           created_at?: string
           id?: string
           job_refnr: string
+          match_begruendung?: Json | null
+          match_score?: number | null
           notes?: string
           ort?: string | null
           status?: string
@@ -50,6 +54,8 @@ export type Database = {
           created_at?: string
           id?: string
           job_refnr?: string
+          match_begruendung?: Json | null
+          match_score?: number | null
           notes?: string
           ort?: string | null
           status?: string

@@ -91,16 +91,17 @@ export function ApplicationChecklist({
         ))}
       </div>
 
-      <Textarea
-        label="Notizen"
-        id={`notes-${jobRefnr}`}
-        value={notes}
-        onChange={(event) => setNotes(event.target.value)}
-        onBlur={handleNotesBlur}
-        rows={4}
-        placeholder="z. B. Gehaltsvorstellung, Ansprechpartner, nächste Schritte …"
-        className="mt-8 sm:mt-6"
-      />
+      <div className="mt-8">
+        <Textarea
+          label="Notizen"
+          id={`notes-${jobRefnr}`}
+          value={notes}
+          onChange={(event) => setNotes(event.target.value)}
+          onBlur={handleNotesBlur}
+          rows={4}
+          placeholder="z. B. Gehaltsvorstellung, Ansprechpartner, nächste Schritte …"
+        />
+      </div>
     </div>
   )
 }
