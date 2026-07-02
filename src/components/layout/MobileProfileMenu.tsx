@@ -26,11 +26,22 @@ export function MobileProfileMenu({ onClose }: MobileProfileMenuProps) {
       if (event.key === 'Escape') onClose()
     }
     document.addEventListener('keydown', handleKeyDown)
-    // Hintergrund-Scroll sperren, solange das Menü offen ist
+    // Hintergrund-Scroll sperren: overflow:hidden reicht auf iOS Safari nicht,
+    // deshalb den Body fixieren und die Scroll-Position merken/wiederherstellen
+    const scrollY = window.scrollY
+    document.body.style.position = 'fixed'
+    document.body.style.top = `-${scrollY}px`
+    document.body.style.left = '0'
+    document.body.style.right = '0'
     document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.position = ''
+      document.body.style.top = ''
+      document.body.style.left = ''
+      document.body.style.right = ''
       document.body.style.overflow = ''
+      window.scrollTo(0, scrollY)
     }
   }, [onClose])
 
