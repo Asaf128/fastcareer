@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { AlertCircle, ChevronLeft, ChevronRight, SearchX } from 'lucide-react'
+import { AlertCircle, SearchX } from 'lucide-react'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { JobSearchForm } from '@/components/suche/JobSearchForm'
 import { JobCard } from '@/components/suche/JobCard'
 import { SaveAlertButton } from '@/components/suche/SaveAlertButton'
+import { SearchResultsPager } from '@/components/suche/SearchResultsPager'
 import { searchJobs } from '@/lib/jobs/arbeitsagentur'
 import { createClient } from '@/lib/supabase/server'
 import type { Arbeitszeit } from '@/types/job.types'
@@ -103,71 +104,45 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
 
         {result && (
           <div className="mt-8">
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-text-secondary text-sm">
-                {result.gesamtTreffer.toLocaleString('de-DE')} Treffer für &quot;{was}&quot;
-                {wo && ` in ${wo}`}
-              </p>
-              {user && (
-                <SaveAlertButton
-                  was={was}
-                  wo={wo}
-                  umkreis={umkreis}
-                  arbeitszeit={arbeitszeit ?? ''}
-                />
-              )}
-            </div>
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-              {result.treffer.map((job) => (
-                <JobCard
-                  key={job.refnr}
-                  job={job}
-                  isSaved={savedRefnrs.has(job.refnr)}
-                  isAuthenticated={!!user}
-                />
-              ))}
-            </div>
-            {result.treffer.length === 0 && (
-              <div className="border-border bg-surface flex flex-col items-center gap-3 rounded-xl border p-10 text-center">
-                <SearchX className="text-text-secondary h-8 w-8" />
+            <SearchResultsPager
+              page={page}
+              totalPages={totalPages}
+              prevHref={page > 1 ? pageHref(page - 1) : undefined}
+              nextHref={page < totalPages ? pageHref(page + 1) : undefined}
+            >
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <p className="text-text-secondary text-sm">
-                  Keine Treffer gefunden. Versuche einen anderen Suchbegriff.
+                  {result.gesamtTreffer.toLocaleString('de-DE')} Treffer für &quot;{was}&quot;
+                  {wo && ` in ${wo}`}
                 </p>
+                {user && (
+                  <SaveAlertButton
+                    was={was}
+                    wo={wo}
+                    umkreis={umkreis}
+                    arbeitszeit={arbeitszeit ?? ''}
+                  />
+                )}
               </div>
-            )}
-
-            {totalPages > 1 && (
-              <nav
-                aria-label="Seiten"
-                className="mt-8 flex items-center justify-between gap-4 text-sm"
-              >
-                {page > 1 ? (
-                  <Link
-                    href={pageHref(page - 1)}
-                    className="border-border hover:border-accent hover:text-accent flex items-center gap-1 rounded-lg border px-3 py-2 transition-colors duration-150"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    Zurück
-                  </Link>
-                ) : (
-                  <span />
-                )}
-                <span className="text-text-secondary">
-                  Seite {page} von {totalPages}
-                </span>
-                {page < totalPages ? (
-                  <Link
-                    href={pageHref(page + 1)}
-                    className="border-border hover:border-accent hover:text-accent flex items-center gap-1 rounded-lg border px-3 py-2 transition-colors duration-150"
-                  >
-                    Weiter
-                    <ChevronRight className="h-4 w-4" />
-                  </Link>
-                ) : (
-                  <span />
-                )}
-              </nav>
-            )}
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                {result.treffer.map((job) => (
+                  <JobCard
+                    key={job.refnr}
+                    job={job}
+                    isSaved={savedRefnrs.has(job.refnr)}
+                    isAuthenticated={!!user}
+                  />
+                ))}
+              </div>
+              {result.treffer.length === 0 && (
+                <div className="border-border bg-surface flex flex-col items-center gap-3 rounded-xl border p-10 text-center">
+                  <SearchX className="text-text-secondary h-8 w-8" />
+                  <p className="text-text-secondary text-sm">
+                    Keine Treffer gefunden. Versuche einen anderen Suchbegriff.
+                  </p>
+                </div>
+              )}
+            </SearchResultsPager>
           </div>
         )}
       </Container>
