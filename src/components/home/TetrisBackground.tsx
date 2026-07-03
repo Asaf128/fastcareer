@@ -60,6 +60,23 @@ interface Piece {
   y: number
 }
 
+// Mobiles Ersatz-Muster: verstreute Accent-Kästchen (Tetris lässt sich ohne
+// Tastatur nicht spielen) — Positionen/Größen fest als Tailwind-Klassen,
+// unten dichter gestapelt wie ein liegengebliebenes Tetris-Brett
+const MOBILE_SQUARES = [
+  'top-[8%] left-[12%] h-5 w-5 bg-accent/10',
+  'top-[16%] right-[10%] h-4 w-4 bg-accent/15 [animation-delay:0.8s]',
+  'top-[34%] left-[6%] h-3.5 w-3.5 bg-accent/10 [animation-delay:1.6s]',
+  'top-[42%] right-[16%] h-6 w-6 bg-accent/10 [animation-delay:2.4s]',
+  'top-[58%] left-[15%] h-4 w-4 bg-accent/15 [animation-delay:3.2s]',
+  'top-[64%] right-[7%] h-5 w-5 bg-accent/10 [animation-delay:1.2s]',
+  'bottom-[14%] left-[8%] h-6 w-6 bg-accent/15 [animation-delay:2s]',
+  'bottom-[10%] right-[22%] h-4 w-4 bg-accent/10 [animation-delay:0.4s]',
+  'bottom-[4%] left-[28%] h-7 w-7 bg-accent/15 [animation-delay:2.8s]',
+  'bottom-[6%] right-[8%] h-7 w-7 bg-accent/10 [animation-delay:3.6s]',
+  'bottom-[3%] left-[55%] h-5 w-5 bg-accent/15 [animation-delay:1.4s]',
+] as const
+
 function isTypingTarget(element: Element | null): boolean {
   return (
     element instanceof HTMLInputElement ||
@@ -78,6 +95,9 @@ export function TetrisBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
+    // Auf Mobil ist der Canvas ausgeblendet (kein Tastatur-Tetris) —
+    // Spiel-Loop gar nicht erst starten
+    if (!window.matchMedia('(min-width: 640px)').matches) return
     const maybeCanvas = canvasRef.current
     if (!maybeCanvas) return
     // Explizite Annotation: hält den non-null-Typ auch in den Closures
@@ -237,10 +257,20 @@ export function TetrisBackground() {
 
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      <canvas ref={canvasRef} />
-      <p className="text-text-secondary/50 absolute bottom-3 left-1/2 hidden -translate-x-1/2 text-xs lg:block">
-        Psst — die Pfeiltasten steuern die Steine
-      </p>
+      {/* Desktop: spielbares Tetris */}
+      <div className="hidden h-full w-full sm:block">
+        <canvas ref={canvasRef} />
+        <p className="text-text-secondary/50 absolute bottom-3 left-1/2 hidden -translate-x-1/2 text-xs lg:block">
+          Psst — die Pfeiltasten steuern die Steine
+        </p>
+      </div>
+
+      {/* Mobil: ruhiges Kästchen-Muster in Accent-Orange */}
+      <div className="sm:hidden">
+        {MOBILE_SQUARES.map((square) => (
+          <div key={square} className={`animate-square-drift absolute rounded-sm ${square}`} />
+        ))}
+      </div>
     </div>
   )
 }
