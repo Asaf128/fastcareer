@@ -208,20 +208,6 @@ select:focus {
   animation: squareDrift 7s ease-in-out infinite;
 }
 
-@keyframes mascotBob {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
-  }
-}
-
-.animate-mascot-bob {
-  animation: mascotBob 1.8s ease-in-out infinite;
-}
-
 /* ─── Text-Gradient ────────────────────────────────────────── */
 .text-gradient {
   background: linear-gradient(135deg, var(--accent-dark) 0%, var(--accent) 100%);

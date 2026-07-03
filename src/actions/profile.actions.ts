@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 import { parseCv } from '@/lib/ai/parseCv'
 import { isRateLimited } from '@/lib/ai/rateLimit'
 import { consumeDailyCount, DAILY_LIMIT } from '@/lib/usage'
+import { isProUser } from '@/lib/pro'
 import type { CvParseResult } from '@/types/ai.types'
 
 const workExperienceSchema = z.object({
@@ -99,11 +100,14 @@ export async function uploadAndParseCv(
   const base64 = buffer.toString('base64')
 
   // Freemium: 3 Lebenslauf-Analysen pro Tag — erst NACH den Datei-Checks
-  // verbrauchen, damit ein abgelehnter Upload kein Kontingent kostet
-  const usage = await consumeDailyCount('cv', user.id)
-  if (!usage.allowed) {
-    return {
-      error: `Tageslimit erreicht: ${DAILY_LIMIT} Lebenslauf-Analysen pro Tag sind kostenlos. Morgen geht's weiter — unbegrenzt mit Pro (bald verfügbar).`,
+  // verbrauchen, damit ein abgelehnter Upload kein Kontingent kostet.
+  // Pro (Admin-E-Mail) ist ausgenommen.
+  if (!isProUser(user.email)) {
+    const usage = await consumeDailyCount('cv', user.id)
+    if (!usage.allowed) {
+      return {
+        error: `Tageslimit erreicht: ${DAILY_LIMIT} Lebenslauf-Analysen pro Tag sind kostenlos. Morgen geht's weiter — unbegrenzt mit Pro (bald verfügbar).`,
+      }
     }
   }
 

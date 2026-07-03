@@ -7,6 +7,7 @@ import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { isRateLimited } from '@/lib/ai/rateLimit'
 import { consumeDailyUnique, refundDailyUnique, DAILY_LIMIT } from '@/lib/usage'
+import { isProUser } from '@/lib/pro'
 import type { MatchScoreResult } from '@/types/ai.types'
 
 const inputSchema = z.object({
@@ -20,7 +21,10 @@ const MAX_SCORES_PER_MINUTE = 5
 
 export async function getMatchScore(
   input: z.infer<typeof inputSchema>
-): Promise<{ error: string } | { error: null; result: MatchScoreResult }> {
+): Promise<
+  | { error: string; limitReached?: boolean }
+  | { error: null; result: MatchScoreResult; remaining: number | null }
+> {
   const parsed = inputSchema.safeParse(input)
   if (!parsed.success) return { error: 'Ungültige Job-Daten.' }
 
@@ -41,12 +45,19 @@ export async function getMatchScore(
     .maybeSingle()
   if (!profile) return { error: 'Bitte fülle zuerst dein Profil aus.' }
 
-  // Freemium: 3 Match-Scores pro Tag — dieselbe Stelle zählt nur einmal
-  const usage = await consumeDailyUnique('match', user.id, parsed.data.jobRefnr)
-  if (!usage.allowed) {
-    return {
-      error: `Tageslimit erreicht: ${DAILY_LIMIT} Match-Scores pro Tag sind kostenlos. Morgen geht's weiter — unbegrenzt mit Pro (bald verfügbar).`,
+  // Freemium: 3 Match-Scores pro Tag — dieselbe Stelle zählt nur einmal,
+  // Pro (Admin-E-Mail) ist ausgenommen. remaining=null heißt unbegrenzt.
+  const isPro = isProUser(user.email)
+  let remaining: number | null = null
+  if (!isPro) {
+    const usage = await consumeDailyUnique('match', user.id, parsed.data.jobRefnr)
+    if (!usage.allowed) {
+      return {
+        error: `Tageslimit erreicht: ${DAILY_LIMIT} Match-Scores pro Tag sind kostenlos.`,
+        limitReached: true,
+      }
     }
+    remaining = usage.remaining
   }
 
   let beschreibung = ''
@@ -71,7 +82,7 @@ export async function getMatchScore(
   } catch (error) {
     console.error('Match-Score fehlgeschlagen:', error)
     // Gescheiterter Versuch soll kein Kontingent kosten
-    await refundDailyUnique('match', user.id, parsed.data.jobRefnr)
+    if (!isPro) await refundDailyUnique('match', user.id, parsed.data.jobRefnr)
     return { error: 'Match-Score konnte nicht berechnet werden. Bitte versuche es erneut.' }
   }
 
@@ -93,5 +104,5 @@ export async function getMatchScore(
     console.error('Match-Score konnte nicht gespeichert werden:', saveError.code)
   }
 
-  return { error: null, result }
+  return { error: null, result, remaining }
 }

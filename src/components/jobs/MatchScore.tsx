@@ -5,6 +5,7 @@ import { Gauge } from 'lucide-react'
 import { toast } from 'sonner'
 import { getMatchScore } from '@/actions/matchScore.actions'
 import { Button } from '@/components/shared/Button'
+import { FeatureLimitNotice, UsageRemainingHint } from '@/components/jobs/UsageLimit'
 import { cn } from '@/lib/cn'
 import type { MatchScoreResult } from '@/types/ai.types'
 
@@ -15,6 +16,8 @@ interface MatchScoreProps {
   ort: string
   isAuthenticated: boolean
   hasProfile: boolean
+  /** Verbleibende Match-Berechnungen heute — null heißt unbegrenzt (Pro) */
+  initialRemaining: number | null
   initialResult: MatchScoreResult | null
 }
 
@@ -31,9 +34,12 @@ export function MatchScore({
   ort,
   isAuthenticated,
   hasProfile,
+  initialRemaining,
   initialResult,
 }: MatchScoreProps) {
   const [result, setResult] = useState<MatchScoreResult | null>(initialResult)
+  const [remaining, setRemaining] = useState(initialRemaining)
+  const [limitReached, setLimitReached] = useState(initialRemaining === 0)
   const [isPending, startTransition] = useTransition()
 
   // Ohne Login/Profil keinen Teaser zeigen — dafür werben schon
@@ -44,11 +50,20 @@ export function MatchScore({
     startTransition(async () => {
       const response = await getMatchScore({ jobRefnr, titel, arbeitgeber, ort })
       if (response.error !== null) {
-        toast.error(response.error)
+        // Beim Tageslimit die Limit-Karte zeigen statt einer Toast-Meldung
+        if (response.limitReached) setLimitReached(true)
+        else toast.error(response.error)
         return
       }
       setResult(response.result)
+      setRemaining(response.remaining)
     })
+  }
+
+  // Limit erreicht und noch kein gespeicherter Score: dieselbe Karte wie
+  // bei der Zusammenfassung, nur mit Match-Text
+  if (!result && limitReached) {
+    return <FeatureLimitNotice featureLabel="Match-Berechnungen" />
   }
 
   return (
@@ -67,6 +82,10 @@ export function MatchScore({
           </Button>
         )}
       </div>
+
+      {!result && remaining != null && (
+        <UsageRemainingHint label="Gratis Match-Berechnungen" remaining={remaining} />
+      )}
 
       {result && (
         <div className="mt-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-8">

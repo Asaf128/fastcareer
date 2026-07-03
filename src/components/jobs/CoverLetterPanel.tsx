@@ -9,6 +9,7 @@ import { generateAndSaveCoverLetter } from '@/actions/coverLetter.actions'
 import { Button } from '@/components/shared/Button'
 import { CoverLetterHeadFields } from '@/components/jobs/CoverLetterHeadFields'
 import { AiThinkingMascot } from '@/components/jobs/AiThinkingMascot'
+import { FeatureLimitNotice, UsageRemainingHint } from '@/components/jobs/UsageLimit'
 import { buildLetterDate, downloadCoverLetterPdf } from '@/components/jobs/coverLetterPdf'
 
 // Wie lange die Sprechblase nach Abschluss noch "Fertig!" zeigt, bevor sie
@@ -23,6 +24,8 @@ interface CoverLetterPanelProps {
   kontaktEmail: string | null
   isAuthenticated: boolean
   hasProfile: boolean
+  /** Verbleibende KI-Anschreiben heute — null heißt unbegrenzt (Pro) */
+  initialRemaining: number | null
   initialCoverLetter: string | null
   senderName: string | null
   senderStreet: string | null
@@ -46,6 +49,7 @@ export function CoverLetterPanel({
   kontaktEmail,
   isAuthenticated,
   hasProfile,
+  initialRemaining,
   initialCoverLetter,
   senderName,
   senderStreet,
@@ -56,6 +60,8 @@ export function CoverLetterPanel({
   const [date, setDate] = useState(() => buildLetterDate(senderLocation))
   const [recipient, setRecipient] = useState([arbeitgeber, ort].filter(Boolean).join('\n'))
   const [isCopied, setIsCopied] = useState(false)
+  const [remaining, setRemaining] = useState(initialRemaining)
+  const [limitReached, setLimitReached] = useState(initialRemaining === 0)
   const [isSaving, startSaving] = useTransition()
   const [isGenerating, startGenerating] = useTransition()
   // Getrennt von isGenerating: bleibt nach Abschluss noch kurz aktiv, damit
@@ -89,11 +95,14 @@ export function CoverLetterPanel({
     startGenerating(async () => {
       const result = await generateAndSaveCoverLetter({ jobRefnr, titel, arbeitgeber, ort })
       if (result.error !== null) {
-        toast.error(result.error)
+        // Beim Tageslimit die Limit-Karte zeigen statt einer Toast-Meldung
+        if (result.limitReached) setLimitReached(true)
+        else toast.error(result.error)
         setShowMascot(false)
         return
       }
       setText(result.coverLetter)
+      setRemaining(result.remaining)
       toast.success('Anschreiben erstellt und gespeichert.')
       setTimeout(() => setShowMascot(false), MASCOT_DONE_DISPLAY_MS)
     })
@@ -129,6 +138,11 @@ export function CoverLetterPanel({
     : null
 
   if (!text && !showMascot) {
+    // Limit erreicht und noch kein gespeichertes Anschreiben: dieselbe Karte
+    // wie bei der Zusammenfassung, nur mit Anschreiben-Text
+    if (limitReached) {
+      return <FeatureLimitNotice featureLabel="KI-Anschreiben" />
+    }
     return (
       <div className="border-border bg-background mt-6 rounded-xl border p-6 shadow-sm lg:p-8">
         <h2 className="text-foreground text-lg font-semibold">Dein Anschreiben</h2>
@@ -140,6 +154,9 @@ export function CoverLetterPanel({
           <Sparkles className="h-4 w-4" />
           Anschreiben mit KI erstellen
         </Button>
+        {remaining != null && (
+          <UsageRemainingHint label="Gratis KI-Anschreiben" remaining={remaining} />
+        )}
       </div>
     )
   }

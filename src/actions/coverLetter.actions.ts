@@ -7,6 +7,7 @@ import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { isRateLimited } from '@/lib/ai/rateLimit'
 import { consumeDailyUnique, refundDailyUnique, DAILY_LIMIT } from '@/lib/usage'
+import { isProUser } from '@/lib/pro'
 
 const inputSchema = z.object({
   jobRefnr: z.string().min(1),
@@ -22,7 +23,10 @@ const MAX_LETTERS_PER_MINUTE = 3
 // zweiten Gemini-Pro-Call mehr.
 export async function generateAndSaveCoverLetter(
   input: z.infer<typeof inputSchema>
-): Promise<{ error: string } | { error: null; coverLetter: string }> {
+): Promise<
+  | { error: string; limitReached?: boolean }
+  | { error: null; coverLetter: string; remaining: number | null }
+> {
   const parsed = inputSchema.safeParse(input)
   if (!parsed.success) return { error: 'Ungültige Job-Daten.' }
 
@@ -43,12 +47,19 @@ export async function generateAndSaveCoverLetter(
     .maybeSingle()
   if (!profile) return { error: 'Bitte fülle zuerst dein Profil aus.' }
 
-  // Freemium: 3 KI-Anschreiben pro Tag — dieselbe Stelle zählt nur einmal
-  const usage = await consumeDailyUnique('letter', user.id, parsed.data.jobRefnr)
-  if (!usage.allowed) {
-    return {
-      error: `Tageslimit erreicht: ${DAILY_LIMIT} KI-Anschreiben pro Tag sind kostenlos. Morgen geht's weiter — unbegrenzt mit Pro (bald verfügbar).`,
+  // Freemium: 3 KI-Anschreiben pro Tag — dieselbe Stelle zählt nur einmal,
+  // Pro (Admin-E-Mail) ist ausgenommen. remaining=null heißt unbegrenzt.
+  const isPro = isProUser(user.email)
+  let remaining: number | null = null
+  if (!isPro) {
+    const usage = await consumeDailyUnique('letter', user.id, parsed.data.jobRefnr)
+    if (!usage.allowed) {
+      return {
+        error: `Tageslimit erreicht: ${DAILY_LIMIT} KI-Anschreiben pro Tag sind kostenlos.`,
+        limitReached: true,
+      }
     }
+    remaining = usage.remaining
   }
 
   const { jobRefnr, titel, arbeitgeber } = parsed.data
@@ -76,7 +87,7 @@ export async function generateAndSaveCoverLetter(
   } catch (error) {
     console.error('Anschreiben-Generierung fehlgeschlagen:', error)
     // Gescheiterter Versuch soll kein Kontingent kosten
-    await refundDailyUnique('letter', user.id, jobRefnr)
+    if (!isPro) await refundDailyUnique('letter', user.id, jobRefnr)
     return { error: 'Anschreiben konnte nicht erstellt werden. Bitte versuche es erneut.' }
   }
 
@@ -96,5 +107,5 @@ export async function generateAndSaveCoverLetter(
     console.error('Anschreiben konnte nicht gespeichert werden:', saveError.code)
   }
 
-  return { error: null, coverLetter }
+  return { error: null, coverLetter, remaining }
 }
