@@ -58,8 +58,8 @@ export function SaveJobButton({
         return
       }
       if (result.requiresConfirmation) {
-        // Es steckt Arbeit in der Bewerbung — Stern bleibt gesetzt,
-        // gelöscht wird erst nach ausdrücklicher Bestätigung
+        // Es steckt Arbeit in der Bewerbung, daher bleibt der Stern gesetzt.
+        // Gelöscht wird erst nach ausdrücklicher Bestätigung.
         setIsSaved(true)
         toast.warning('Diese Bewerbung enthält Anschreiben, Match oder Notizen.', {
           description: 'Beim Entfernen geht das unwiderruflich verloren.',

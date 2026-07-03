@@ -6,7 +6,7 @@ import { getCreditPackage } from '@/constants/creditPackages'
 
 // Stripe-Webhook: einziger Ort, an dem Credits gutgeschrieben werden.
 // Signaturprüfung gegen STRIPE_WEBHOOK_SECRET; Idempotenz übernimmt
-// grant_credits (UNIQUE auf stripe_session_id) — Stripe-Retries und
+// grant_credits (UNIQUE auf stripe_session_id): Stripe-Retries und
 // doppelte Events sind damit harmlos.
 export async function POST(request: Request) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
   }
 
   // completed deckt Karten & Co. ab; async_payment_succeeded verzögerte
-  // Methoden (z. B. SEPA/Klarna) — payment_status schützt vor Gutschrift
+  // Methoden (z. B. SEPA/Klarna). payment_status schützt vor Gutschrift
   // vor Zahlungseingang
   if (
     event.type === 'checkout.session.completed' ||
@@ -39,8 +39,8 @@ export async function POST(request: Request) {
     const userId = session.metadata?.user_id
     const pkg = getCreditPackage(session.metadata?.package_id)
     if (!userId || !pkg) {
-      // Session gehört nicht zu einem Credit-Kauf (oder Metadaten fehlen) —
-      // 200, damit Stripe nicht endlos erneut zustellt
+      // Session gehört nicht zu einem Credit-Kauf (oder Metadaten fehlen),
+      // daher 200, damit Stripe nicht endlos erneut zustellt
       console.error('Stripe-Session ohne verwertbare Metadaten:', session.id)
       return NextResponse.json({ received: true })
     }

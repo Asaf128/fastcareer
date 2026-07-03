@@ -1,11 +1,11 @@
 import { ImageResponse } from 'next/og'
 
-// Social-Media-Vorschaubild (WhatsApp, LinkedIn, X …) — wird beim Build
+// Social-Media-Vorschaubild (WhatsApp, LinkedIn, X …): wird beim Build
 // einmalig gerendert und von Next automatisch als og:image registriert.
 // Farben = Brand-Tokens aus globals.css (--accent / --background); CSS-
 // Variablen sind hier nicht verfügbar, daher die Werte direkt.
 
-export const alt = 'Fastcareer — Jobs finden in Sekunden'
+export const alt = 'Fastcareer: Jobs finden in Sekunden'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -30,7 +30,7 @@ async function loadPlayfairDisplay(): Promise<ArrayBuffer | null> {
   }
 }
 
-// Dezente Kästchen wie im Tetris-Hero — Position/Größe in px
+// Dezente Kästchen wie im Tetris-Hero: Position/Größe in px
 const SQUARES = [
   { top: 60, left: 80, size: 44 },
   { top: 160, left: 200, size: 28 },
@@ -103,7 +103,7 @@ export default async function Image() {
             opacity: 0.9,
           }}
         >
-          Jobs finden in Sekunden — Anschreiben auf Knopfdruck
+          Jobs finden in Sekunden, Anschreiben auf Knopfdruck
         </div>
       </div>
     </div>,

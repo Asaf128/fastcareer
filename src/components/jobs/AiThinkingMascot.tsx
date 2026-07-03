@@ -11,7 +11,7 @@ interface AiThinkingMascotProps {
 const THOUGHT_INTERVAL_MS = 2000
 
 // Pixel-Geist im Pac-Man-Stil: o = Accent-Orange, w = Augenweiß,
-// b = Pupille, . = leer — bewusst verpixelt (crispEdges), warm und freundlich
+// b = Pupille, . = leer, bewusst verpixelt (crispEdges), warm und freundlich
 const PIXEL_ROWS = [
   '....oooo....',
   '..oooooooo..',
@@ -38,7 +38,7 @@ function truncate(value: string, max: number): string {
 
 /**
  * Gedanken-Pool aus den echten Daten der Stelle. Anfang und Ende erzählen
- * eine feste Mini-Geschichte, die Mitte wird pro Durchlauf gemischt — so
+ * eine feste Mini-Geschichte, die Mitte wird pro Durchlauf gemischt, so
  * wiederholt sich nichts und jede Generierung liest sich anders.
  */
 function buildThoughts(titel: string, arbeitgeber: string): string[] {
@@ -53,7 +53,7 @@ function buildThoughts(titel: string, arbeitgeber: string): string[] {
     'Hmm, das klingt noch steif …',
     'Besser. Viel besser.',
     'Hauptteil: deine Stärken …',
-    'Nichts erfinden — nur was wirklich in deinem Profil steht.',
+    'Nichts erfinden, nur was wirklich in deinem Profil steht.',
     'Formuliere die Einleitung um …',
     'Noch den Schluss abrunden …',
     'Kommas prüfen …',
@@ -68,7 +68,7 @@ function buildThoughts(titel: string, arbeitgeber: string): string[] {
 
 /**
  * Kleines Pixel-Maskottchen, das während der KI-Generierung über dem
- * Anschreiben-Feld sitzt und in einer Sprechblase kurze Gedanken zeigt —
+ * Anschreiben-Feld sitzt und in einer Sprechblase kurze Gedanken zeigt,
  * gespeist aus den echten Stellen-Daten, ohne sich zu wiederholen.
  */
 export function AiThinkingMascot({ phase, titel, arbeitgeber }: AiThinkingMascotProps) {

@@ -40,14 +40,14 @@ ${profilBlock}
 Stellenangebot:
 ${jobBlock}
 
-Schreibe NUR den Brieftext eines individuellen, überzeugenden Anschreibens auf Deutsch: beginnend mit der Anrede (z. B. "Sehr geehrte Damen und Herren,") und endend mit "Mit freundlichen Grüßen" gefolgt vom Namen der Person. KEINE Betreffzeile, KEINE Adressen, KEIN Datum — das ergänzt das System selbst. KEINERLEI Markdown-Formatierung (keine **Sterne**, keine Überschriften), nur reiner Fließtext. Beziehe dich konkret auf die Anforderungen der Stelle und die tatsächliche Erfahrung der Person aus dem Profil — erfinde keine Erfahrungen oder Fähigkeiten. Formeller, aber persönlicher Ton. Keine Platzhalter wie "[Name einfügen]", keine Meta-Kommentare.`,
+Schreibe NUR den Brieftext eines individuellen, überzeugenden Anschreibens auf Deutsch: beginnend mit der Anrede (z. B. "Sehr geehrte Damen und Herren,") und endend mit "Mit freundlichen Grüßen" gefolgt vom Namen der Person. KEINE Betreffzeile, KEINE Adressen, KEIN Datum, das ergänzt das System selbst. KEINERLEI Markdown-Formatierung (keine **Sterne**, keine Überschriften), nur reiner Fließtext. Beziehe dich konkret auf die Anforderungen der Stelle und die tatsächliche Erfahrung der Person aus dem Profil, erfinde keine Erfahrungen oder Fähigkeiten. Formeller, aber persönlicher Ton. Keine Platzhalter wie "[Name einfügen]", keine Meta-Kommentare.`,
           },
         ],
       },
     ],
     config: {
       systemInstruction:
-        'Du bist ein professioneller Karriereberater, der maßgeschneiderte Anschreiben auf Deutsch verfasst — sachlich, konkret, ohne Floskeln.',
+        'Du bist ein professioneller Karriereberater, der maßgeschneiderte Anschreiben auf Deutsch verfasst: sachlich, konkret, ohne Floskeln.',
     },
   })
 

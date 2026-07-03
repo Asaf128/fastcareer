@@ -70,7 +70,7 @@ export async function removeApplication(jobRefnr: string, options?: { force?: bo
 
   // Schutz vor versehentlichem Stern-Klick: Steckt in der Bewerbung bereits
   // Arbeit (Anschreiben, Match, Notizen, fortgeschrittener Status), wird erst
-  // eine Bestätigung verlangt — leere Bewerbungen gehen weiter ohne Reibung.
+  // eine Bestätigung verlangt. Leere Bewerbungen gehen weiter ohne Reibung.
   if (!options?.force) {
     const { data: existing } = await supabase
       .from('applications')

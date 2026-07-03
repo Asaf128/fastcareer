@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
-import { Check, Copy, Download, FileText, Send, Sparkles } from 'lucide-react'
+import { Check, Copy, Download, FileText, Send } from 'lucide-react'
 import { toast } from 'sonner'
 import { saveCoverLetter } from '@/actions/applications.actions'
 import { generateAndSaveCoverLetter } from '@/actions/coverLetter.actions'
@@ -24,7 +24,7 @@ interface CoverLetterPanelProps {
   kontaktEmail: string | null
   isAuthenticated: boolean
   hasProfile: boolean
-  /** Verbleibende KI-Anschreiben heute — null heißt unbegrenzt (Pro) */
+  /** Verbleibende KI-Anschreiben heute (null heißt unbegrenzt, Pro) */
   initialRemaining: number | null
   initialCoverLetter: string | null
   senderName: string | null
@@ -148,10 +148,9 @@ export function CoverLetterPanel({
         <h2 className="text-foreground text-lg font-semibold">Dein Anschreiben</h2>
         <p className="text-text-secondary mt-2 text-sm">
           Die KI erstellt aus deinem Profil und den Anforderungen der Stelle ein maßgeschneidertes
-          Anschreiben — dauert ca. 20–30 Sekunden.
+          Anschreiben. Das dauert ca. 20 bis 30 Sekunden.
         </p>
         <Button variant="accent" className="mt-4" onClick={handleGenerate}>
-          <Sparkles className="h-4 w-4" />
           Anschreiben mit KI erstellen
         </Button>
         {remaining != null && <UsageRemainingHint label="KI-Anschreiben" remaining={remaining} />}

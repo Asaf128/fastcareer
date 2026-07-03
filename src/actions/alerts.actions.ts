@@ -30,7 +30,7 @@ export async function createJobAlert(input: z.infer<typeof alertSchema>) {
 
   if ((count ?? 0) >= MAX_ALERTS_PER_USER) {
     return {
-      error: `Maximal ${MAX_ALERTS_PER_USER} Job-Alerts möglich — lösche zuerst einen im Profil.`,
+      error: `Maximal ${MAX_ALERTS_PER_USER} Job-Alerts möglich. Lösche zuerst einen im Profil.`,
     }
   }
 

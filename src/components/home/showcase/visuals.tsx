@@ -2,7 +2,7 @@ import { Check, Download, FileText, MapPin, Search, Send, Sparkles, Star } from 
 
 /**
  * Kompakte Nachbauten der echten UI als Illustrationen für die
- * Scroll-Experience — rein dekorativ, daher aria-hidden im ScrollShowcase.
+ * Scroll-Experience, rein dekorativ, daher aria-hidden im ScrollShowcase.
  */
 
 function MockCard({ children }: { children: React.ReactNode }) {
@@ -34,20 +34,18 @@ export function SearchVisual() {
         Jobs suchen
       </div>
       <div className="mt-4 space-y-2">
-        {['Pflegefachkraft (m/w/d) — Vivantes', 'Gesundheits- und Krankenpfleger — Charité'].map(
-          (titel) => (
-            <div
-              key={titel}
-              className="border-border flex items-center gap-3 rounded-lg border p-3"
-            >
-              <div className="min-w-0 flex-1">
-                <p className="text-foreground truncate text-xs font-semibold">{titel}</p>
-                <p className="text-text-secondary mt-1 text-[10px]">Berlin · Vollzeit</p>
-              </div>
-              <Star className="text-warning h-4 w-4 shrink-0" />
+        {[
+          'Pflegefachkraft (m/w/d) bei Vivantes',
+          'Gesundheits- und Krankenpfleger bei Charité',
+        ].map((titel) => (
+          <div key={titel} className="border-border flex items-center gap-3 rounded-lg border p-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-foreground truncate text-xs font-semibold">{titel}</p>
+              <p className="text-text-secondary mt-1 text-[10px]">Berlin · Vollzeit</p>
             </div>
-          )
-        )}
+            <Star className="text-warning h-4 w-4 shrink-0" />
+          </div>
+        ))}
       </div>
     </MockCard>
   )
@@ -148,16 +146,16 @@ export function PdfVisual() {
 export function BoardVisual() {
   const entries = [
     {
-      titel: 'Pflegefachkraft — Vivantes',
+      titel: 'Pflegefachkraft bei Vivantes',
       status: 'Interview',
       badge: 'bg-warning/10 text-warning',
     },
     {
-      titel: 'Stationsleitung — DRK Kliniken',
+      titel: 'Stationsleitung bei DRK Kliniken',
       status: 'Beworben',
       badge: 'bg-accent/10 text-accent',
     },
-    { titel: 'Krankenpfleger — Charité', status: 'Zusage', badge: 'bg-success/10 text-success' },
+    { titel: 'Krankenpfleger bei Charité', status: 'Zusage', badge: 'bg-success/10 text-success' },
   ]
   return (
     <MockCard>

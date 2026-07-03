@@ -16,10 +16,10 @@ const MENU_LINKS = [
 ] as const
 
 /**
- * Overlay mit verblurrtem Seitenhintergrund, beginnt unterhalb der Navbar —
+ * Overlay mit verblurrtem Seitenhintergrund, beginnt unterhalb der Navbar,
  * der Fastcareer-Schriftzug bleibt sichtbar, geschlossen wird über das
  * X in der Navbar (HeaderNav) oder Escape. Wichtig: per Portal direkt in
- * <body> — im Header würde dessen backdrop-blur das fixed-Overlay einfangen
+ * <body>, denn im Header würde dessen backdrop-blur das fixed-Overlay einfangen
  * und es öffnete sich innerhalb der Navbar.
  */
 export function MobileProfileMenu({ onClose }: MobileProfileMenuProps) {
@@ -52,7 +52,7 @@ export function MobileProfileMenu({ onClose }: MobileProfileMenuProps) {
       role="dialog"
       aria-modal="true"
       aria-label="Profilmenü"
-      // top-[65px] = Header-Höhe (h-16 + 1px Border) — die Navbar bleibt frei
+      // top-[65px] = Header-Höhe (h-16 + 1px Border), die Navbar bleibt frei
       className="bg-background/60 animate-fade-in fixed inset-x-0 top-[65px] bottom-0 z-40 flex flex-col backdrop-blur-xl sm:hidden"
     >
       <nav className="flex flex-1 flex-col items-center justify-center gap-9 pb-16">

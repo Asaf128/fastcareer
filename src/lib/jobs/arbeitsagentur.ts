@@ -30,7 +30,13 @@ export async function searchJobs(params: JobSearchParams): Promise<JobSearchResu
   })
   if (params.wo) query.set('wo', params.wo)
   if (params.umkreis) query.set('umkreis', String(params.umkreis))
-  if (params.arbeitszeit) query.set('arbeitszeit', params.arbeitszeit)
+  // Ausbildung ist bei der Arbeitsagentur kein Arbeitszeit-Wert, sondern ein
+  // eigener Angebotstyp (angebotsart=4 für Ausbildung/Duales Studium)
+  if (params.arbeitszeit === 'ausbildung') {
+    query.set('angebotsart', '4')
+  } else if (params.arbeitszeit) {
+    query.set('arbeitszeit', params.arbeitszeit)
+  }
   if (params.veroeffentlichtSeit)
     query.set('veroeffentlichtseit', String(params.veroeffentlichtSeit))
 

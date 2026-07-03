@@ -27,7 +27,7 @@ export default async function ProfilPage() {
     .eq('id', user.id)
     .maybeSingle()
 
-  // Signed URL, weil der cvs-Bucket privat ist (1 h gültig — reicht für die Seite)
+  // Signed URL, weil der cvs-Bucket privat ist (1 h gültig, reicht für die Seite)
   let cvUrl: string | null = null
   if (profile?.cv_path) {
     const { data: signed } = await supabase.storage

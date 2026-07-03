@@ -6,7 +6,7 @@
   --background: #fbfaf8;
   --foreground: #191919;
 
-  /* Akzent (1 Farbe in 3 Stufen) — hier anpassen für gesamtes Farbschema */
+  /* Akzent (1 Farbe in 3 Stufen): hier anpassen für gesamtes Farbschema */
   --accent: #cc785c;
   --accent-light: #e8b8a4;
   --accent-dark: #a35a41;
@@ -78,7 +78,7 @@ h4 {
 }
 
 /* ─── Basis ────────────────────────────────────────────────── */
-/* Bewusst KEIN globales scroll-behavior:smooth — das ließ Next.js'
+/* Bewusst KEIN globales scroll-behavior:smooth: Das ließ Next.js'
    Scroll-Reset auf Seitenwechseln nicht sauber ganz oben ankommen
    (die Animation zu einem inzwischen verschobenen Ziel-Offset lief ins
    Leere) und störte auch die JS-gesteuerten Scroll-Animationen. Wo
@@ -118,7 +118,7 @@ select:focus {
 }
 
 /* iOS Safari zoomt beim Fokussieren automatisch rein, wenn ein Formularfeld
-   eine Schriftgröße unter 16px hat — auf Mobile daher immer mind. 16px. */
+   eine Schriftgröße unter 16px hat. Auf Mobile daher immer mind. 16px. */
 @media (max-width: 767px) {
   input,
   textarea,
@@ -158,7 +158,7 @@ select:focus {
   transform-origin: top;
 }
 
-/* Reiner Opacity-Fade ohne Verschiebung — für Textwechsel in fixen Boxen
+/* Reiner Opacity-Fade ohne Verschiebung: für Textwechsel in fixen Boxen
    (z. B. die Gedanken-Sprechblase), wo nichts "springen" darf */
 @keyframes thoughtFade {
   from {
@@ -216,6 +216,6 @@ select:focus {
   background-clip: text;
 }
 
-/* Hinweis: bewusst KEIN prefers-reduced-motion-Override — die Animationen
+/* Hinweis: bewusst KEIN prefers-reduced-motion-Override, die Animationen
    sind Teil des Produkterlebnisses und sollen auch mit iOS
    "Bewegung reduzieren" sichtbar bleiben (Entscheidung des Betreibers). */

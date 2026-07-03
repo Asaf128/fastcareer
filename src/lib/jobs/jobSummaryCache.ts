@@ -52,7 +52,7 @@ export async function getOrCreateJobSummary(input: JobSummaryInput): Promise<Job
     return fallbackSummary(input)
   }
 
-  // Insert über den Service-Role-Client — die offene INSERT-Policy wurde
+  // Insert über den Service-Role-Client: die offene INSERT-Policy wurde
   // entfernt (Cache-Poisoning-Schutz), Clients können nicht mehr direkt schreiben.
   try {
     const admin = createAdminClient()

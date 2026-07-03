@@ -11,7 +11,7 @@ export type QuotaSource = 'pro' | 'free' | 'credit'
 
 export interface QuotaResult {
   allowed: boolean
-  /** Woraus der Aufruf bezahlt wurde — null, wenn nicht erlaubt */
+  /** Woraus der Aufruf bezahlt wurde, null wenn nicht erlaubt */
   source: QuotaSource | null
   /** Rest in der genutzten Quelle nach diesem Aufruf; null = unbegrenzt */
   remaining: number | null
@@ -23,7 +23,7 @@ export interface QuotaParams {
   feature: CreditFeature
   /** Redis-Schlüssel fürs Tageskontingent: User-ID oder `ip:<addr>` */
   userKey: string
-  /** null = anonym — dann gibt es keine Credits */
+  /** null = anonym, dann gibt es keine Credits */
   userId: string | null
   email: string | null | undefined
   jobRefnr: string
@@ -65,7 +65,7 @@ export async function refundAiQuota(params: QuotaParams, result: QuotaResult): P
 
 /**
  * Verfügbares Gesamt-Kontingent (Gratis heute + gekaufte Credits) nur
- * LESEN — für die Anzeige, ob ein Panel den Limit-Zustand zeigen muss.
+ * LESEN, für die Anzeige, ob ein Panel den Limit-Zustand zeigen muss.
  * null = unbegrenzt (Pro).
  */
 export async function peekAiQuota(

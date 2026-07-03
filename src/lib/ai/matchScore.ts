@@ -34,7 +34,7 @@ export async function calculateMatchScore(input: MatchScoreInput): Promise<Match
         role: 'user',
         parts: [
           {
-            text: `Bewerte, wie gut dieses Profil zu der Stelle passt (0–100).
+            text: `Bewerte, wie gut dieses Profil zu der Stelle passt (0 bis 100).
 
 Stelle: ${input.titel}
 Anforderungen: ${input.summary.anforderungen.join('; ') || 'keine Angaben'}
@@ -47,14 +47,14 @@ Sprachen: ${input.profile.languages.join(', ') || '-'}
 Berufserfahrung (JSON): ${JSON.stringify(input.profile.work_experience)}
 Ausbildung (JSON): ${JSON.stringify(input.profile.education)}
 
-Gib einen realistischen Score und 2–4 kurze Begründungspunkte auf Deutsch (je max. 12 Wörter, konkret: was passt, was fehlt).`,
+Gib einen realistischen Score und 2 bis 4 kurze Begründungspunkte auf Deutsch (je max. 12 Wörter, konkret: was passt, was fehlt).`,
           },
         ],
       },
     ],
     config: {
       systemInstruction:
-        'Du bist eine nüchterne Recruiting-KI. Bewerte ehrlich und differenziert — 100 nur bei perfekter Passung, unter 40 bei fehlenden Kernanforderungen. Antworte ausschließlich mit validem JSON gemäß Schema.',
+        'Du bist eine nüchterne Recruiting-KI. Bewerte ehrlich und differenziert: 100 nur bei perfekter Passung, unter 40 bei fehlenden Kernanforderungen. Antworte ausschließlich mit validem JSON gemäß Schema.',
       responseMimeType: 'application/json',
       responseSchema,
     },

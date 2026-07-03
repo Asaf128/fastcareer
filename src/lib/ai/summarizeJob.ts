@@ -66,7 +66,7 @@ ${input.beschreibung}`,
     ],
     config: {
       systemInstruction:
-        'Du extrahierst strukturierte Informationen aus Stellenanzeigen. Antworte ausschließlich mit validem JSON gemäß Schema, auf Deutsch, ohne Erfindungen — wenn eine Information fehlt, gib einen leeren String, ein leeres Array oder null zurück.',
+        'Du extrahierst strukturierte Informationen aus Stellenanzeigen. Antworte ausschließlich mit validem JSON gemäß Schema, auf Deutsch, ohne Erfindungen. Wenn eine Information fehlt, gib einen leeren String, ein leeres Array oder null zurück.',
       responseMimeType: 'application/json',
       responseSchema,
     },

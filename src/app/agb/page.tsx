@@ -36,7 +36,7 @@ export default function AgbPage() {
                 Ein Credit-Paket schaltet ein Nutzungskontingent für die KI-Funktionen frei. Die
                 Paketgröße gilt je Funktionsart: Ein 100er-Paket umfasst 100 KI-Zusammenfassungen,
                 100 Match-Berechnungen und 100 KI-Anschreiben. Für dieselbe Stellenanzeige wird pro
-                Funktion nur einmal ein Credit verbraucht — erneutes Öffnen oder Neu-Generieren
+                Funktion nur einmal ein Credit verbraucht; erneutes Öffnen oder Neu-Generieren
                 derselben Anzeige ist kostenfrei. Credits sind an das Nutzerkonto gebunden, nicht
                 übertragbar und verfallen nicht. Das tägliche Gratis-Kontingent wird stets vor den
                 gekauften Credits verbraucht. Schlägt eine KI-Generierung fehl, wird der Credit
@@ -77,7 +77,7 @@ export default function AgbPage() {
               <p>
                 Die KI-Funktionen werden mit hoher, aber nicht garantierter Verfügbarkeit
                 bereitgestellt. KI-generierte Inhalte (Zusammenfassungen, Match-Bewertungen,
-                Anschreiben) werden automatisiert erstellt und können Fehler enthalten — bitte prüfe
+                Anschreiben) werden automatisiert erstellt und können Fehler enthalten. Bitte prüfe
                 insbesondere Anschreiben vor dem Versand. Eine Garantie für den Erfolg von
                 Bewerbungen wird nicht übernommen.
               </p>

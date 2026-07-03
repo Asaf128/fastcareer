@@ -88,7 +88,7 @@ export async function getMatchScore(
     return { error: 'Match-Score konnte nicht berechnet werden. Bitte versuche es erneut.' }
   }
 
-  // Sofort speichern — ein erneuter Seitenbesuch kostet dann keinen zweiten
+  // Sofort speichern, ein erneuter Seitenbesuch kostet dann keinen zweiten
   // Gemini-Call mehr (gleiche Logik wie beim Anschreiben)
   const { error: saveError } = await supabase.from('applications').upsert(
     {

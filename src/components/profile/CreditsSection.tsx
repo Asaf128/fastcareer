@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { Sparkles } from 'lucide-react'
 import type { CreditFeature } from '@/lib/credits'
 
 interface CreditsSectionProps {
@@ -13,20 +12,17 @@ const LABELS: Record<CreditFeature, string> = {
   letter: 'Anschreiben',
 }
 
-/** Credit-Guthaben im Profil — mit Link zur Kaufseite. */
+/** Credit-Guthaben im Profil, mit Link zur Kaufseite. */
 export function CreditsSection({ balance }: CreditsSectionProps) {
   return (
     <section className="border-border bg-background mt-8 rounded-xl border p-6 shadow-sm">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-foreground flex items-center gap-2 text-lg font-semibold">
-            <Sparkles className="text-accent h-4 w-4" />
-            Meine Credits
-          </h2>
+          <h2 className="text-foreground text-lg font-semibold">Meine Credits</h2>
           <p className="text-text-secondary mt-1 text-sm">
             {balance
-              ? 'Dein Guthaben — wird genutzt, sobald das Gratis-Tageskontingent aufgebraucht ist.'
-              : 'Du hast noch keine Credits — 3 Nutzungen pro KI-Feature sind täglich gratis.'}
+              ? 'Dein Guthaben wird genutzt, sobald das Gratis-Tageskontingent aufgebraucht ist.'
+              : 'Du hast noch keine Credits. 3 Nutzungen pro KI-Feature sind täglich gratis.'}
           </p>
         </div>
         <Link href="/credits" className="text-accent shrink-0 text-sm font-medium hover:underline">

@@ -99,14 +99,14 @@ export async function uploadAndParseCv(
 
   const base64 = buffer.toString('base64')
 
-  // Freemium: 3 Lebenslauf-Analysen pro Tag — erst NACH den Datei-Checks
+  // Freemium: 3 Lebenslauf-Analysen pro Tag, erst NACH den Datei-Checks
   // verbrauchen, damit ein abgelehnter Upload kein Kontingent kostet.
   // Pro (Admin-E-Mail) ist ausgenommen.
   if (!isProUser(user.email)) {
     const usage = await consumeDailyCount('cv', user.id)
     if (!usage.allowed) {
       return {
-        error: `Tageslimit erreicht: ${DAILY_LIMIT} Lebenslauf-Analysen pro Tag sind kostenlos. Morgen geht's weiter — unbegrenzt mit Pro (bald verfügbar).`,
+        error: `Tageslimit erreicht: ${DAILY_LIMIT} Lebenslauf-Analysen pro Tag sind kostenlos. Morgen geht's weiter, unbegrenzt mit Pro (bald verfügbar).`,
       }
     }
   }
@@ -143,7 +143,7 @@ export async function uploadAndParseCv(
   if (profileError) {
     console.error('CV-Pfad konnte nicht gespeichert werden:', profileError.code)
   } else if (oldCvPath && oldCvPath !== path) {
-    // Alten Lebenslauf entfernen — sonst sammeln sich Dateien im Bucket (DSGVO)
+    // Alten Lebenslauf entfernen, sonst sammeln sich Dateien im Bucket (DSGVO)
     const { error: removeError } = await supabase.storage.from('cvs').remove([oldCvPath])
     if (removeError) {
       console.error('Alter Lebenslauf konnte nicht gelöscht werden:', removeError.message)

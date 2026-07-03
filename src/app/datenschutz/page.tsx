@@ -58,7 +58,7 @@ export default function DatenschutzPage() {
                 Bei Nutzung der Jobsuche werden die eingegebenen Suchbegriffe serverseitig an die
                 offene Schnittstelle der Bundesagentur für Arbeit weitergeleitet, um passende
                 Stellenangebote abzurufen. Für Ortsvorschläge wird serverseitig die Schnittstelle
-                von openplz.de abgefragt. In beiden Fällen erfolgt die Abfrage über unseren Server —
+                von openplz.de abgefragt. In beiden Fällen erfolgt die Abfrage über unseren Server;
                 es besteht keine direkte Verbindung zwischen deinem Browser und diesen Diensten. Es
                 werden keine Suchanfragen dauerhaft gespeichert oder Profilen zugeordnet.
               </p>
@@ -73,7 +73,7 @@ export default function DatenschutzPage() {
                 dir ein Stellenangebot, speichern wir die Referenznummer, den Titel und den
                 Arbeitgeber der Stelle, verknüpft mit deinem Konto, damit du sie in deiner Merkliste
                 wiederfindest. Legst du ein Profil an oder lädst deinen Lebenslauf hoch, speichern
-                wir auch diese Daten (Profildaten, Lebenslauf-PDF) bei Supabase — zugriffsgeschützt
+                wir auch diese Daten (Profildaten, Lebenslauf-PDF) bei Supabase, zugriffsgeschützt
                 und nur für dich abrufbar; beim Hochladen eines neuen Lebenslaufs wird der alte
                 gelöscht. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Erfüllung des
                 Nutzungsvertrags). Diese Daten werden gelöscht, wenn du dein Konto löschen lässt
@@ -94,15 +94,15 @@ export default function DatenschutzPage() {
                 (Suchbegriff, Ort, Umkreis, Arbeitszeit) verknüpft mit deinem Konto und senden dir
                 höchstens einmal täglich neue passende Stellenangebote. Rechtsgrundlage ist Art. 6
                 Abs. 1 lit. b DSGVO (Erfüllung des Nutzungsvertrags). Du kannst jeden Job-Alert
-                jederzeit in deinem Profil löschen — damit endet der Versand sofort.
+                jederzeit in deinem Profil löschen, damit endet der Versand sofort.
               </p>
             </section>
 
             <section>
               <h2 className="mb-2 font-medium">7. KI-Funktionen (Google Cloud Vertex AI)</h2>
               <p>
-                Für die KI-Funktionen — Zusammenfassen von Stellenanzeigen, Auslesen deines
-                hochgeladenen Lebenslaufs, Erstellen von Anschreiben und Match-Score — nutzen wir
+                Für die KI-Funktionen (Zusammenfassen von Stellenanzeigen, Auslesen deines
+                hochgeladenen Lebenslaufs, Erstellen von Anschreiben und Match-Score) nutzen wir
                 Google Cloud Vertex AI (Google Ireland Ltd.), Serverstandort EU. Dabei werden die
                 jeweils nötigen Daten (Stellenbeschreibung, dein Lebenslauf bzw. deine Profildaten)
                 zur Verarbeitung an Google übermittelt; sie werden dort nicht zum Training von
@@ -140,7 +140,7 @@ export default function DatenschutzPage() {
               <p>
                 Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der
                 Verarbeitung, Datenübertragbarkeit sowie Widerspruch gegen die Verarbeitung deiner
-                personenbezogenen Daten (Art. 15–21 DSGVO). Wende dich dazu an die oben genannte
+                personenbezogenen Daten (Art. 15 bis 21 DSGVO). Wende dich dazu an die oben genannte
                 Kontaktadresse. Außerdem steht dir ein Beschwerderecht bei einer
                 Datenschutzaufsichtsbehörde zu.
               </p>

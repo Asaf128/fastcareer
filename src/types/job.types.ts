@@ -1,4 +1,4 @@
-export type Arbeitszeit = 'vz' | 'tz' | 'snw' | 'ho'
+export type Arbeitszeit = 'vz' | 'tz' | 'snw' | 'ho' | 'mj' | 'ausbildung'
 
 export interface JobSearchParams {
   was: string

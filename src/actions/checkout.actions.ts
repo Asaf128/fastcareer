@@ -13,7 +13,7 @@ const inputSchema = z.object({
 /**
  * Startet den Stripe-Checkout für ein Credit-Paket. Die Gutschrift passiert
  * NICHT hier und auch nicht auf der Danke-Seite, sondern ausschließlich im
- * Webhook (signaturgeprüft, idempotent) — sonst könnte man sich Credits
+ * Webhook (signaturgeprüft, idempotent), sonst könnte man sich Credits
  * ohne Zahlung erschleichen.
  */
 export async function createCheckoutSession(
@@ -46,7 +46,7 @@ export async function createCheckoutSession(
             currency: 'eur',
             unit_amount: pkg.priceCents,
             product_data: {
-              name: `Fastcareer ${pkg.name}-Paket — ${pkg.credits} Credits`,
+              name: `Fastcareer ${pkg.name}-Paket: ${pkg.credits} Credits`,
               description: `${pkg.credits} KI-Zusammenfassungen + ${pkg.credits} Match-Berechnungen + ${pkg.credits} Anschreiben. Credits verfallen nicht.`,
             },
           },
@@ -58,7 +58,7 @@ export async function createCheckoutSession(
         package_id: pkg.id,
       },
       // Widerruf bei digitalen Inhalten: sofortige Bereitstellung + Erlöschen
-      // des Widerrufsrechts — Zustimmung direkt im Checkout (§ 356 Abs. 5 BGB)
+      // des Widerrufsrechts, Zustimmung direkt im Checkout (§ 356 Abs. 5 BGB)
       custom_text: {
         submit: {
           message:

@@ -14,7 +14,7 @@ const codeSchema = z.object({
   next: z.string().optional(),
 })
 
-// Nur app-interne Ziele zulassen — sonst wäre /login?next=https://boese.seite
+// Nur app-interne Ziele zulassen, sonst wäre /login?next=https://boese.seite
 // ein Open-Redirect nach erfolgreichem Login.
 function safeRedirectTarget(next: string | undefined): string {
   if (next && next.startsWith('/') && !next.startsWith('//')) return next
