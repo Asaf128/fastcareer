@@ -84,7 +84,7 @@ export function MatchScore({
       </div>
 
       {!result && remaining != null && (
-        <UsageRemainingHint label="Gratis Match-Berechnungen" remaining={remaining} />
+        <UsageRemainingHint label="Match-Berechnungen" remaining={remaining} />
       )}
 
       {result && (

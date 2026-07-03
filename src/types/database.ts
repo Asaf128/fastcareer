@@ -89,6 +89,36 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_purchases: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          credits: number
+          id: string
+          package_id: string
+          stripe_session_id: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          credits: number
+          id?: string
+          package_id: string
+          stripe_session_id: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          credits?: number
+          id?: string
+          package_id?: string
+          stripe_session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       credit_usages: {
         Row: {
           created_at: string
@@ -468,6 +498,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      grant_credits: {
+        Args: {
+          p_user_id: string
+          p_stripe_session_id: string
+          p_package_id: string
+          p_credits: number
+          p_amount_cents: number
+        }
+        Returns: boolean
+      }
       consume_credit: {
         Args: { p_feature: string; p_job_refnr: string }
         Returns: {

@@ -5,7 +5,9 @@ import { Section } from '@/components/shared/Section'
 import { ProfileForm } from '@/components/profile/ProfileForm'
 import { DeleteAccountSection } from '@/components/profile/DeleteAccountSection'
 import { JobAlertsSection } from '@/components/profile/JobAlertsSection'
+import { CreditsSection } from '@/components/profile/CreditsSection'
 import { createClient } from '@/lib/supabase/server'
+import { getCreditBalance } from '@/lib/credits'
 
 export const metadata: Metadata = {
   title: 'Mein Profil',
@@ -34,6 +36,8 @@ export default async function ProfilPage() {
     cvUrl = signed?.signedUrl ?? null
   }
 
+  const balance = await getCreditBalance()
+
   const { data: alerts } = await supabase
     .from('job_alerts')
     .select('id, was, wo, arbeitszeit')
@@ -49,6 +53,7 @@ export default async function ProfilPage() {
         </p>
 
         <ProfileForm initialProfile={profile} cvUrl={cvUrl} />
+        <CreditsSection balance={balance} />
         <JobAlertsSection alerts={alerts ?? []} />
         <DeleteAccountSection />
       </Container>

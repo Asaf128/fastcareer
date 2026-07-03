@@ -139,7 +139,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
             <JobSummary summary={summary} />
             {summaryRemaining != null && (
               <UsageRemainingHint
-                label="Gratis KI-Zusammenfassungen"
+                label="KI-Zusammenfassungen"
                 remaining={summaryRemaining}
                 showLoginLink={!user}
               />

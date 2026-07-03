@@ -154,9 +154,7 @@ export function CoverLetterPanel({
           <Sparkles className="h-4 w-4" />
           Anschreiben mit KI erstellen
         </Button>
-        {remaining != null && (
-          <UsageRemainingHint label="Gratis KI-Anschreiben" remaining={remaining} />
-        )}
+        {remaining != null && <UsageRemainingHint label="KI-Anschreiben" remaining={remaining} />}
       </div>
     )
   }
