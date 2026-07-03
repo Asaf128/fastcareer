@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 import { BackButton } from '@/components/shared/BackButton'
 import { Container } from '@/components/shared/Container'
@@ -9,10 +10,13 @@ import { MatchScore } from '@/components/jobs/MatchScore'
 import { CoverLetterPanel } from '@/components/jobs/CoverLetterPanel'
 import { ApplicationChecklist } from '@/components/jobs/ApplicationChecklist'
 import { OriginalListing } from '@/components/jobs/OriginalListing'
+import { SummaryLimitNotice, SummaryTasterHint } from '@/components/jobs/UsageLimit'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
+import { consumeDailyUnique } from '@/lib/usage'
 import { createClient } from '@/lib/supabase/server'
 import type { ApplicationStatus } from '@/types/application.types'
+import type { JobSummary as JobSummaryData } from '@/types/ai.types'
 
 interface JobDetailPageProps {
   params: Promise<{ refnr: string }>
@@ -68,13 +72,24 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
   const resolvedArbeitgeber = arbeitgeber ?? application?.arbeitgeber ?? ''
   const resolvedOrt = ort ?? application?.ort ?? ''
 
-  const summary = await getOrCreateJobSummary({
-    refnr,
-    titel: resolvedTitel,
-    arbeitgeber: resolvedArbeitgeber,
-    ort: resolvedOrt,
-    beschreibung: detail.beschreibung,
-  })
+  // Freemium-Kontingent: 3 KI-Zusammenfassungen pro Tag — angemeldet per
+  // User-ID, anonym per IP (Schnupper-Kontingent). Dieselbe Anzeige am
+  // selben Tag erneut zu öffnen verbraucht nichts.
+  const requestHeaders = await headers()
+  const ip = requestHeaders.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
+  const usageKey = user ? user.id : `ip:${ip}`
+  const usage = await consumeDailyUnique('summary', usageKey, refnr)
+
+  let summary: JobSummaryData | null = null
+  if (usage.allowed) {
+    summary = await getOrCreateJobSummary({
+      refnr,
+      titel: resolvedTitel,
+      arbeitgeber: resolvedArbeitgeber,
+      ort: resolvedOrt,
+      beschreibung: detail.beschreibung,
+    })
+  }
 
   // Anschreiben wird nicht mehr beim Seitenaufbau generiert (teurer Pro-Call,
   // blockierte das Rendering) — das passiert auf Klick im CoverLetterPanel
@@ -99,7 +114,14 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
           <OriginalListing kontaktEmail={detail.kontaktEmail} quelleUrl={detail.quelleUrl} />
         </div>
 
-        <JobSummary summary={summary} />
+        {summary ? (
+          <>
+            <JobSummary summary={summary} />
+            {!user && <SummaryTasterHint remaining={usage.remaining} />}
+          </>
+        ) : (
+          <SummaryLimitNotice isAuthenticated={Boolean(user)} />
+        )}
 
         <MatchScore
           jobRefnr={refnr}

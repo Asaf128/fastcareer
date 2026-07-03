@@ -6,6 +6,7 @@ import { calculateMatchScore } from '@/lib/ai/matchScore'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { isRateLimited } from '@/lib/ai/rateLimit'
+import { consumeDailyUnique, refundDailyUnique, DAILY_LIMIT } from '@/lib/usage'
 import type { MatchScoreResult } from '@/types/ai.types'
 
 const inputSchema = z.object({
@@ -40,6 +41,14 @@ export async function getMatchScore(
     .maybeSingle()
   if (!profile) return { error: 'Bitte fülle zuerst dein Profil aus.' }
 
+  // Freemium: 3 Match-Scores pro Tag — dieselbe Stelle zählt nur einmal
+  const usage = await consumeDailyUnique('match', user.id, parsed.data.jobRefnr)
+  if (!usage.allowed) {
+    return {
+      error: `Tageslimit erreicht: ${DAILY_LIMIT} Match-Scores pro Tag sind kostenlos. Morgen geht's weiter — unbegrenzt mit Pro (bald verfügbar).`,
+    }
+  }
+
   let beschreibung = ''
   try {
     const detail = await getJobDetail(parsed.data.jobRefnr)
@@ -61,6 +70,8 @@ export async function getMatchScore(
     result = await calculateMatchScore({ titel: parsed.data.titel, summary, profile })
   } catch (error) {
     console.error('Match-Score fehlgeschlagen:', error)
+    // Gescheiterter Versuch soll kein Kontingent kosten
+    await refundDailyUnique('match', user.id, parsed.data.jobRefnr)
     return { error: 'Match-Score konnte nicht berechnet werden. Bitte versuche es erneut.' }
   }
 

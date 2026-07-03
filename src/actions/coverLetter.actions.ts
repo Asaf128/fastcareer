@@ -6,6 +6,7 @@ import { generateCoverLetter } from '@/lib/ai/generateCoverLetter'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { isRateLimited } from '@/lib/ai/rateLimit'
+import { consumeDailyUnique, refundDailyUnique, DAILY_LIMIT } from '@/lib/usage'
 
 const inputSchema = z.object({
   jobRefnr: z.string().min(1),
@@ -42,6 +43,14 @@ export async function generateAndSaveCoverLetter(
     .maybeSingle()
   if (!profile) return { error: 'Bitte fülle zuerst dein Profil aus.' }
 
+  // Freemium: 3 KI-Anschreiben pro Tag — dieselbe Stelle zählt nur einmal
+  const usage = await consumeDailyUnique('letter', user.id, parsed.data.jobRefnr)
+  if (!usage.allowed) {
+    return {
+      error: `Tageslimit erreicht: ${DAILY_LIMIT} KI-Anschreiben pro Tag sind kostenlos. Morgen geht's weiter — unbegrenzt mit Pro (bald verfügbar).`,
+    }
+  }
+
   const { jobRefnr, titel, arbeitgeber } = parsed.data
   const ort = parsed.data.ort ?? ''
 
@@ -66,6 +75,8 @@ export async function generateAndSaveCoverLetter(
     coverLetter = await generateCoverLetter({ titel, arbeitgeber, ort, summary, profile })
   } catch (error) {
     console.error('Anschreiben-Generierung fehlgeschlagen:', error)
+    // Gescheiterter Versuch soll kein Kontingent kosten
+    await refundDailyUnique('letter', user.id, jobRefnr)
     return { error: 'Anschreiben konnte nicht erstellt werden. Bitte versuche es erneut.' }
   }
 
