@@ -3,13 +3,14 @@
 import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { cn } from '@/lib/cn'
 import {
   APPLICATION_STATUSES,
   APPLICATION_STATUS_LABELS,
   type ApplicationStatus,
 } from '@/types/application.types'
 
-interface MobileStatusPagerProps {
+interface StatusFilterPagerProps {
   activeFilter: ApplicationStatus | null
   children: React.ReactNode
 }
@@ -24,11 +25,13 @@ function pageHref(status: ApplicationStatus | null): string {
 }
 
 /**
- * Mobil ist immer nur eine Status-Kategorie sichtbar, Wechsel per
- * Pfeil-Buttons oder horizontalem Swipe über der Liste. Auf Desktop
- * bleiben die Filter-Chips, hier wird nur durchgereicht.
+ * Status-Filter für "Meine Bewerbungen" — Desktop-Chips und mobiler
+ * Pfeil-/Swipe-Umschalter teilen sich denselben optimistischen Zustand: Ein
+ * Klick/Swipe wechselt die aktive Kategorie SOFORT (statt auf die
+ * Server-Navigation zu warten, die spürbar hinterherhinkte) und dimmt die
+ * Liste, bis die neuen Daten da sind.
  */
-export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerProps) {
+export function StatusFilterPager({ activeFilter, children }: StatusFilterPagerProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const touchStartRef = useRef<{ x: number; y: number } | null>(null)
@@ -54,7 +57,7 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
   const next = index < PAGES.length - 1 ? PAGES[index + 1] : undefined
 
   function goTo(status: ApplicationStatus | null | undefined) {
-    if (status === undefined || isPending) return
+    if (status === undefined || isPending || status === displayedFilter) return
     setOptimisticFilter(status)
     startTransition(() => {
       router.push(pageHref(status))
@@ -80,6 +83,27 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
 
   return (
     <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+      {/* Desktop: Filter-Chips */}
+      <nav aria-label="Nach Status filtern" className="mb-6 hidden flex-wrap gap-2 sm:flex">
+        {PAGES.map((status) => (
+          <button
+            key={status ?? 'alle'}
+            type="button"
+            onClick={() => goTo(status)}
+            disabled={isPending}
+            className={cn(
+              'rounded-full border px-3.5 py-1.5 text-sm transition-colors duration-150 disabled:cursor-default',
+              displayedFilter === status
+                ? 'border-accent bg-accent text-white'
+                : 'border-border text-text-secondary hover:border-accent hover:text-accent'
+            )}
+          >
+            {status ? APPLICATION_STATUS_LABELS[status] : 'Alle'}
+          </button>
+        ))}
+      </nav>
+
+      {/* Mobil: Pfeile + Swipe statt Chips */}
       <div className="mb-6 flex items-center justify-between gap-2 sm:hidden">
         <button
           type="button"

@@ -27,7 +27,7 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Jobsuche-Komponenten (JobCard, JobSearchForm): `src/components/suche/`
 - Login (6-stelliger E-Mail-Code, zweistufiges Formular): `src/app/login/page.tsx`, `src/components/auth/LoginForm.tsx`
 - Auth-Callback (Code-Exchange, nur noch Fallback für ältere Magic-Link-E-Mails): `src/app/auth/callback/route.ts`
-- Meine Bewerbungen (Status-Pipeline gespeichert/beworben/interview/zusage/absage, Filter-Chips, Badges): `src/app/bewerbungen/page.tsx`; Status-Typen/Labels in `src/types/application.types.ts`. `/favoriten` ist ein reiner Redirect dorthin (alte Links bleiben gültig); mobiler Kategorie-Wechsler (Pfeile + Swipe): `src/components/bewerbungen/MobileStatusPager.tsx`
+- Meine Bewerbungen (Status-Pipeline gespeichert/beworben/interview/zusage/absage, Filter-Chips, Badges): `src/app/bewerbungen/page.tsx`; Status-Typen/Labels in `src/types/application.types.ts`. `/favoriten` ist ein reiner Redirect dorthin (alte Links bleiben gültig); Status-Filter mit sofortigem optimistischem Feedback (Desktop-Chips + mobiler Pfeile/Swipe-Wechsler): `src/components/bewerbungen/StatusFilterPager.tsx`
 - Auth Server Actions (Code anfordern via `signInWithOtp`, Code prüfen via `verifyOtp`, Logout): `src/actions/auth.actions.ts`
 - Arbeitsagentur-API-Anbindung: `src/lib/jobs/arbeitsagentur.ts`, `src/lib/jobs/arbeitsagentur-detail.ts`
 - Orte/PLZ-Lookup: `src/lib/jobs/openplz.ts`
