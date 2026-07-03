@@ -1,4 +1,4 @@
-import { Redis } from '@upstash/redis'
+import { getRedis } from '@/lib/redis'
 
 // Rate-Limiter für teure KI-Aufrufe. Läuft über Upstash Redis (Fixed Window),
 // damit das Limit über alle Serverless-Instanzen hinweg gilt — eine In-Memory-
@@ -6,16 +6,6 @@ import { Redis } from '@upstash/redis'
 // Ohne Upstash-Env-Vars (z. B. lokal) greift der In-Memory-Fallback.
 const WINDOW_MS = 60_000
 const MAX_REQUESTS_PER_WINDOW = 20
-
-let redisClient: Redis | null = null
-
-function getRedis(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN
-  if (!url || !token) return null
-  redisClient ??= new Redis({ url, token })
-  return redisClient
-}
 
 const requestLog = new Map<string, number[]>()
 
