@@ -24,11 +24,11 @@ export const metadata: Metadata = {
   title: { default: 'Fastcareer — Jobs finden in Sekunden', template: '%s | Fastcareer' },
   description:
     'Fastcareer durchsucht offene Stellen der Arbeitsagentur nach Beruf und Ort — schnell, übersichtlich, ohne Umwege.',
+  // og:image kommt aus src/app/opengraph-image.tsx (Next-Konvention)
   openGraph: {
     type: 'website',
     locale: 'de_DE',
     siteName: 'Fastcareer',
-    images: [{ url: '/images/og-default.jpg', width: 1200, height: 630 }],
   },
   twitter: { card: 'summary_large_image' },
   robots: { index: true, follow: true },
