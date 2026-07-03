@@ -6,8 +6,8 @@ import { generateCoverLetter } from '@/lib/ai/generateCoverLetter'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { isRateLimited } from '@/lib/ai/rateLimit'
-import { consumeDailyUnique, refundDailyUnique, DAILY_LIMIT } from '@/lib/usage'
-import { isProUser } from '@/lib/pro'
+import { DAILY_LIMIT } from '@/lib/usage'
+import { consumeAiQuota, refundAiQuota, type QuotaParams } from '@/lib/quota'
 
 const inputSchema = z.object({
   jobRefnr: z.string().min(1),
@@ -47,19 +47,21 @@ export async function generateAndSaveCoverLetter(
     .maybeSingle()
   if (!profile) return { error: 'Bitte fülle zuerst dein Profil aus.' }
 
-  // Freemium: 3 KI-Anschreiben pro Tag — dieselbe Stelle zählt nur einmal,
-  // Pro (Admin-E-Mail) ist ausgenommen. remaining=null heißt unbegrenzt.
-  const isPro = isProUser(user.email)
-  let remaining: number | null = null
-  if (!isPro) {
-    const usage = await consumeDailyUnique('letter', user.id, parsed.data.jobRefnr)
-    if (!usage.allowed) {
-      return {
-        error: `Tageslimit erreicht: ${DAILY_LIMIT} KI-Anschreiben pro Tag sind kostenlos.`,
-        limitReached: true,
-      }
+  // Kontingent-Kaskade: Pro → 3 Gratis/Tag → gekaufte Credits. Dieselbe
+  // Stelle zählt nur einmal. remaining=null heißt unbegrenzt (Pro).
+  const quotaParams: QuotaParams = {
+    feature: 'letter',
+    userKey: user.id,
+    userId: user.id,
+    email: user.email,
+    jobRefnr: parsed.data.jobRefnr,
+  }
+  const quota = await consumeAiQuota(quotaParams)
+  if (!quota.allowed) {
+    return {
+      error: `Tageslimit erreicht: ${DAILY_LIMIT} KI-Anschreiben pro Tag sind kostenlos.`,
+      limitReached: true,
     }
-    remaining = usage.remaining
   }
 
   const { jobRefnr, titel, arbeitgeber } = parsed.data
@@ -87,7 +89,7 @@ export async function generateAndSaveCoverLetter(
   } catch (error) {
     console.error('Anschreiben-Generierung fehlgeschlagen:', error)
     // Gescheiterter Versuch soll kein Kontingent kosten
-    if (!isPro) await refundDailyUnique('letter', user.id, jobRefnr)
+    await refundAiQuota(quotaParams, quota)
     return { error: 'Anschreiben konnte nicht erstellt werden. Bitte versuche es erneut.' }
   }
 
@@ -107,5 +109,5 @@ export async function generateAndSaveCoverLetter(
     console.error('Anschreiben konnte nicht gespeichert werden:', saveError.code)
   }
 
-  return { error: null, coverLetter, remaining }
+  return { error: null, coverLetter, remaining: quota.remaining }
 }

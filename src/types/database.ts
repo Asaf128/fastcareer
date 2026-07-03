@@ -65,6 +65,54 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_balances: {
+        Row: {
+          letter_credits: number
+          match_credits: number
+          summary_credits: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          letter_credits?: number
+          match_credits?: number
+          summary_credits?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          letter_credits?: number
+          match_credits?: number
+          summary_credits?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      credit_usages: {
+        Row: {
+          created_at: string
+          feature: string
+          id: string
+          job_refnr: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feature: string
+          id?: string
+          job_refnr: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feature?: string
+          id?: string
+          job_refnr?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       job_alerts: {
         Row: {
           arbeitszeit: string
@@ -420,7 +468,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      consume_credit: {
+        Args: { p_feature: string; p_job_refnr: string }
+        Returns: {
+          allowed: boolean
+          remaining: number
+          charged: boolean
+        }[]
+      }
+      refund_credit: {
+        Args: { p_feature: string; p_job_refnr: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

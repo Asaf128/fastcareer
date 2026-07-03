@@ -6,8 +6,8 @@ import { calculateMatchScore } from '@/lib/ai/matchScore'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { isRateLimited } from '@/lib/ai/rateLimit'
-import { consumeDailyUnique, refundDailyUnique, DAILY_LIMIT } from '@/lib/usage'
-import { isProUser } from '@/lib/pro'
+import { DAILY_LIMIT } from '@/lib/usage'
+import { consumeAiQuota, refundAiQuota, type QuotaParams } from '@/lib/quota'
 import type { MatchScoreResult } from '@/types/ai.types'
 
 const inputSchema = z.object({
@@ -45,19 +45,21 @@ export async function getMatchScore(
     .maybeSingle()
   if (!profile) return { error: 'Bitte fülle zuerst dein Profil aus.' }
 
-  // Freemium: 3 Match-Scores pro Tag — dieselbe Stelle zählt nur einmal,
-  // Pro (Admin-E-Mail) ist ausgenommen. remaining=null heißt unbegrenzt.
-  const isPro = isProUser(user.email)
-  let remaining: number | null = null
-  if (!isPro) {
-    const usage = await consumeDailyUnique('match', user.id, parsed.data.jobRefnr)
-    if (!usage.allowed) {
-      return {
-        error: `Tageslimit erreicht: ${DAILY_LIMIT} Match-Scores pro Tag sind kostenlos.`,
-        limitReached: true,
-      }
+  // Kontingent-Kaskade: Pro → 3 Gratis/Tag → gekaufte Credits. Dieselbe
+  // Stelle zählt nur einmal. remaining=null heißt unbegrenzt (Pro).
+  const quotaParams: QuotaParams = {
+    feature: 'match',
+    userKey: user.id,
+    userId: user.id,
+    email: user.email,
+    jobRefnr: parsed.data.jobRefnr,
+  }
+  const quota = await consumeAiQuota(quotaParams)
+  if (!quota.allowed) {
+    return {
+      error: `Tageslimit erreicht: ${DAILY_LIMIT} Match-Scores pro Tag sind kostenlos.`,
+      limitReached: true,
     }
-    remaining = usage.remaining
   }
 
   let beschreibung = ''
@@ -82,7 +84,7 @@ export async function getMatchScore(
   } catch (error) {
     console.error('Match-Score fehlgeschlagen:', error)
     // Gescheiterter Versuch soll kein Kontingent kosten
-    if (!isPro) await refundDailyUnique('match', user.id, parsed.data.jobRefnr)
+    await refundAiQuota(quotaParams, quota)
     return { error: 'Match-Score konnte nicht berechnet werden. Bitte versuche es erneut.' }
   }
 
@@ -104,5 +106,5 @@ export async function getMatchScore(
     console.error('Match-Score konnte nicht gespeichert werden:', saveError.code)
   }
 
-  return { error: null, result, remaining }
+  return { error: null, result, remaining: quota.remaining }
 }
