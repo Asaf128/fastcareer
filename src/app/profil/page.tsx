@@ -4,10 +4,10 @@ import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { ProfileForm } from '@/components/profile/ProfileForm'
 import { DeleteAccountSection } from '@/components/profile/DeleteAccountSection'
-import { JobAlertsSection } from '@/components/profile/JobAlertsSection'
 import { CreditsSection } from '@/components/profile/CreditsSection'
 import { createClient } from '@/lib/supabase/server'
 import { getCreditBalance } from '@/lib/credits'
+import { isProUser } from '@/lib/pro'
 
 export const metadata: Metadata = {
   title: 'Mein Profil',
@@ -38,12 +38,6 @@ export default async function ProfilPage() {
 
   const balance = await getCreditBalance()
 
-  const { data: alerts } = await supabase
-    .from('job_alerts')
-    .select('id, was, wo, arbeitszeit')
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
-
   return (
     <Section className="py-10 lg:py-14">
       <Container className="max-w-2xl">
@@ -53,8 +47,7 @@ export default async function ProfilPage() {
         </p>
 
         <ProfileForm initialProfile={profile} cvUrl={cvUrl} />
-        <CreditsSection balance={balance} />
-        <JobAlertsSection alerts={alerts ?? []} />
+        <CreditsSection balance={balance} isPro={isProUser(user.email)} />
         <DeleteAccountSection />
       </Container>
     </Section>
