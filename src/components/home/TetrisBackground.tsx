@@ -60,6 +60,10 @@ interface Piece {
   y: number
 }
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value))
+}
+
 // Mobiles Ersatz-Muster: verstreute Accent-Kästchen, da Klicks auf Mobil mit
 // Scrollen kollidieren. Positionen/Größen fest als Tailwind-Klassen, unten
 // dichter gestapelt wie ein liegengebliebenes Tetris-Brett
@@ -79,10 +83,11 @@ const MOBILE_SQUARES = [
 
 /**
  * Dezenter Tetris-Hintergrund für die Hero-Sektion: Steine in Accent-Orange
- * fallen von selbst und stapeln sich am Boden. Kein Tastatur-Spiel mehr,
- * aber ein Klick auf den Stein schiebt ihn eine Zelle in Klickrichtung.
- * Rein dekorativ, pointer-events bleiben nur auf dem Canvas selbst aktiv,
- * die Animation pausiert außerhalb des Viewports.
+ * fallen von selbst und stapeln sich am Boden. Maustaste über dem fallenden
+ * Stein halten und seitlich ziehen schiebt ihn hin und her — alles bleibt
+ * auf den Canvas begrenzt, der nur in der Hero-Sektion (dort wo die Steine
+ * spawnen) liegt. Rein dekorativ, pointer-events bleiben nur auf dem Canvas
+ * selbst aktiv, die Animation pausiert außerhalb des Viewports.
  */
 export function TetrisBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -198,14 +203,29 @@ export function TetrisBackground() {
       ctx.globalAlpha = 1
     }
 
-    function onClick(event: MouseEvent) {
+    // Ziehen statt Klicken: Maustaste über dem Stein halten und seitlich
+    // bewegen schiebt ihn hin und her — kein Sprung mehr durch bloßes Klicken
+    let drag: { pointerId: number; startClientX: number; startPieceX: number } | null = null
+
+    function onPointerDown(event: PointerEvent) {
       if (!isVisible || !piece) return
-      const rect = canvas.getBoundingClientRect()
-      const clickX = event.clientX - rect.left
-      const pieceCenterX = (piece.x + 0.5) * CELL
-      const direction = clickX < pieceCenterX ? -1 : 1
-      if (!collides(piece, direction, 0)) piece.x += direction
+      drag = { pointerId: event.pointerId, startClientX: event.clientX, startPieceX: piece.x }
+      canvas.setPointerCapture(event.pointerId)
+    }
+
+    function onPointerMove(event: PointerEvent) {
+      if (!drag || drag.pointerId !== event.pointerId || !piece) return
+      const deltaCells = Math.round((event.clientX - drag.startClientX) / CELL)
+      let target = clamp(drag.startPieceX + deltaCells, 0, cols - 1)
+      // Falls die Zielspalte belegt ist, so nah wie möglich in Zugrichtung heranrücken
+      const dir = Math.sign(target - piece.x)
+      while (target !== piece.x && collides(piece, target - piece.x, 0)) target -= dir
+      piece.x = target
       draw()
+    }
+
+    function onPointerUp(event: PointerEvent) {
+      if (drag?.pointerId === event.pointerId) drag = null
     }
 
     function startTicking() {
@@ -229,12 +249,18 @@ export function TetrisBackground() {
 
     setup()
     startTicking()
-    canvas.addEventListener('click', onClick)
+    canvas.addEventListener('pointerdown', onPointerDown)
+    canvas.addEventListener('pointermove', onPointerMove)
+    canvas.addEventListener('pointerup', onPointerUp)
+    canvas.addEventListener('pointercancel', onPointerUp)
     return () => {
       stopTicking()
       observer.disconnect()
       resizeObserver.disconnect()
-      canvas.removeEventListener('click', onClick)
+      canvas.removeEventListener('pointerdown', onPointerDown)
+      canvas.removeEventListener('pointermove', onPointerMove)
+      canvas.removeEventListener('pointerup', onPointerUp)
+      canvas.removeEventListener('pointercancel', onPointerUp)
     }
   }, [])
 

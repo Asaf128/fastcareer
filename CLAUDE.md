@@ -16,7 +16,6 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Letzte Suchen (localStorage): `src/components/home/RecentSearches.tsx`, `src/lib/recentSearches.ts` (Speichern beim Submit im JobSearchForm)
 - Startseiten-Sektionen (Scroll-Experience "So funktioniert's", FAQ mit JSON-LD): `src/components/home/ScrollShowcase.tsx` + `src/components/home/showcase/` (Schritt-Daten `steps.tsx`, UI-Mock-Visuals `visuals.tsx`), `src/components/home/FaqSection.tsx`
 - Match-Score (KI vergleicht Profil mit Anforderungen, on demand): `src/lib/ai/matchScore.ts`, `src/actions/matchScore.actions.ts`, `src/components/jobs/MatchScore.tsx`
-- Job-Alerts (gespeicherte Suchen, täglicher Mail-Versand): Tabelle `job_alerts`, `src/actions/alerts.actions.ts`, `src/components/suche/SaveAlertButton.tsx`, `src/components/profile/JobAlertsSection.tsx`, Cron-Route `src/app/api/alerts/run/route.ts` (Vercel Cron 07:00, CRON_SECRET + RESEND_API_KEY nötig), Zeitplan in `vercel.json`
 - Impressum: `src/app/impressum/page.tsx`
 - Datenschutz: `src/app/datenschutz/page.tsx`
 - SEO (robots/sitemap): `src/app/robots.ts`, `src/app/sitemap.ts`; Social-Vorschaubild (og:image, zur Build-Zeit gerendert): `src/app/opengraph-image.tsx`

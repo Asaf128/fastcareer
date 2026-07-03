@@ -2,13 +2,18 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { UserCircle, X } from 'lucide-react'
+import { Bookmark, LogOut, User, UserCircle, X } from 'lucide-react'
 import { logout } from '@/actions/auth.actions'
 import { MobileProfileMenu } from '@/components/layout/MobileProfileMenu'
 
 interface HeaderNavProps {
   isAuthenticated: boolean
 }
+
+const NAV_LINKS = [
+  { href: '/profil', label: 'Profil', icon: User },
+  { href: '/bewerbungen', label: 'Bewerbungen', icon: Bookmark },
+] as const
 
 export function HeaderNav({ isAuthenticated }: HeaderNavProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -28,24 +33,24 @@ export function HeaderNav({ isAuthenticated }: HeaderNavProps) {
 
   return (
     <>
-      <nav className="hidden items-center gap-4 sm:flex">
-        <Link
-          href="/profil"
-          className="text-text-secondary hover:text-foreground text-sm transition-colors duration-150"
-        >
-          Profil
-        </Link>
-        <Link
-          href="/bewerbungen"
-          className="text-text-secondary hover:text-foreground text-sm transition-colors duration-150"
-        >
-          Bewerbungen
-        </Link>
+      <nav className="bg-surface border-border hidden items-center gap-1 rounded-full border p-1 sm:flex">
+        {NAV_LINKS.map(({ href, label, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className="text-text-secondary hover:text-foreground hover:bg-background flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-150"
+          >
+            <Icon className="h-3.5 w-3.5" />
+            {label}
+          </Link>
+        ))}
+        <div className="bg-border mx-1 h-4 w-px" aria-hidden />
         <form action={logout}>
           <button
             type="submit"
-            className="text-text-secondary hover:text-foreground text-sm transition-colors duration-150"
+            className="text-text-secondary hover:bg-error/10 hover:text-error flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors duration-150"
           >
+            <LogOut className="h-3.5 w-3.5" />
             Abmelden
           </button>
         </form>

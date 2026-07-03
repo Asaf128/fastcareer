@@ -5,7 +5,6 @@ import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { JobSearchForm } from '@/components/suche/JobSearchForm'
 import { JobCard } from '@/components/suche/JobCard'
-import { SaveAlertButton } from '@/components/suche/SaveAlertButton'
 import { SearchResultsPager } from '@/components/suche/SearchResultsPager'
 import { searchJobs } from '@/lib/jobs/arbeitsagentur'
 import { createClient } from '@/lib/supabase/server'
@@ -110,20 +109,10 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
               prevHref={page > 1 ? pageHref(page - 1) : undefined}
               nextHref={page < totalPages ? pageHref(page + 1) : undefined}
             >
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-text-secondary text-sm">
-                  {result.gesamtTreffer.toLocaleString('de-DE')} Treffer für &quot;{was}&quot;
-                  {wo && ` in ${wo}`}
-                </p>
-                {user && (
-                  <SaveAlertButton
-                    was={was}
-                    wo={wo}
-                    umkreis={umkreis}
-                    arbeitszeit={arbeitszeit ?? ''}
-                  />
-                )}
-              </div>
+              <p className="text-text-secondary mb-4 text-sm">
+                {result.gesamtTreffer.toLocaleString('de-DE')} Treffer für &quot;{was}&quot;
+                {wo && ` in ${wo}`}
+              </p>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {result.treffer.map((job) => (
                   <JobCard

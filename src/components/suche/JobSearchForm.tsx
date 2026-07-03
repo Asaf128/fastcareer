@@ -17,6 +17,14 @@ interface JobSearchFormProps {
   popularSearches?: string[]
 }
 
+// Erkennt gängige Schreibweisen für Home-Office als Suchbegriff:
+// "Homeoffice", "Home Office", "Home-Office", "HO" (case-insensitive)
+const HOME_OFFICE_PATTERN = /^(home[\s-]?office|ho)$/i
+
+function isHomeOfficeQuery(value: string): boolean {
+  return HOME_OFFICE_PATTERN.test(value.trim())
+}
+
 async function fetchBerufe(query: string): Promise<string[]> {
   const response = await fetch(`/api/berufe?q=${encodeURIComponent(query)}`)
   const data = (await response.json()) as { berufe: string[] }
@@ -47,6 +55,7 @@ export function JobSearchForm({
 
   function selectPopularSearch(suche: string) {
     setWas(suche)
+    if (isHomeOfficeQuery(suche)) setArbeitszeit('ho')
     // DOM-Wert direkt setzen: der Submit läuft, bevor React neu gerendert hat
     if (wasInputRef.current) wasInputRef.current.value = suche
     formRef.current?.requestSubmit()
@@ -80,6 +89,9 @@ export function JobSearchForm({
               onChange={(e) => {
                 setWas(e.target.value)
                 berufe.onQueryChange(e.target.value)
+                // "Homeoffice"/"HO" etc. als Beruf eingetippt: automatisch wie
+                // Arbeitszeit "Home-Office" behandeln (Ort/Umkreis ausgrauen)
+                if (isHomeOfficeQuery(e.target.value)) setArbeitszeit('ho')
               }}
               onFocus={berufe.openIfAvailable}
               onBlur={() => setTimeout(berufe.close, 150)}
@@ -93,6 +105,7 @@ export function JobSearchForm({
                 items={berufe.suggestions.map((beruf) => ({ key: beruf, label: beruf }))}
                 onSelect={(beruf) => {
                   setWas(beruf)
+                  if (isHomeOfficeQuery(beruf)) setArbeitszeit('ho')
                   berufe.close()
                 }}
               />

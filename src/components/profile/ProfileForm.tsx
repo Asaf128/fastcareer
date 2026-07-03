@@ -94,8 +94,11 @@ export function ProfileForm({ initialProfile, cvUrl }: ProfileFormProps) {
           onChange={(e) => setStreet(e.target.value)}
         />
         <Input label="PLZ & Ort" value={location} onChange={(e) => setLocation(e.target.value)} />
-        <Input label="Kurzprofil" value={headline} onChange={(e) => setHeadline(e.target.value)} />
       </div>
+
+      {/* Eigene Zeile statt im 2-Spalten-Grid: das Feld enthält deutlich mehr
+          Text als Name/Adresse und sollte die volle Breite nutzen */}
+      <Input label="Kurzprofil" value={headline} onChange={(e) => setHeadline(e.target.value)} />
 
       <Textarea
         label="Über mich"
