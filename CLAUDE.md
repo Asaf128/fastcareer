@@ -19,7 +19,7 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Job-Alerts (gespeicherte Suchen, täglicher Mail-Versand): Tabelle `job_alerts`, `src/actions/alerts.actions.ts`, `src/components/suche/SaveAlertButton.tsx`, `src/components/profile/JobAlertsSection.tsx`, Cron-Route `src/app/api/alerts/run/route.ts` (Vercel Cron 07:00, CRON_SECRET + RESEND_API_KEY nötig), Zeitplan in `vercel.json`
 - Impressum: `src/app/impressum/page.tsx`
 - Datenschutz: `src/app/datenschutz/page.tsx`
-- SEO (robots/sitemap): `src/app/robots.ts`, `src/app/sitemap.ts`
+- SEO (robots/sitemap): `src/app/robots.ts`, `src/app/sitemap.ts`; Social-Vorschaubild (og:image, zur Build-Zeit gerendert): `src/app/opengraph-image.tsx`
 - API-Route Orte-Autocomplete: `src/app/api/orte/route.ts`
 - API-Route Berufe-Autocomplete (BA-Suggest-Service): `src/app/api/berufe/route.ts`, `src/lib/jobs/berufe.ts`; gemeinsamer Debounce-Hook `src/hooks/useSuggestions.ts`, Dropdown `src/components/suche/SuggestionList.tsx`
 - Header (Login-Status, Nav): `src/components/layout/Header.tsx` — delegiert an `HeaderNav.tsx` (Desktop-Inline-Links / Mobil-Profil-Icon) und `MobileProfileMenu.tsx` (Vollbild-Overlay: Profil/Bewerbungen/Abmelden)

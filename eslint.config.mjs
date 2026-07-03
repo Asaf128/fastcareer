@@ -32,6 +32,7 @@ const eslintConfig = defineConfig([
       'src/app/**/template.tsx',
       'src/app/sitemap.ts',
       'src/app/robots.ts',
+      'src/app/**/opengraph-image.tsx',
       'next.config.ts',
     ],
     rules: {
