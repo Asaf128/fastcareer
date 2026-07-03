@@ -11,7 +11,7 @@ export function SummaryLimitNotice({ isAuthenticated }: { isAuthenticated: boole
     <div className="border-border bg-surface mt-6 rounded-xl border border-dashed p-6 text-center lg:p-8">
       <Lock className="text-accent mx-auto h-6 w-6" />
       <h2 className="text-foreground mt-3 text-lg font-semibold">
-        {isAuthenticated ? 'Tageslimit erreicht' : 'Schnupper-Limit erreicht'}
+        {isAuthenticated ? 'Tageslimit erreicht' : 'Gratis-Limit für heute erreicht'}
       </h2>
       <p className="text-text-secondary mx-auto mt-2 max-w-md text-sm">
         Du hast heute {DAILY_LIMIT} KI-Zusammenfassungen genutzt — morgen geht&apos;s kostenlos
@@ -40,15 +40,14 @@ export function SummaryLimitNotice({ isAuthenticated }: { isAuthenticated: boole
 }
 
 /**
- * Sichtbares Schnupper-Kontingent für anonyme Nutzer unter der
+ * Sichtbares Gratis-Kontingent für anonyme Nutzer unter der
  * Zusammenfassung — macht klar, dass sie gerade ein Gratis-Kontingent nutzen.
  */
 export function SummaryTasterHint({ remaining }: { remaining: number }) {
   return (
     <p className="text-text-secondary mt-2 flex items-center justify-center gap-1.5 text-center text-xs">
       <Sparkles className="text-accent h-3.5 w-3.5 shrink-0" />
-      Schnupper-Kontingent: noch {remaining} von {DAILY_LIMIT} kostenlosen KI-Zusammenfassungen
-      heute —{' '}
+      Gratis KI-Zusammenfassungen: {remaining} von {DAILY_LIMIT} heute übrig —{' '}
       <Link href="/login" className="text-accent hover:underline">
         kostenlos anmelden
       </Link>
