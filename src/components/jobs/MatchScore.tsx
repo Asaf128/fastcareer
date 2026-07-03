@@ -16,7 +16,7 @@ interface MatchScoreProps {
   ort: string
   isAuthenticated: boolean
   hasProfile: boolean
-  /** Verbleibende Match-Berechnungen heute — null heißt unbegrenzt (Pro) */
+  /** Verbleibende Match-Berechnungen heute (null heißt unbegrenzt, Pro) */
   initialRemaining: number | null
   initialResult: MatchScoreResult | null
 }
@@ -42,7 +42,7 @@ export function MatchScore({
   const [limitReached, setLimitReached] = useState(initialRemaining === 0)
   const [isPending, startTransition] = useTransition()
 
-  // Ohne Login/Profil keinen Teaser zeigen — dafür werben schon
+  // Ohne Login/Profil keinen Teaser zeigen, dafür werben schon
   // Anschreiben-Panel und Bewerbungsstand auf derselben Seite
   if (!isAuthenticated || !hasProfile) return null
 

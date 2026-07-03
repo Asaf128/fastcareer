@@ -5,12 +5,12 @@ const FAQS = [
   {
     frage: 'Ist Fastcareer kostenlos?',
     antwort:
-      'Ja, Fastcareer ist komplett kostenlos. Die Jobsuche funktioniert ohne Konto; für KI-Anschreiben und das Bewerbungs-Cockpit meldest du dich einfach per E-Mail-Code an — ohne Passwort.',
+      'Die Jobsuche ist immer kostenlos und funktioniert ohne Konto. Für KI-Anschreiben und das Bewerbungs-Cockpit meldest du dich per E-Mail-Code an, ohne Passwort. Die KI-Funktionen (Zusammenfassung, Match-Score, Anschreiben) sind pro Tag 3 Mal gratis nutzbar, danach kannst du günstige Credits dazukaufen.',
   },
   {
     frage: 'Woher kommen die Stellenangebote?',
     antwort:
-      'Alle Stellenangebote stammen aus der offiziellen Jobbörse der Bundesagentur für Arbeit — der größten Stellendatenbank Deutschlands mit Hunderttausenden aktuellen Angeboten.',
+      'Alle Stellenangebote stammen aus der offiziellen Jobbörse der Bundesagentur für Arbeit, der größten Stellendatenbank Deutschlands mit Hunderttausenden aktuellen Angeboten.',
   },
   {
     frage: 'Wie funktioniert das KI-Anschreiben?',
@@ -25,7 +25,7 @@ const FAQS = [
   {
     frage: 'Muss ich mich bei der Arbeitsagentur bewerben?',
     antwort:
-      'Nein. Fastcareer zeigt dir die Kontaktdaten bzw. den Original-Link jeder Stelle — du bewirbst dich direkt beim Arbeitgeber, mit deinem fertigen Anschreiben.',
+      'Nein. Fastcareer zeigt dir die Kontaktdaten bzw. den Original-Link jeder Stelle. Du bewirbst dich direkt beim Arbeitgeber, mit deinem fertigen Anschreiben.',
   },
 ] as const
 

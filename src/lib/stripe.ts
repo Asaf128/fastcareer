@@ -2,7 +2,7 @@ import 'server-only'
 import Stripe from 'stripe'
 
 // Stripe-Server-Client für Checkout-Sessions und Webhook-Verifikation.
-// Nur serverseitig — der Secret Key darf nie in den Browser.
+// Nur serverseitig: der Secret Key darf nie in den Browser.
 let cachedStripe: Stripe | null = null
 
 export function getStripe(): Stripe {

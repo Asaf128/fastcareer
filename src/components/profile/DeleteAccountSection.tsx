@@ -13,7 +13,7 @@ export function DeleteAccountSection() {
   function handleDelete() {
     startTransition(async () => {
       const result = await deleteAccount()
-      // Bei Erfolg wird server-seitig redirected — hierher kommt nur der Fehlerfall
+      // Bei Erfolg wird server-seitig redirected, hierher kommt nur der Fehlerfall
       if (result?.error) toast.error(result.error)
     })
   }

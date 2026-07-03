@@ -19,7 +19,7 @@ const inputSchema = z.object({
 const MAX_LETTERS_PER_MINUTE = 3
 
 // Generiert das Anschreiben erst auf Klick (statt beim Seitenaufbau) und
-// speichert es sofort server-seitig — ein Reload kostet damit keinen
+// speichert es sofort server-seitig, ein Reload kostet damit keinen
 // zweiten Gemini-Pro-Call mehr.
 export async function generateAndSaveCoverLetter(
   input: z.infer<typeof inputSchema>

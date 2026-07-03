@@ -41,7 +41,7 @@ export function CvUpload({ onParsed, cvUrl }: CvUploadProps) {
       {cvUrl && (
         <p className="text-text-secondary mb-3 flex items-center justify-center gap-1.5 text-xs">
           <FileCheck className="text-success h-4 w-4 shrink-0" />
-          Lebenslauf hinterlegt —{' '}
+          Lebenslauf hinterlegt:{' '}
           <a
             href={cvUrl}
             target="_blank"

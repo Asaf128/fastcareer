@@ -7,7 +7,7 @@ interface RawVorschlag {
 }
 
 /**
- * Offizielle Berufsbezeichnungen der Jobbörse als Autocomplete-Vorschläge —
+ * Offizielle Berufsbezeichnungen der Jobbörse als Autocomplete-Vorschläge,
  * derselbe Suggest-Service, den auch arbeitsagentur.de/jobsuche nutzt.
  */
 export async function suggestBerufe(query: string): Promise<string[]> {

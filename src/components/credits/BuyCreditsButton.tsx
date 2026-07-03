@@ -12,7 +12,7 @@ interface BuyCreditsButtonProps {
   isAuthenticated: boolean
 }
 
-/** Startet den Stripe-Checkout — ohne Login geht's erst zur Anmeldung. */
+/** Startet den Stripe-Checkout, ohne Login geht's erst zur Anmeldung. */
 export function BuyCreditsButton({ packageId, isAuthenticated }: BuyCreditsButtonProps) {
   const [isPending, startTransition] = useTransition()
 

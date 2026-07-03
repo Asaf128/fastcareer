@@ -53,7 +53,7 @@ export function JobSearchForm({
   }
 
   function handleSubmit() {
-    // Läuft vor der GET-Navigation zu /suche — merkt sich die Suche lokal
+    // Läuft vor der GET-Navigation zu /suche, merkt sich die Suche lokal
     saveRecentSearch({
       was: wasInputRef.current?.value.trim() ?? was.trim(),
       wo: isHomeOffice ? '' : wo,
@@ -160,6 +160,8 @@ export function JobSearchForm({
             >
               <option value="vz">Vollzeit</option>
               <option value="tz">Teilzeit</option>
+              <option value="mj">Minijob</option>
+              <option value="ausbildung">Ausbildung</option>
               <option value="ho">Home-Office</option>
             </select>
             <ChevronDown className="text-text-secondary pointer-events-none absolute top-1/2 right-2.5 h-4 w-4 -translate-y-1/2" />

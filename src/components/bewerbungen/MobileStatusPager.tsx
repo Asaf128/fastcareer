@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import {
@@ -24,12 +24,13 @@ function pageHref(status: ApplicationStatus | null): string {
 }
 
 /**
- * Mobil ist immer nur eine Status-Kategorie sichtbar — Wechsel per
+ * Mobil ist immer nur eine Status-Kategorie sichtbar, Wechsel per
  * Pfeil-Buttons oder horizontalem Swipe über der Liste. Auf Desktop
  * bleiben die Filter-Chips, hier wird nur durchgereicht.
  */
 export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerProps) {
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const touchStartRef = useRef<{ x: number; y: number } | null>(null)
   // Optimistischer Anzeige-Status: die Pille wechselt SOFORT beim Klick/Swipe,
   // statt auf die Server-Navigation zu warten (die spürbar hinterherhinkte).
@@ -53,9 +54,11 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
   const next = index < PAGES.length - 1 ? PAGES[index + 1] : undefined
 
   function goTo(status: ApplicationStatus | null | undefined) {
-    if (status === undefined) return
+    if (status === undefined || isPending) return
     setOptimisticFilter(status)
-    router.push(pageHref(status))
+    startTransition(() => {
+      router.push(pageHref(status))
+    })
   }
 
   function handleTouchStart(event: React.TouchEvent) {
@@ -70,7 +73,7 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
     if (!start || !touch) return
     const dx = touch.clientX - start.x
     const dy = touch.clientY - start.y
-    // Nur klar horizontale Gesten zählen — vertikales Scrollen nicht abfangen
+    // Nur klar horizontale Gesten zählen, vertikales Scrollen nicht abfangen
     if (Math.abs(dx) < SWIPE_THRESHOLD || Math.abs(dx) < Math.abs(dy) * 1.5) return
     goTo(dx < 0 ? next : prev)
   }
@@ -82,10 +85,11 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
           type="button"
           onClick={() => goTo(prev)}
           aria-label="Vorherige Kategorie"
+          disabled={isPending}
           className={
             prev === undefined
               ? 'invisible p-2'
-              : 'border-border text-text-secondary hover:border-accent hover:text-accent rounded-full border p-2 transition-colors duration-150'
+              : 'border-border text-text-secondary hover:border-accent hover:text-accent rounded-full border p-2 transition-colors duration-150 disabled:opacity-50'
           }
         >
           <ChevronLeft className="h-4 w-4" />
@@ -102,17 +106,23 @@ export function MobileStatusPager({ activeFilter, children }: MobileStatusPagerP
           type="button"
           onClick={() => goTo(next)}
           aria-label="Nächste Kategorie"
+          disabled={isPending}
           className={
             next === undefined
               ? 'invisible p-2'
-              : 'border-border text-text-secondary hover:border-accent hover:text-accent rounded-full border p-2 transition-colors duration-150'
+              : 'border-border text-text-secondary hover:border-accent hover:text-accent rounded-full border p-2 transition-colors duration-150 disabled:opacity-50'
           }
         >
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>
 
-      {children}
+      <div
+        aria-busy={isPending}
+        className={isPending ? 'opacity-60 transition-opacity duration-150' : ''}
+      >
+        {children}
+      </div>
     </div>
   )
 }

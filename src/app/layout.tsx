@@ -21,9 +21,9 @@ const bodyFont = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'),
-  title: { default: 'Fastcareer — Jobs finden in Sekunden', template: '%s | Fastcareer' },
+  title: { default: 'Fastcareer: Jobs finden in Sekunden', template: '%s | Fastcareer' },
   description:
-    'Fastcareer durchsucht offene Stellen der Arbeitsagentur nach Beruf und Ort — schnell, übersichtlich, ohne Umwege.',
+    'Fastcareer durchsucht offene Stellen der Arbeitsagentur nach Beruf und Ort. Schnell, übersichtlich, ohne Umwege.',
   // og:image kommt aus src/app/opengraph-image.tsx (Next-Konvention)
   openGraph: {
     type: 'website',

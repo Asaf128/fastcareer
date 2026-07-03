@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 
 const CELL = 28
 const TICK_MS = 700
-// Deckkraft der Kästchen — bewusst dezent, der Hero-Content bleibt gut lesbar
+// Deckkraft der Kästchen, bewusst dezent, der Hero-Content bleibt gut lesbar
 const STACK_ALPHA = 0.1
 const PIECE_ALPHA = 0.22
 
@@ -60,9 +60,9 @@ interface Piece {
   y: number
 }
 
-// Mobiles Ersatz-Muster: verstreute Accent-Kästchen (Tetris lässt sich ohne
-// Tastatur nicht spielen) — Positionen/Größen fest als Tailwind-Klassen,
-// unten dichter gestapelt wie ein liegengebliebenes Tetris-Brett
+// Mobiles Ersatz-Muster: verstreute Accent-Kästchen, da Klicks auf Mobil mit
+// Scrollen kollidieren. Positionen/Größen fest als Tailwind-Klassen, unten
+// dichter gestapelt wie ein liegengebliebenes Tetris-Brett
 const MOBILE_SQUARES = [
   'top-[8%] left-[12%] h-5 w-5 bg-accent/10',
   'top-[16%] right-[10%] h-4 w-4 bg-accent/15 [animation-delay:0.8s]',
@@ -77,26 +77,18 @@ const MOBILE_SQUARES = [
   'bottom-[3%] left-[55%] h-5 w-5 bg-accent/15 [animation-delay:1.4s]',
 ] as const
 
-function isTypingTarget(element: Element | null): boolean {
-  return (
-    element instanceof HTMLInputElement ||
-    element instanceof HTMLTextAreaElement ||
-    element instanceof HTMLSelectElement
-  )
-}
-
 /**
  * Dezenter Tetris-Hintergrund für die Hero-Sektion: Steine in Accent-Orange
- * fallen von selbst und stapeln sich am Boden; mit den Pfeiltasten kann man
- * mitspielen (links/rechts, ↑ dreht, ↓ lässt schneller fallen). Rein
- * dekorativ — pointer-events-none, pausiert außerhalb des Viewports.
+ * fallen von selbst und stapeln sich am Boden. Kein Tastatur-Spiel mehr,
+ * aber ein Klick auf den Stein schiebt ihn eine Zelle in Klickrichtung.
+ * Rein dekorativ, pointer-events bleiben nur auf dem Canvas selbst aktiv,
+ * die Animation pausiert außerhalb des Viewports.
  */
 export function TetrisBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
-    // Auf Mobil ist der Canvas ausgeblendet (kein Tastatur-Tetris) —
-    // Spiel-Loop gar nicht erst starten
+    // Auf Mobil ist der Canvas ausgeblendet, Animations-Loop gar nicht erst starten
     if (!window.matchMedia('(min-width: 640px)').matches) return
     const maybeCanvas = canvasRef.current
     if (!maybeCanvas) return
@@ -206,22 +198,13 @@ export function TetrisBackground() {
       ctx.globalAlpha = 1
     }
 
-    function onKeyDown(event: KeyboardEvent) {
-      if (!isVisible || !piece || isTypingTarget(document.activeElement)) return
-      if (event.key === 'ArrowLeft' && !collides(piece, -1, 0)) {
-        piece.x -= 1
-      } else if (event.key === 'ArrowRight' && !collides(piece, 1, 0)) {
-        piece.x += 1
-      } else if (event.key === 'ArrowDown' && !collides(piece, 0, 1)) {
-        piece.y += 1
-      } else if (event.key === 'ArrowUp') {
-        // Rotation um den Drehpunkt: (x, y) → (-y, x)
-        const rotated = piece.cells.map(([x, y]) => [-y, x] as [number, number])
-        if (!collides(piece, 0, 0, rotated)) piece.cells = rotated
-      } else {
-        return
-      }
-      event.preventDefault()
+    function onClick(event: MouseEvent) {
+      if (!isVisible || !piece) return
+      const rect = canvas.getBoundingClientRect()
+      const clickX = event.clientX - rect.left
+      const pieceCenterX = (piece.x + 0.5) * CELL
+      const direction = clickX < pieceCenterX ? -1 : 1
+      if (!collides(piece, direction, 0)) piece.x += direction
       draw()
     }
 
@@ -246,23 +229,20 @@ export function TetrisBackground() {
 
     setup()
     startTicking()
-    window.addEventListener('keydown', onKeyDown)
+    canvas.addEventListener('click', onClick)
     return () => {
       stopTicking()
       observer.disconnect()
       resizeObserver.disconnect()
-      window.removeEventListener('keydown', onKeyDown)
+      canvas.removeEventListener('click', onClick)
     }
   }, [])
 
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* Desktop: spielbares Tetris */}
+      {/* Desktop: klickbares Tetris */}
       <div className="hidden h-full w-full sm:block">
-        <canvas ref={canvasRef} />
-        <p className="text-text-secondary/50 absolute bottom-3 left-1/2 hidden -translate-x-1/2 text-xs lg:block">
-          Psst — die Pfeiltasten steuern die Steine
-        </p>
+        <canvas ref={canvasRef} className="pointer-events-auto cursor-pointer" />
       </div>
 
       {/* Mobil: ruhiges Kästchen-Muster in Accent-Orange */}

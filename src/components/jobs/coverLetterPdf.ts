@@ -25,7 +25,7 @@ export function buildLetterDate(senderLocation: string | null): string {
  * drei Leerzeilen Abstand (Platz für die Unterschrift).
  */
 export async function downloadCoverLetterPdf(input: CoverLetterPdfInput): Promise<void> {
-  // jspdf erst beim Klick laden — hält es aus dem initialen Bundle raus
+  // jspdf erst beim Klick laden, hält es aus dem initialen Bundle raus
   const { jsPDF } = await import('jspdf')
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
   doc.setFont('helvetica', 'normal')
@@ -39,7 +39,7 @@ export async function downloadCoverLetterPdf(input: CoverLetterPdfInput): Promis
   const maxY = 277
   let y = 20
 
-  // Eigene Anschrift — oben rechts
+  // Eigene Anschrift: oben rechts
   const senderLines = [input.senderName, input.senderStreet, input.senderLocation].filter(
     (line): line is string => Boolean(line)
   )
@@ -71,7 +71,7 @@ export async function downloadCoverLetterPdf(input: CoverLetterPdfInput): Promis
   doc.setFont('helvetica', 'normal')
   y += lineHeight
 
-  // 2 Leerzeilen, dann der Brieftext — Grußformel bekommt 3 Leerzeilen
+  // 2 Leerzeilen, dann der Brieftext. Die Grußformel bekommt 3 Leerzeilen
   // Abstand zum Namen (Platz für die Unterschrift)
   y += 2 * lineHeight
   const bodyText = input.bodyText

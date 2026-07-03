@@ -5,7 +5,7 @@ interface SuggestionItem {
   label: string
   /** Grauer Zusatz hinter dem Label, z. B. die PLZ */
   hint?: string
-  /** Wert der bei Auswahl übergeben wird — Default: label */
+  /** Wert der bei Auswahl übergeben wird (Default: label) */
   value?: string
 }
 

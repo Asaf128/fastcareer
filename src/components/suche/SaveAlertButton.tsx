@@ -24,7 +24,7 @@ export function SaveAlertButton({ was, wo, umkreis, arbeitszeit }: SaveAlertButt
         return
       }
       setIsSaved(true)
-      toast.success('Job-Alert gespeichert — wir mailen dir neue Treffer.')
+      toast.success('Job-Alert gespeichert, wir mailen dir neue Treffer.')
     })
   }
 

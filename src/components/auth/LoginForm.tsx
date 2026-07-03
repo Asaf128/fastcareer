@@ -4,7 +4,7 @@ import { useActionState, useEffect, useRef, useState } from 'react'
 import { requestLoginCode, verifyLoginCode } from '@/actions/auth.actions'
 import { Button } from '@/components/shared/Button'
 
-// Supabase ist auf 8-stellige E-Mail-Codes konfiguriert — bei dieser Länge
+// Supabase ist auf 8-stellige E-Mail-Codes konfiguriert, bei dieser Länge
 // wird automatisch abgeschickt. Kürzere/längere Codes gehen weiter manuell.
 const OTP_AUTO_SUBMIT_LENGTH = 8
 // Muss zum "Minimum interval per user" im Supabase-SMTP-Setup passen (60 s)
@@ -47,8 +47,8 @@ export function LoginForm({ next }: LoginFormProps) {
         <input type="hidden" name="email" value={requestState.email} />
         {next && <input type="hidden" name="next" value={next} />}
         <p className="text-text-secondary text-sm">
-          Code an <span className="text-foreground">{requestState.email}</span> geschickt — bitte
-          die 8 Ziffern eingeben.
+          Code an <span className="text-foreground">{requestState.email}</span> geschickt, bitte die
+          8 Ziffern eingeben.
         </p>
         <input
           type="text"
@@ -65,7 +65,7 @@ export function LoginForm({ next }: LoginFormProps) {
           className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-center text-lg tracking-[0.3em]"
         />
         {verifyState.error && <p className="text-sm text-red-600">{verifyState.error}</p>}
-        <Button type="submit" isLoading={isVerifying}>
+        <Button type="submit" variant="accent" isLoading={isVerifying}>
           Bestätigen
         </Button>
         <button
@@ -92,7 +92,7 @@ export function LoginForm({ next }: LoginFormProps) {
         className="border-border bg-surface text-foreground rounded-none border px-4 py-3 text-sm"
       />
       {requestState.error && <p className="text-sm text-red-600">{requestState.error}</p>}
-      <Button type="submit" isLoading={isRequesting}>
+      <Button type="submit" variant="accent" isLoading={isRequesting}>
         Code anfordern
       </Button>
     </form>

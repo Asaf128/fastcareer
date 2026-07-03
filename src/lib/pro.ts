@@ -1,5 +1,5 @@
 /**
- * Pro-Status: Eine Bezahlschiene gibt es noch nicht — einzig die
+ * Pro-Status: Eine Bezahlschiene gibt es noch nicht, einzig die
  * Admin-E-Mail ist automatisch Pro und nutzt alle KI-Features unbegrenzt.
  * Alle anderen Konten (angemeldet oder nicht) haben dieselben
  * Freemium-Tageskontingente.

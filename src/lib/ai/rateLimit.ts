@@ -1,7 +1,7 @@
 import { getRedis } from '@/lib/redis'
 
 // Rate-Limiter für teure KI-Aufrufe. Läuft über Upstash Redis (Fixed Window),
-// damit das Limit über alle Serverless-Instanzen hinweg gilt — eine In-Memory-
+// damit das Limit über alle Serverless-Instanzen hinweg gilt. Eine In-Memory-
 // Map existiert pro Instanz und vervielfacht das Limit bei Traffic-Spitzen.
 // Ohne Upstash-Env-Vars (z. B. lokal) greift der In-Memory-Fallback.
 const WINDOW_MS = 60_000

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Sparkles } from 'lucide-react'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { PackageCard } from '@/components/credits/PackageCard'
@@ -11,7 +10,7 @@ import { DAILY_LIMIT } from '@/lib/usage'
 export const metadata: Metadata = {
   title: 'Credits kaufen',
   description:
-    'KI-Credits für deine Jobsuche: Zusammenfassungen, Match-Berechnungen und Anschreiben — einmalig kaufen, kein Abo, Credits verfallen nicht.',
+    'KI-Credits für deine Jobsuche: Zusammenfassungen, Match-Berechnungen und Anschreiben. Einmalig kaufen, kein Abo, Credits verfallen nicht.',
 }
 
 export default async function CreditsPage() {
@@ -27,15 +26,12 @@ export default async function CreditsPage() {
         <h1 className="text-foreground text-2xl lg:text-3xl">Credits kaufen</h1>
         <p className="text-text-secondary mt-2 max-w-xl text-sm lg:text-base">
           {DAILY_LIMIT} Nutzungen pro KI-Feature sind jeden Tag kostenlos. Wer mehr braucht, kauft
-          einmalig ein Paket — kein Abo, keine Folgekosten, Credits verfallen nicht.
+          einmalig ein Paket, kein Abo, keine Folgekosten, Credits verfallen nicht.
         </p>
 
         {balance && (
           <div className="border-border bg-surface mt-6 flex flex-wrap items-center gap-x-6 gap-y-1 rounded-xl border p-4 text-sm">
-            <span className="text-foreground flex items-center gap-1.5 font-medium">
-              <Sparkles className="text-accent h-4 w-4" />
-              Dein Guthaben:
-            </span>
+            <span className="text-foreground font-medium">Dein Guthaben:</span>
             <span className="text-text-primary">{balance.summary} Zusammenfassungen</span>
             <span className="text-text-primary">{balance.match} Matches</span>
             <span className="text-text-primary">{balance.letter} Anschreiben</span>
@@ -52,7 +48,7 @@ export default async function CreditsPage() {
           <p>
             Ein Paket gilt pro Feature-Typ: Das Jobsuche-Paket sind 100 Zusammenfassungen UND 100
             Matches UND 100 Anschreiben. Dieselbe Stelle kostet pro Feature nur einmal einen Credit
-            — erneutes Öffnen oder Neu-Generieren ist gratis. Dein Gratis-Tageskontingent wird immer
+            Erneutes Öffnen oder Neu-Generieren ist gratis. Dein Gratis-Tageskontingent wird immer
             zuerst verbraucht.
           </p>
           <p>

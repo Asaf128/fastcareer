@@ -19,7 +19,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <div className="border-border bg-background rounded-xl border p-8 shadow-sm">
           <h1 className="text-foreground text-2xl">Anmelden</h1>
           <p className="text-text-secondary mt-2 mb-6 text-sm">
-            Kein Passwort nötig — wir schicken dir einen Anmelde-Code per E-Mail.
+            Kein Passwort nötig: Wir schicken dir einen Anmelde-Code per E-Mail.
           </p>
           <LoginForm next={next} />
         </div>

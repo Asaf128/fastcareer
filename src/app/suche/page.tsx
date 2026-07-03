@@ -33,7 +33,7 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
   const wo = params.wo ?? ''
   const umkreis = Number(params.umkreis ?? 25)
   const page = Math.max(1, Number(params.page ?? 1))
-  // Ohne Param gilt Vollzeit — konsistent zum Default im Suchformular
+  // Ohne Param gilt Vollzeit, konsistent zum Default im Suchformular
   const arbeitszeit = (params.arbeitszeit as Arbeitszeit | undefined) ?? 'vz'
 
   let result: Awaited<ReturnType<typeof searchJobs>> | null = null

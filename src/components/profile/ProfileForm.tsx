@@ -111,7 +111,7 @@ export function ProfileForm({ initialProfile, cvUrl }: ProfileFormProps) {
       <SkillsInput label="Sprachen" values={languages} onChange={setLanguages} />
 
       <div className="flex items-center gap-4">
-        <Button type="submit" isLoading={isPending}>
+        <Button type="submit" variant="accent" isLoading={isPending}>
           Profil speichern
         </Button>
       </div>

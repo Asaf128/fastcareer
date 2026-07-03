@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 }
 
 // Bewusst keine Gutschrift-Logik hier: Die Credits schreibt ausschließlich
-// der Stripe-Webhook gut — diese Seite ist nur die freundliche Bestätigung.
+// der Stripe-Webhook gut, diese Seite ist nur die freundliche Bestätigung.
 export default function CreditsDankePage() {
   return (
     <Section className="py-16 lg:py-24">
@@ -19,7 +19,7 @@ export default function CreditsDankePage() {
         <h1 className="text-foreground mt-4 text-2xl lg:text-3xl">Danke für deinen Kauf!</h1>
         <p className="text-text-secondary mt-3 text-sm lg:text-base">
           Deine Zahlung war erfolgreich. Die Credits werden dir in wenigen Augenblicken
-          gutgeschrieben — du kannst direkt weitersuchen. Die Rechnung bekommst du per E-Mail von
+          gutgeschrieben, du kannst direkt weitersuchen. Die Rechnung bekommst du per E-Mail von
           Stripe.
         </p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

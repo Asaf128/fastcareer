@@ -7,7 +7,7 @@ import { cn } from '@/lib/cn'
 import { SHOWCASE_STEPS as STEPS } from '@/components/home/showcase/steps'
 
 const STEP_COUNT = STEPS.length
-// Wie nah (px) über/unter der Sektion ein Scroll-Impuls das Betreten auslöst —
+// Wie nah (px) über/unter der Sektion ein Scroll-Impuls das Betreten auslöst,
 // größer als der größte plausible Sprung eines einzelnen Wheel-Events
 const ENTRY_BUFFER = 500
 // Akkumulierte Wheel-Distanz, ab der ein Schritt ausgelöst wird
@@ -22,7 +22,7 @@ const TOUCH_TRIGGER_DELTA = 24
 const GLIDE_MS = 600
 // Prüf-Intervall + Bewegungs-Schwelle fürs Einrasten: sobald sich die Seite
 // innerhalb eines Ticks kaum noch bewegt (iOS-Momentum klingt aus), wird
-// sofort eingerastet — ein Timer, der bei jedem Scroll-Event neu startet,
+// sofort eingerastet, denn ein Timer, der bei jedem Scroll-Event neu startet,
 // würde erst Sekunden nach dem Ausrollen greifen
 const SETTLE_POLL_MS = 100
 const SETTLE_SPEED_PX = 8
@@ -41,7 +41,7 @@ type Zone = 'none' | 'enterTop' | 'enterBottom' | 'inside' | 'exitTop' | 'exitBo
 /**
  * Pinned-Scroll-Experience: Die Optik hängt kontinuierlich an der
  * Scroll-Position (weiches Ein-/Ausfaden statt hartem Umschalten), die
- * Steuerung läuft schrittweise — jede Scroll-/Wisch-Geste bewegt genau einen
+ * Steuerung läuft schrittweise: jede Scroll-/Wisch-Geste bewegt genau einen
  * Schritt, angefahren mit einer eigenen Glide-Animation. Richtungswechsel
  * greifen sofort (auch mitten im Glide), gleichgerichtete Inertia-Reste
  * werden kurz ignoriert. Tastatur/Scrollbar bleiben nativ; ein Settle-Snap
@@ -125,7 +125,7 @@ export function ScrollShowcase() {
     }
 
     // Frei erreichte Zwischenposition (iOS-Momentum, Scrollbar-Drag, Tastatur)
-    // einrasten, sobald die Bewegung fast abgeklungen ist — nicht erst, wenn
+    // einrasten, sobald die Bewegung fast abgeklungen ist, nicht erst, wenn
     // das letzte Momentum-Event verhallt ist
     function startSettlePoll() {
       if (settlePoll !== undefined) return
@@ -220,7 +220,7 @@ export function ScrollShowcase() {
       const touch = e.touches[0]
       if (!touch || touchY === null) return
       if (isGliding) {
-        // Geste festhalten, Baseline mitführen — nach dem Glide zählt sie neu
+        // Geste festhalten, Baseline mitführen: nach dem Glide zählt sie neu
         e.preventDefault()
         touchY = touch.clientY
         return
@@ -275,10 +275,10 @@ export function ScrollShowcase() {
       {/* Hoher Track: 100svh Scrollweg pro Schritt, darin klebt der Viewport */}
       <div ref={trackRef} className="relative h-[500svh]">
         {/* h-dvh statt svh: füllt den echten sichtbaren Viewport, auch wenn
-            die mobile URL-Leiste einklappt — sonst bleibt unten Leerraum */}
+            die mobile URL-Leiste einklappt, sonst bleibt unten Leerraum */}
         <div className="sticky top-0 h-dvh overflow-hidden">
           {STEPS.map((step, index) => {
-            // Abstand zum Fortschritt: 0 = voll sichtbar, ±1 = ausgeblendet —
+            // Abstand zum Fortschritt: 0 = voll sichtbar, ±1 = ausgeblendet,
             // der Glide zieht diese Werte weich durch (der feine Fade-Effekt)
             const distance = progress - index
             const opacity = clamp(1 - Math.abs(distance) * 1.4, 0, 1)
@@ -287,11 +287,11 @@ export function ScrollShowcase() {
               <div
                 key={step.title}
                 aria-hidden={index !== active ? 'true' : 'false'}
-                // Scroll-getriebene Werte müssen inline gesetzt werden —
+                // Scroll-getriebene Werte müssen inline gesetzt werden,
                 // sie ändern sich mit jedem Frame
                 style={{ opacity, transform: `translateY(${translateY}px)` }}
                 // top-16 = Header-Höhe: der Content zentriert sich im Bereich
-                // UNTER der Navbar — dadurch beginnt jeder Schritt auf gleicher
+                // UNTER der Navbar, dadurch beginnt jeder Schritt auf gleicher
                 // Höhe und sitzt optisch mittig statt zu tief
                 className={cn(
                   'absolute inset-x-0 top-16 bottom-0 flex items-center will-change-[opacity,transform]',
@@ -310,7 +310,7 @@ export function ScrollShowcase() {
                         {step.text}
                       </p>
                     </div>
-                    {/* UI-Mock ist rein dekorativ — Screenreader lesen nur den Text */}
+                    {/* UI-Mock ist rein dekorativ, Screenreader lesen nur den Text */}
                     <div aria-hidden>{step.visual}</div>
                   </div>
                 </Container>
@@ -322,7 +322,7 @@ export function ScrollShowcase() {
 
       <Container className="pt-4 pb-16 lg:pb-24">
         <p className="text-text-secondary text-center text-sm">
-          Kostenlos und ohne Passwort —{' '}
+          Kostenlos und ohne Passwort:{' '}
           <Link href="/login" className="text-accent hover:underline">
             mit E-Mail-Code anmelden
           </Link>{' '}

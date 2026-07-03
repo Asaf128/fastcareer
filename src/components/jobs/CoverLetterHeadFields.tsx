@@ -14,7 +14,7 @@ interface CoverLetterHeadFieldsProps {
 
 /**
  * Editierbarer Briefkopf über dem Anschreiben-Text: Die KI erkennt die
- * Empfängeranschrift nicht immer korrekt — hier kann alles kontrolliert
+ * Empfängeranschrift nicht immer korrekt, hier kann alles kontrolliert
  * und angepasst werden, bevor das PDF erzeugt wird.
  */
 export function CoverLetterHeadFields({

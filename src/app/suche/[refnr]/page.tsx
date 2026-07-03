@@ -25,7 +25,7 @@ interface JobDetailPageProps {
 
 export async function generateMetadata({ searchParams }: JobDetailPageProps): Promise<Metadata> {
   const { titel, arbeitgeber } = await searchParams
-  // Interne Stellen-ID gehört nicht in den Browser-Tab — stattdessen
+  // Interne Stellen-ID gehört nicht in den Browser-Tab, stattdessen
   // "Jobtitel | Arbeitgeber" (das "| Fastcareer" hängt das Layout-Template an)
   if (!titel) return { title: 'Stellenangebot' }
   const parts = [titel.slice(0, 60), arbeitgeber?.slice(0, 40)].filter(Boolean)
@@ -66,7 +66,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
   const profile = profileResult.data
 
   // Fallback auf die gespeicherte Bewerbung: Links aus "Meine Bewerbungen"
-  // tragen keine titel/arbeitgeber-Query-Params — ohne Fallback schlugen
+  // tragen keine titel/arbeitgeber-Query-Params, ohne Fallback schlugen
   // dort Anschreiben- und Match-Generierung fehl ("Ungültige Job-Daten")
   const resolvedTitel = titel ?? application?.titel ?? 'Stellenangebot'
   const resolvedArbeitgeber = arbeitgeber ?? application?.arbeitgeber ?? ''
@@ -97,7 +97,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
       beschreibung: detail.beschreibung,
     })
   }
-  // Rest-Anzeige nur für die Gratis-Quelle — die Credit-Anzeige kommt mit
+  // Rest-Anzeige nur für die Gratis-Quelle, die Credit-Anzeige kommt mit
   // der Kauf-UI (Schritt 3)
   const summaryRemaining = summaryQuota.source === 'free' ? summaryQuota.remaining : null
 
@@ -112,7 +112,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
       : [null, null]
 
   // Anschreiben wird nicht mehr beim Seitenaufbau generiert (teurer Pro-Call,
-  // blockierte das Rendering) — das passiert auf Klick im CoverLetterPanel
+  // blockierte das Rendering); das passiert auf Klick im CoverLetterPanel
   // und wird dort sofort gespeichert.
   const coverLetter = application?.cover_letter ?? null
 

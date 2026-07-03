@@ -19,7 +19,7 @@ export interface UsageResult {
 // TTL großzügiger als ein Tag, damit die Keys sicher aufgeräumt werden
 const TTL_SECONDS = 60 * 60 * 48
 
-// "Tag" aus Sicht der Nutzer, nicht UTC — sv-SE formatiert als YYYY-MM-DD
+// "Tag" aus Sicht der Nutzer, nicht UTC: sv-SE formatiert als YYYY-MM-DD
 function today(): string {
   return new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' })
 }
@@ -50,7 +50,7 @@ function consumeCountInMemory(key: string): UsageResult {
 
 /**
  * Set-basiertes Kontingent: dieselbe Einheit (z. B. dieselbe Stellen-Refnr)
- * zählt am selben Tag nur EINMAL — erneutes Öffnen oder Regenerieren einer
+ * zählt am selben Tag nur EINMAL. Erneutes Öffnen oder Regenerieren einer
  * bereits genutzten Anzeige verbraucht nichts.
  */
 export async function consumeDailyUnique(
@@ -66,7 +66,7 @@ export async function consumeDailyUnique(
       if (added === 1) await redis.expire(key, TTL_SECONDS)
       const count = await redis.scard(key)
       if (count > DAILY_LIMIT && added === 1) {
-        // Limit würde überschritten — Eintrag zurückrollen
+        // Limit würde überschritten, Eintrag zurückrollen
         await redis.srem(key, member)
         return { allowed: false, remaining: 0 }
       }
@@ -80,7 +80,7 @@ export async function consumeDailyUnique(
 
 /**
  * Verbrauch zurückgeben, wenn die eigentliche Aktion danach fehlschlägt
- * (z. B. Gemini-Fehler) — ein gescheiterter Versuch soll nichts kosten.
+ * (z. B. Gemini-Fehler): ein gescheiterter Versuch soll nichts kosten.
  */
 export async function refundDailyUnique(
   feature: UsageFeature,
@@ -101,7 +101,7 @@ export async function refundDailyUnique(
 }
 
 /**
- * Verbleibendes Kontingent nur LESEN, ohne etwas zu verbrauchen — für die
+ * Verbleibendes Kontingent nur LESEN, ohne etwas zu verbrauchen, für die
  * Anzeige "X von 3 heute übrig" vor dem ersten Klick. Nur für Set-basierte
  * Kontingente (summary/match/letter), nicht für den CV-Zähler.
  */

@@ -19,6 +19,8 @@ interface JobAlertsSectionProps {
 const ARBEITSZEIT_LABELS: Record<string, string> = {
   vz: 'Vollzeit',
   tz: 'Teilzeit',
+  mj: 'Minijob',
+  ausbildung: 'Ausbildung',
   ho: 'Home-Office',
   snw: 'Schicht/Nacht/Wochenende',
 }

@@ -39,7 +39,7 @@ export async function getJobDetail(refnr: string): Promise<JobDetail> {
       const emailMatch = kontaktinformationen?.match(EMAIL_PATTERN)
       kontaktEmail = emailMatch?.[0] ?? null
     } catch {
-      // ng-state konnte nicht geparst werden — Beschreibung/Kontakt bleiben leer,
+      // ng-state konnte nicht geparst werden, Beschreibung/Kontakt bleiben leer,
       // Nutzer wird auf quelleUrl verwiesen
     }
   }

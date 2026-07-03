@@ -1,7 +1,7 @@
 import { Redis } from '@upstash/redis'
 
 // Gemeinsamer Upstash-Client für Rate-Limiting und Tages-Kontingente.
-// Ohne Env-Vars (z. B. lokal) gibt es null — die Aufrufer haben dann
+// Ohne Env-Vars (z. B. lokal) gibt es null, die Aufrufer haben dann
 // jeweils einen In-Memory-Fallback pro Serverless-Instanz.
 let redisClient: Redis | null = null
 

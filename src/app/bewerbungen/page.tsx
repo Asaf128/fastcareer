@@ -62,7 +62,7 @@ export default async function BewerbungenPage({ searchParams }: BewerbungenPageP
           Deine gespeicherten Stellenangebote und dein Bewerbungsstand an einem Ort.
         </p>
 
-        {/* Desktop: Filter-Chips — mobil übernimmt der MobileStatusPager */}
+        {/* Desktop: Filter-Chips, mobil übernimmt der MobileStatusPager */}
         <nav aria-label="Nach Status filtern" className="mb-6 hidden flex-wrap gap-2 sm:flex">
           <Link
             href="/bewerbungen"

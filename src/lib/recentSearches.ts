@@ -60,6 +60,6 @@ export function saveRecentSearch(search: RecentSearch): void {
     const next = [search, ...existing].slice(0, MAX_ENTRIES)
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next))
   } catch {
-    // localStorage kann fehlen (Private Mode) — Suche funktioniert trotzdem
+    // localStorage kann fehlen (Private Mode), Suche funktioniert trotzdem
   }
 }
