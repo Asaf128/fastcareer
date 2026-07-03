@@ -65,6 +65,84 @@ export type Database = {
         }
         Relationships: []
       }
+      credit_balances: {
+        Row: {
+          letter_credits: number
+          match_credits: number
+          summary_credits: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          letter_credits?: number
+          match_credits?: number
+          summary_credits?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          letter_credits?: number
+          match_credits?: number
+          summary_credits?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      credit_purchases: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          credits: number
+          id: string
+          package_id: string
+          stripe_session_id: string
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          credits: number
+          id?: string
+          package_id: string
+          stripe_session_id: string
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          credits?: number
+          id?: string
+          package_id?: string
+          stripe_session_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      credit_usages: {
+        Row: {
+          created_at: string
+          feature: string
+          id: string
+          job_refnr: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feature: string
+          id?: string
+          job_refnr: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feature?: string
+          id?: string
+          job_refnr?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       job_alerts: {
         Row: {
           arbeitszeit: string
@@ -420,7 +498,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      grant_credits: {
+        Args: {
+          p_user_id: string
+          p_stripe_session_id: string
+          p_package_id: string
+          p_credits: number
+          p_amount_cents: number
+        }
+        Returns: boolean
+      }
+      consume_credit: {
+        Args: { p_feature: string; p_job_refnr: string }
+        Returns: {
+          allowed: boolean
+          remaining: number
+          charged: boolean
+        }[]
+      }
+      refund_credit: {
+        Args: { p_feature: string; p_job_refnr: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

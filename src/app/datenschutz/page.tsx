@@ -113,7 +113,20 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">8. Schriftarten (Google Fonts)</h2>
+              <h2 className="mb-2 font-medium">8. Zahlungsabwicklung (Stripe)</h2>
+              <p>
+                Für den Kauf von Credit-Paketen nutzen wir den Zahlungsdienstleister Stripe (Stripe
+                Payments Europe, Ltd., Irland). Beim Bezahlvorgang verarbeitet Stripe die für die
+                Zahlung erforderlichen Daten (u. a. E-Mail-Adresse, Zahlungsdaten, IP-Adresse) in
+                eigener Verantwortung; Zahlungsdaten wie Kartennummern erreichen unsere Server zu
+                keinem Zeitpunkt. Wir speichern lediglich, welches Paket zu welchem Nutzerkonto
+                gekauft wurde, um die Credits gutzuschreiben. Rechtsgrundlage ist Art. 6 Abs. 1 lit.
+                b DSGVO (Vertragserfüllung). Weitere Informationen: https://stripe.com/de/privacy
+              </p>
+            </section>
+
+            <section>
+              <h2 className="mb-2 font-medium">9. Schriftarten (Google Fonts)</h2>
               <p>
                 Die verwendeten Schriftarten werden über <code>next/font</code> beim Build in die
                 Website eingebunden und lokal von unserem Server ausgeliefert. Beim Aufruf der Seite
@@ -123,7 +136,7 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">9. Deine Rechte</h2>
+              <h2 className="mb-2 font-medium">10. Deine Rechte</h2>
               <p>
                 Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der
                 Verarbeitung, Datenübertragbarkeit sowie Widerspruch gegen die Verarbeitung deiner

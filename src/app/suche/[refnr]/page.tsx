@@ -13,8 +13,7 @@ import { OriginalListing } from '@/components/jobs/OriginalListing'
 import { SummaryLimitNotice, UsageRemainingHint } from '@/components/jobs/UsageLimit'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
-import { consumeDailyUnique, peekDailyRemaining } from '@/lib/usage'
-import { isProUser } from '@/lib/pro'
+import { consumeAiQuota, peekAiQuota } from '@/lib/quota'
 import { createClient } from '@/lib/supabase/server'
 import type { ApplicationStatus } from '@/types/application.types'
 import type { JobSummary as JobSummaryData } from '@/types/ai.types'
@@ -73,25 +72,23 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
   const resolvedArbeitgeber = arbeitgeber ?? application?.arbeitgeber ?? ''
   const resolvedOrt = ort ?? application?.ort ?? ''
 
-  // Freemium-Kontingent: 3 KI-Zusammenfassungen pro Tag — angemeldet per
-  // User-ID, anonym per IP (Schnupper-Kontingent). Dieselbe Anzeige am
-  // selben Tag erneut zu öffnen verbraucht nichts. Die Pro-Admin-E-Mail
-  // ist von allen Kontingenten ausgenommen.
-  const isPro = isProUser(user?.email)
+  // Kontingent-Kaskade: Pro (Admin) → 3 Gratis/Tag (angemeldet per User-ID,
+  // anonym per IP) → gekaufte Credits. Dieselbe Anzeige erneut zu öffnen
+  // verbraucht nichts (Dedupe in beiden Quellen).
   const requestHeaders = await headers()
   const ip = requestHeaders.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
   const usageKey = user ? user.id : `ip:${ip}`
 
+  const summaryQuota = await consumeAiQuota({
+    feature: 'summary',
+    userKey: usageKey,
+    userId: user?.id ?? null,
+    email: user?.email,
+    jobRefnr: refnr,
+  })
+
   let summary: JobSummaryData | null = null
-  // null = unbegrenzt (Pro) bzw. Limit erreicht — dann keine Rest-Anzeige
-  let summaryRemaining: number | null = null
-  let summaryAllowed = true
-  if (!isPro) {
-    const usage = await consumeDailyUnique('summary', usageKey, refnr)
-    summaryAllowed = usage.allowed
-    if (usage.allowed) summaryRemaining = usage.remaining
-  }
-  if (summaryAllowed) {
+  if (summaryQuota.allowed) {
     summary = await getOrCreateJobSummary({
       refnr,
       titel: resolvedTitel,
@@ -100,14 +97,17 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
       beschreibung: detail.beschreibung,
     })
   }
+  // Rest-Anzeige nur für die Gratis-Quelle — die Credit-Anzeige kommt mit
+  // der Kauf-UI (Schritt 3)
+  const summaryRemaining = summaryQuota.source === 'free' ? summaryQuota.remaining : null
 
-  // Restkontingente für Match & Anschreiben, damit die Panels das Limit
-  // schon VOR dem Klick anzeigen können (statt erst per Fehlermeldung)
+  // Verfügbares Kontingent (Gratis + Credits) für Match & Anschreiben, damit
+  // die Panels das Limit schon VOR dem Klick anzeigen können
   const [matchRemaining, letterRemaining] =
-    user && profile && !isPro
+    user && profile
       ? await Promise.all([
-          peekDailyRemaining('match', user.id),
-          peekDailyRemaining('letter', user.id),
+          peekAiQuota('match', user.id, user.id, user.email),
+          peekAiQuota('letter', user.id, user.id, user.email),
         ])
       : [null, null]
 
@@ -139,7 +139,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
             <JobSummary summary={summary} />
             {summaryRemaining != null && (
               <UsageRemainingHint
-                label="Gratis KI-Zusammenfassungen"
+                label="KI-Zusammenfassungen"
                 remaining={summaryRemaining}
                 showLoginLink={!user}
               />

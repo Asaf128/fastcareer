@@ -20,10 +20,13 @@ function LimitNotice({ isAuthenticated, children }: LimitNoticeProps) {
       </h2>
       <p className="text-text-secondary mx-auto mt-2 max-w-md text-sm">{children}</p>
       {isAuthenticated ? (
-        <span className="bg-accent/10 text-accent mt-4 inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm font-medium">
+        <Link
+          href="/credits"
+          className="bg-accent hover:bg-accent-dark mt-4 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-white shadow-sm transition-[background-color,transform] duration-150 ease-out active:scale-[0.97]"
+        >
           <Sparkles className="h-4 w-4" />
-          Unbegrenzt mit Pro — bald verfügbar
-        </span>
+          Credits kaufen — ab 1,99 €
+        </Link>
       ) : (
         <Link
           href="/login"
@@ -76,12 +79,14 @@ export function FeatureLimitNotice({ featureLabel }: { featureLabel: string }) {
 /**
  * Sichtbares Restkontingent ("X von 3 heute übrig"), damit das Limit nicht
  * erst beim Erreichen auffällt — für anonyme UND angemeldete Nutzer.
+ * Liegt der Wert über dem Tageslimit, stecken gekaufte Credits dahinter.
  */
 export function UsageRemainingHint({
   label,
   remaining,
   showLoginLink = false,
 }: {
+  /** Feature-Bezeichnung ohne Präfix, z. B. "KI-Anschreiben" */
   label: string
   remaining: number
   showLoginLink?: boolean
@@ -89,7 +94,9 @@ export function UsageRemainingHint({
   return (
     <p className="text-text-secondary mt-2 flex flex-wrap items-center justify-center gap-1.5 text-center text-xs">
       <Sparkles className="text-accent h-3.5 w-3.5 shrink-0" />
-      {label}: {remaining} von {DAILY_LIMIT} heute übrig
+      {remaining > DAILY_LIMIT
+        ? `${label}: noch ${remaining} verfügbar (${DAILY_LIMIT} gratis pro Tag + deine Credits)`
+        : `Gratis ${label}: ${remaining} von ${DAILY_LIMIT} heute übrig`}
       {showLoginLink && (
         <>
           {' '}

@@ -21,6 +21,12 @@ export function Footer() {
           >
             Datenschutz
           </Link>
+          <Link
+            href="/agb"
+            className="text-text-secondary hover:text-foreground text-xs transition-colors duration-150 sm:text-sm"
+          >
+            AGB
+          </Link>
         </nav>
       </Container>
     </footer>
