@@ -5,7 +5,7 @@ import { Bookmark, MapPin } from 'lucide-react'
 import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { SaveJobButton } from '@/components/jobs/SaveJobButton'
-import { MobileStatusPager } from '@/components/bewerbungen/MobileStatusPager'
+import { StatusFilterPager } from '@/components/bewerbungen/StatusFilterPager'
 import { createClient } from '@/lib/supabase/server'
 import { cn } from '@/lib/cn'
 import {
@@ -62,36 +62,7 @@ export default async function BewerbungenPage({ searchParams }: BewerbungenPageP
           Deine gespeicherten Stellenangebote und dein Bewerbungsstand an einem Ort.
         </p>
 
-        {/* Desktop: Filter-Chips, mobil übernimmt der MobileStatusPager */}
-        <nav aria-label="Nach Status filtern" className="mb-6 hidden flex-wrap gap-2 sm:flex">
-          <Link
-            href="/bewerbungen"
-            className={cn(
-              'rounded-full border px-3.5 py-1.5 text-sm transition-colors duration-150',
-              activeFilter === null
-                ? 'border-accent bg-accent text-white'
-                : 'border-border text-text-secondary hover:border-accent hover:text-accent'
-            )}
-          >
-            Alle
-          </Link>
-          {APPLICATION_STATUSES.map((value) => (
-            <Link
-              key={value}
-              href={`/bewerbungen?status=${value}`}
-              className={cn(
-                'rounded-full border px-3.5 py-1.5 text-sm transition-colors duration-150',
-                activeFilter === value
-                  ? 'border-accent bg-accent text-white'
-                  : 'border-border text-text-secondary hover:border-accent hover:text-accent'
-              )}
-            >
-              {APPLICATION_STATUS_LABELS[value]}
-            </Link>
-          ))}
-        </nav>
-
-        <MobileStatusPager activeFilter={activeFilter}>
+        <StatusFilterPager activeFilter={activeFilter}>
           {!applications || applications.length === 0 ? (
             <div className="border-border bg-surface flex flex-col items-center gap-3 rounded-xl border p-10 text-center">
               <Bookmark className="text-text-secondary h-8 w-8" />
@@ -171,7 +142,7 @@ export default async function BewerbungenPage({ searchParams }: BewerbungenPageP
               })}
             </div>
           )}
-        </MobileStatusPager>
+        </StatusFilterPager>
       </Container>
     </Section>
   )
