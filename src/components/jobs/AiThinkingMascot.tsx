@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { cn } from '@/lib/cn'
 
 interface AiThinkingMascotProps {
   phase: 'thinking' | 'done'
@@ -110,7 +109,6 @@ export function AiThinkingMascot({ phase, titel, arbeitgeber }: AiThinkingMascot
           viewBox={`0 0 ${12 * PIXEL_SIZE} ${PIXEL_ROWS.length * PIXEL_SIZE}`}
           shapeRendering="crispEdges"
           aria-hidden
-          className={cn(phase === 'thinking' && 'animate-mascot-bob')}
         >
           {PIXEL_ROWS.flatMap((row, y) =>
             row

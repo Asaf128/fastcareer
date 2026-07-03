@@ -100,6 +100,25 @@ export async function refundDailyUnique(
   memorySets.get(key)?.delete(member)
 }
 
+/**
+ * Verbleibendes Kontingent nur LESEN, ohne etwas zu verbrauchen — für die
+ * Anzeige "X von 3 heute übrig" vor dem ersten Klick. Nur für Set-basierte
+ * Kontingente (summary/match/letter), nicht für den CV-Zähler.
+ */
+export async function peekDailyRemaining(feature: UsageFeature, userKey: string): Promise<number> {
+  const key = usageKey(feature, userKey)
+  const redis = getRedis()
+  if (redis) {
+    try {
+      const count = await redis.scard(key)
+      return Math.max(0, DAILY_LIMIT - count)
+    } catch (error) {
+      console.error('Usage-Kontingent (peek) via Upstash fehlgeschlagen:', error)
+    }
+  }
+  return Math.max(0, DAILY_LIMIT - (memorySets.get(key)?.size ?? 0))
+}
+
 /** Zähler-basiertes Kontingent für Features ohne Dedupe-Einheit (CV-Upload). */
 export async function consumeDailyCount(
   feature: UsageFeature,

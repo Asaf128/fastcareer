@@ -10,10 +10,11 @@ import { MatchScore } from '@/components/jobs/MatchScore'
 import { CoverLetterPanel } from '@/components/jobs/CoverLetterPanel'
 import { ApplicationChecklist } from '@/components/jobs/ApplicationChecklist'
 import { OriginalListing } from '@/components/jobs/OriginalListing'
-import { SummaryLimitNotice, SummaryTasterHint } from '@/components/jobs/UsageLimit'
+import { SummaryLimitNotice, UsageRemainingHint } from '@/components/jobs/UsageLimit'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
-import { consumeDailyUnique } from '@/lib/usage'
+import { consumeDailyUnique, peekDailyRemaining } from '@/lib/usage'
+import { isProUser } from '@/lib/pro'
 import { createClient } from '@/lib/supabase/server'
 import type { ApplicationStatus } from '@/types/application.types'
 import type { JobSummary as JobSummaryData } from '@/types/ai.types'
@@ -74,14 +75,23 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
 
   // Freemium-Kontingent: 3 KI-Zusammenfassungen pro Tag — angemeldet per
   // User-ID, anonym per IP (Schnupper-Kontingent). Dieselbe Anzeige am
-  // selben Tag erneut zu öffnen verbraucht nichts.
+  // selben Tag erneut zu öffnen verbraucht nichts. Die Pro-Admin-E-Mail
+  // ist von allen Kontingenten ausgenommen.
+  const isPro = isProUser(user?.email)
   const requestHeaders = await headers()
   const ip = requestHeaders.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
   const usageKey = user ? user.id : `ip:${ip}`
-  const usage = await consumeDailyUnique('summary', usageKey, refnr)
 
   let summary: JobSummaryData | null = null
-  if (usage.allowed) {
+  // null = unbegrenzt (Pro) bzw. Limit erreicht — dann keine Rest-Anzeige
+  let summaryRemaining: number | null = null
+  let summaryAllowed = true
+  if (!isPro) {
+    const usage = await consumeDailyUnique('summary', usageKey, refnr)
+    summaryAllowed = usage.allowed
+    if (usage.allowed) summaryRemaining = usage.remaining
+  }
+  if (summaryAllowed) {
     summary = await getOrCreateJobSummary({
       refnr,
       titel: resolvedTitel,
@@ -90,6 +100,16 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
       beschreibung: detail.beschreibung,
     })
   }
+
+  // Restkontingente für Match & Anschreiben, damit die Panels das Limit
+  // schon VOR dem Klick anzeigen können (statt erst per Fehlermeldung)
+  const [matchRemaining, letterRemaining] =
+    user && profile && !isPro
+      ? await Promise.all([
+          peekDailyRemaining('match', user.id),
+          peekDailyRemaining('letter', user.id),
+        ])
+      : [null, null]
 
   // Anschreiben wird nicht mehr beim Seitenaufbau generiert (teurer Pro-Call,
   // blockierte das Rendering) — das passiert auf Klick im CoverLetterPanel
@@ -117,10 +137,16 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
         {summary ? (
           <>
             <JobSummary summary={summary} />
-            {!user && <SummaryTasterHint remaining={usage.remaining} />}
+            {summaryRemaining != null && (
+              <UsageRemainingHint
+                label="Gratis KI-Zusammenfassungen"
+                remaining={summaryRemaining}
+                showLoginLink={!user}
+              />
+            )}
           </>
         ) : (
-          <SummaryLimitNotice isAuthenticated={Boolean(user)} />
+          <SummaryLimitNotice isAuthenticated={Boolean(user)} quelleUrl={detail.quelleUrl} />
         )}
 
         <MatchScore
@@ -130,6 +156,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
           ort={resolvedOrt}
           isAuthenticated={Boolean(user)}
           hasProfile={Boolean(profile)}
+          initialRemaining={matchRemaining}
           initialResult={
             application?.match_score != null
               ? {
@@ -148,6 +175,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
           kontaktEmail={detail.kontaktEmail}
           isAuthenticated={Boolean(user)}
           hasProfile={Boolean(profile)}
+          initialRemaining={letterRemaining}
           initialCoverLetter={coverLetter}
           senderName={profile?.full_name ?? null}
           senderStreet={profile?.street ?? null}

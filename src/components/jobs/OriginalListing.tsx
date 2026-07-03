@@ -25,7 +25,7 @@ export function OriginalListing({ kontaktEmail, quelleUrl }: OriginalListingProp
         href={quelleUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="bg-foreground hover:bg-surface-dark mt-4 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white transition-[background-color,transform] duration-150 ease-out active:scale-[0.97]"
+        className="bg-accent hover:bg-accent-dark mt-4 inline-flex items-center gap-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-[background-color,transform] duration-150 ease-out active:scale-[0.97]"
       >
         Original-Stellenangebot öffnen
         <ExternalLink className="h-4 w-4" />
