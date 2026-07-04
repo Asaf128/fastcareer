@@ -36,7 +36,12 @@ export async function getJobDetail(refnr: string): Promise<JobDetail> {
       const state = JSON.parse(ngStateRaw) as NgStateJson
       beschreibung = state.jobdetail?.stellenangebotsBeschreibung ?? ''
       const kontaktinformationen = state.arbeitgeberdarstellung?.kontaktinformationen
-      const emailMatch = kontaktinformationen?.match(EMAIL_PATTERN)
+      // Viele Arbeitgeber nennen die Bewerbungs-Mail nur im Fließtext der
+      // Beschreibung statt im separaten Kontakt-Feld — daher als Fallback
+      // dort ebenfalls suchen, sonst bleibt der "Per Mail senden"-Button bei
+      // den meisten Stellen unsichtbar
+      const emailMatch =
+        kontaktinformationen?.match(EMAIL_PATTERN) ?? beschreibung.match(EMAIL_PATTERN)
       kontaktEmail = emailMatch?.[0] ?? null
     } catch {
       // ng-state konnte nicht geparst werden, Beschreibung/Kontakt bleiben leer,
