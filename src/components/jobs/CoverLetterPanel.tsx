@@ -11,7 +11,6 @@ import { CoverLetterHeadFields } from '@/components/jobs/CoverLetterHeadFields'
 import { AiThinkingMascot } from '@/components/jobs/AiThinkingMascot'
 import { FeatureLimitNotice, UsageRemainingHint } from '@/components/jobs/UsageLimit'
 import { buildLetterDate, downloadCoverLetterPdf } from '@/components/jobs/coverLetterPdf'
-import { getMailComposeLink } from '@/lib/mailCompose'
 
 // Wie lange die Sprechblase nach Abschluss noch "Fertig!" zeigt, bevor sie
 // dem echten Anschreiben-Feld weicht
@@ -23,8 +22,6 @@ interface CoverLetterPanelProps {
   arbeitgeber: string
   ort: string
   kontaktEmail: string | null
-  /** Login-Mail des Nutzers, für die Erkennung von Gmail/Outlook/Yahoo & Co. */
-  userEmail: string | null
   isAuthenticated: boolean
   hasProfile: boolean
   /** Verbleibende KI-Anschreiben heute (null heißt unbegrenzt, Pro) */
@@ -50,7 +47,6 @@ export function CoverLetterPanel({
   arbeitgeber,
   ort,
   kontaktEmail,
-  userEmail,
   isAuthenticated,
   hasProfile,
   initialRemaining,
@@ -137,8 +133,8 @@ export function CoverLetterPanel({
     })
   }
 
-  const mailCompose = kontaktEmail
-    ? getMailComposeLink(userEmail, { to: kontaktEmail, subject, body: text.slice(0, 1800) })
+  const mailtoHref = kontaktEmail
+    ? `mailto:${kontaktEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text.slice(0, 1800))}`
     : null
 
   if (!text && !showMascot) {
@@ -223,15 +219,13 @@ export function CoverLetterPanel({
               <Download className="h-4 w-4" />
               Als PDF herunterladen
             </Button>
-            {mailCompose && (
+            {mailtoHref && (
               <a
-                href={mailCompose.href}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={mailtoHref}
                 className="bg-accent hover:bg-accent-dark inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-[background-color,transform] duration-150 ease-out active:scale-[0.97]"
               >
                 <Send className="h-4 w-4" />
-                {mailCompose.label}
+                Per E-Mail bewerben
               </a>
             )}
           </div>
