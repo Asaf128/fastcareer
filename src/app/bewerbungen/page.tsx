@@ -6,7 +6,7 @@ import { Container } from '@/components/shared/Container'
 import { Section } from '@/components/shared/Section'
 import { SaveJobButton } from '@/components/jobs/SaveJobButton'
 import { StatusFilterPager } from '@/components/bewerbungen/StatusFilterPager'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, getAuthUser } from '@/lib/supabase/server'
 import { cn } from '@/lib/cn'
 import {
   APPLICATION_STATUSES,
@@ -38,13 +38,10 @@ export default async function BewerbungenPage({ searchParams }: BewerbungenPageP
   const { status: statusParam } = await searchParams
   const activeFilter = isApplicationStatus(statusParam) ? statusParam : null
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const user = await getAuthUser()
   if (!user) redirect('/login?next=/bewerbungen')
 
+  const supabase = await createClient()
   let query = supabase
     .from('applications')
     .select('*')

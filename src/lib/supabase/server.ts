@@ -1,5 +1,7 @@
+import { cache } from 'react'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import type { User } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
 export async function createClient() {
@@ -23,3 +25,19 @@ export async function createClient() {
     }
   )
 }
+
+/**
+ * Angemeldeten Nutzer einmal pro Request abfragen — mit React `cache()`
+ * memoisiert, damit z. B. Header UND die jeweilige Seite (beide eigene
+ * Server Components im selben Render-Baum) sich einen Netzwerk-Roundtrip
+ * zu Supabase Auth teilen, statt ihn beide separat auszulösen. Das
+ * Middleware-getUser() (Session-Refresh, anderer Runtime-Kontext) bleibt
+ * davon unberührt und läuft weiterhin einmal pro Navigation.
+ */
+export const getAuthUser = cache(async (): Promise<User | null> => {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  return user
+})
