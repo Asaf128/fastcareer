@@ -14,7 +14,7 @@ import { SummaryLimitNotice, UsageRemainingHint } from '@/components/jobs/UsageL
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
 import { consumeAiQuota, peekAiQuota } from '@/lib/quota'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, getAuthUser } from '@/lib/supabase/server'
 import type { ApplicationStatus } from '@/types/application.types'
 import type { JobSummary as JobSummaryData } from '@/types/ai.types'
 
@@ -36,17 +36,15 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
   const { refnr } = await params
   const { titel, arbeitgeber, ort } = await searchParams
 
-  let detail
-  try {
-    detail = await getJobDetail(refnr)
-  } catch {
-    notFound()
-  }
-
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // getJobDetail scrapt die Arbeitsagentur-Seite (externer HTTP-Call, meist
+  // der langsamste Einzelschritt) — läuft parallel zur Auth-Arbeit statt
+  // davor, statt beides nacheinander abzuwarten
+  const [detail, user, supabase] = await Promise.all([
+    getJobDetail(refnr).catch(() => null),
+    getAuthUser(),
+    createClient(),
+  ])
+  if (!detail) notFound()
 
   const [applicationResult, profileResult] = await Promise.all([
     user

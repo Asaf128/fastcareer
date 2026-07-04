@@ -5,7 +5,7 @@ import { Section } from '@/components/shared/Section'
 import { ProfileForm } from '@/components/profile/ProfileForm'
 import { DeleteAccountSection } from '@/components/profile/DeleteAccountSection'
 import { CreditsSection } from '@/components/profile/CreditsSection'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, getAuthUser } from '@/lib/supabase/server'
 import { getCreditBalance } from '@/lib/credits'
 import { isProUser } from '@/lib/pro'
 
@@ -14,18 +14,15 @@ export const metadata: Metadata = {
 }
 
 export default async function ProfilPage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
+  const user = await getAuthUser()
   if (!user) redirect('/login?next=/profil')
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .maybeSingle()
+  const supabase = await createClient()
+  // Unabhängige Abfragen parallel statt nacheinander
+  const [{ data: profile }, balance] = await Promise.all([
+    supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
+    getCreditBalance(),
+  ])
 
   // Signed URL, weil der cvs-Bucket privat ist (1 h gültig, reicht für die Seite)
   let cvUrl: string | null = null
@@ -35,8 +32,6 @@ export default async function ProfilPage() {
       .createSignedUrl(profile.cv_path, 3600)
     cvUrl = signed?.signedUrl ?? null
   }
-
-  const balance = await getCreditBalance()
 
   return (
     <Section className="py-10 lg:py-14">

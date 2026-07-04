@@ -1,13 +1,10 @@
 import Link from 'next/link'
 import { APP_NAME } from '@/constants/config'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser } from '@/lib/supabase/server'
 import { HeaderNav } from '@/components/layout/HeaderNav'
 
 export async function Header() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getAuthUser()
 
   return (
     <header className="border-border bg-background/95 sticky top-0 z-20 border-b backdrop-blur">

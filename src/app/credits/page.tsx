@@ -4,7 +4,7 @@ import { Section } from '@/components/shared/Section'
 import { PackageCard } from '@/components/credits/PackageCard'
 import { CREDIT_PACKAGES } from '@/constants/creditPackages'
 import { getCreditBalance } from '@/lib/credits'
-import { createClient } from '@/lib/supabase/server'
+import { getAuthUser } from '@/lib/supabase/server'
 import { DAILY_LIMIT } from '@/lib/usage'
 
 export const metadata: Metadata = {
@@ -14,10 +14,7 @@ export const metadata: Metadata = {
 }
 
 export default async function CreditsPage() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getAuthUser()
   const balance = user ? await getCreditBalance() : null
 
   return (

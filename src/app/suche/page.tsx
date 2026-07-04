@@ -7,7 +7,7 @@ import { JobSearchForm } from '@/components/suche/JobSearchForm'
 import { JobCard } from '@/components/suche/JobCard'
 import { SearchResultsPager } from '@/components/suche/SearchResultsPager'
 import { searchJobs } from '@/lib/jobs/arbeitsagentur'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, getAuthUser } from '@/lib/supabase/server'
 import type { Arbeitszeit } from '@/types/job.types'
 
 export const metadata: Metadata = {
@@ -63,13 +63,11 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
     return `/suche?${query.toString()}`
   }
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const user = await getAuthUser()
 
   let savedRefnrs = new Set<string>()
   if (user && result) {
+    const supabase = await createClient()
     const { data } = await supabase.from('applications').select('job_refnr').eq('user_id', user.id)
     savedRefnrs = new Set(data?.map((application) => application.job_refnr))
   }
