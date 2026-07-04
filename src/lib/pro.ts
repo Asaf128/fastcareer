@@ -4,7 +4,7 @@
  * Alle anderen Konten (angemeldet oder nicht) haben dieselben
  * Freemium-Tageskontingente.
  */
-const PRO_EMAILS = new Set(['ceb.asaf@gmail.com'])
+const PRO_EMAILS = new Set(['ceb.asaf@gmail.com', 'cebecisirack@gmail.com'])
 
 export function isProUser(email: string | null | undefined): boolean {
   return email != null && PRO_EMAILS.has(email.toLowerCase())
