@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 import { saveCoverLetter } from '@/actions/applications.actions'
 import { generateAndSaveCoverLetter } from '@/actions/coverLetter.actions'
 import { Button } from '@/components/shared/Button'
+import { Input } from '@/components/shared/Input'
 import { CoverLetterHeadFields } from '@/components/jobs/CoverLetterHeadFields'
 import { AiThinkingMascot } from '@/components/jobs/AiThinkingMascot'
 import { FeatureLimitNotice, UsageRemainingHint } from '@/components/jobs/UsageLimit'
@@ -76,6 +77,7 @@ export function CoverLetterPanel({
   const [subject, setSubject] = useState(`Bewerbung als ${titel}`)
   const [date, setDate] = useState(() => buildLetterDate(senderLocation))
   const [recipient, setRecipient] = useState([arbeitgeber, ort].filter(Boolean).join('\n'))
+  const [recipientEmail, setRecipientEmail] = useState(kontaktEmail ?? '')
   const [isCopied, setIsCopied] = useState(false)
   const [remaining, setRemaining] = useState(initialRemaining)
   const [limitReached, setLimitReached] = useState(initialRemaining === 0)
@@ -158,9 +160,11 @@ export function CoverLetterPanel({
     })
   }
 
-  const mailLink = kontaktEmail
-    ? getMailLink(isWindows, userEmail, { to: kontaktEmail, subject, body: text.slice(0, 1800) })
-    : null
+  const mailLink = getMailLink(isWindows, userEmail, {
+    to: recipientEmail,
+    subject,
+    body: text.slice(0, 1800),
+  })
 
   if (!text && !showMascot) {
     // Limit erreicht und noch kein gespeichertes Anschreiben: dieselbe Karte
@@ -239,23 +243,38 @@ export function CoverLetterPanel({
             className="border-border bg-background text-text-primary mt-4 w-full rounded-lg border p-4 text-sm leading-relaxed disabled:opacity-70"
           />
 
+          {!kontaktEmail && (
+            <div className="mt-4">
+              <Input
+                label="Empfänger-E-Mail"
+                type="email"
+                value={recipientEmail}
+                onChange={(event) => setRecipientEmail(event.target.value)}
+                placeholder="bewerbung@firma.de"
+              />
+              <p className="text-text-secondary mt-1 text-xs">
+                Keine E-Mail-Adresse gefunden, sie ist vermutlich durch ein Captcha geschützt. Bitte
+                selbst eintragen.
+              </p>
+            </div>
+          )}
+
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             <Button variant="secondary" size="sm" onClick={downloadPdf}>
               <Download className="h-4 w-4" />
               Als PDF herunterladen
             </Button>
-            {mailLink && (
-              <a
-                href={mailLink.href}
-                {...(mailLink.opensInNewTab
-                  ? { target: '_blank', rel: 'noopener noreferrer' }
-                  : {})}
-                className="bg-accent hover:bg-accent-dark inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-[background-color,transform] duration-150 ease-out active:scale-[0.97]"
-              >
-                <Send className="h-4 w-4" />
-                {mailLink.label}
-              </a>
-            )}
+            <a
+              href={recipientEmail ? mailLink.href : undefined}
+              aria-disabled={!recipientEmail}
+              {...(mailLink.opensInNewTab ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+              className={`bg-accent hover:bg-accent-dark inline-flex items-center justify-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-[background-color,transform] duration-150 ease-out active:scale-[0.97] ${
+                recipientEmail ? '' : 'pointer-events-none opacity-50'
+              }`}
+            >
+              <Send className="h-4 w-4" />
+              {mailLink.label}
+            </a>
           </div>
         </>
       )}
