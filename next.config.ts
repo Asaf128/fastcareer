@@ -10,13 +10,16 @@ const contentSecurityPolicy = [
   "img-src 'self' data: blob: https://*.supabase.co",
   "font-src 'self' data:",
   "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://vitals.vercel-insights.com",
-  "frame-ancestors 'none'",
+  // Portfolio-Seite darf Fastcareer als Showcase einbetten; alle anderen bleiben blockiert.
+  // Kein X-Frame-Options mehr: das kann keine fremden Origins erlauben und würde
+  // frame-ancestors in älteren Browsern widersprechen — moderne ignorieren XFO ohnehin,
+  // sobald frame-ancestors gesetzt ist.
+  "frame-ancestors 'self' https://asafcebeci.de https://www.asafcebeci.de",
   "base-uri 'self'",
   "form-action 'self'",
 ].join('; ')
 
 const securityHeaders = [
-  { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
