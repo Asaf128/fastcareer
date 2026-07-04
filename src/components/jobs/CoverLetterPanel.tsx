@@ -150,10 +150,12 @@ export function CoverLetterPanel({
           Die KI erstellt aus deinem Profil und den Anforderungen der Stelle ein maßgeschneidertes
           Anschreiben. Das dauert ca. 20 bis 30 Sekunden.
         </p>
-        <Button variant="accent" className="mt-4" onClick={handleGenerate}>
+        <Button variant="accent" size="sm" className="mt-4" onClick={handleGenerate}>
           Anschreiben mit KI erstellen
         </Button>
-        {remaining != null && <UsageRemainingHint label="KI-Anschreiben" remaining={remaining} />}
+        {remaining != null && (
+          <UsageRemainingHint label="KI-Anschreiben" remaining={remaining} align="start" />
+        )}
       </div>
     )
   }

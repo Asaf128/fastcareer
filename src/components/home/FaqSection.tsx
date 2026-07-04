@@ -5,7 +5,7 @@ const FAQS = [
   {
     frage: 'Ist Fastcareer kostenlos?',
     antwort:
-      'Die Jobsuche ist immer kostenlos und funktioniert ohne Konto. Für KI-Anschreiben und das Bewerbungs-Cockpit meldest du dich per E-Mail-Code an, ohne Passwort. Die KI-Funktionen (Zusammenfassung, Match-Score, Anschreiben) sind pro Tag 3 Mal gratis nutzbar, danach kannst du günstige Credits dazukaufen.',
+      'Die Jobsuche ist immer kostenlos und funktioniert ohne Konto. Für KI-Anschreiben und das Bewerbungs-Cockpit meldest du dich per E-Mail-Code an, ohne Passwort. Die KI-Funktionen (Zusammenfassung, Match-Score, Anschreiben) sind alle 7 Tage 2 Mal gratis nutzbar, danach kannst du günstige Credits dazukaufen.',
   },
   {
     frage: 'Woher kommen die Stellenangebote?',

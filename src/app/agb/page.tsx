@@ -24,9 +24,9 @@ export default function AgbPage() {
               <p>
                 Diese AGB gelten für den Kauf von KI-Credits über die Website Fastcareer. Anbieter
                 ist Asaf Cebeci, Seiboldsdorfer Feld 5, 83278 Traunstein, E-Mail: ceb.asaf@gmail.com
-                (nachfolgend „Anbieter&quot;). Die Jobsuche selbst sowie das tägliche
-                Gratis-Kontingent der KI-Funktionen bleiben kostenlos; diese AGB betreffen nur den
-                Kauf von Credit-Paketen.
+                (nachfolgend „Anbieter&quot;). Die Jobsuche selbst sowie das Gratis-Kontingent der
+                KI-Funktionen (alle 7 Tage) bleiben kostenlos; diese AGB betreffen nur den Kauf von
+                Credit-Paketen.
               </p>
             </section>
 
@@ -38,9 +38,9 @@ export default function AgbPage() {
                 100 Match-Berechnungen und 100 KI-Anschreiben. Für dieselbe Stellenanzeige wird pro
                 Funktion nur einmal ein Credit verbraucht; erneutes Öffnen oder Neu-Generieren
                 derselben Anzeige ist kostenfrei. Credits sind an das Nutzerkonto gebunden, nicht
-                übertragbar und verfallen nicht. Das tägliche Gratis-Kontingent wird stets vor den
-                gekauften Credits verbraucht. Schlägt eine KI-Generierung fehl, wird der Credit
-                automatisch erstattet.
+                übertragbar und verfallen nicht. Das Gratis-Kontingent wird stets vor den gekauften
+                Credits verbraucht. Schlägt eine KI-Generierung fehl, wird der Credit automatisch
+                erstattet.
               </p>
             </section>
 

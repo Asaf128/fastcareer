@@ -5,7 +5,7 @@ import { PackageCard } from '@/components/credits/PackageCard'
 import { CREDIT_PACKAGES } from '@/constants/creditPackages'
 import { getCreditBalance } from '@/lib/credits'
 import { getAuthUser } from '@/lib/supabase/server'
-import { DAILY_LIMIT } from '@/lib/usage'
+import { USAGE_LIMIT } from '@/lib/usage'
 
 export const metadata: Metadata = {
   title: 'Credits kaufen',
@@ -22,7 +22,7 @@ export default async function CreditsPage() {
       <Container className="max-w-3xl">
         <h1 className="text-foreground text-2xl lg:text-3xl">Credits kaufen</h1>
         <p className="text-text-secondary mt-2 max-w-xl text-sm lg:text-base">
-          {DAILY_LIMIT} Nutzungen pro KI-Feature sind jeden Tag kostenlos. Wer mehr braucht, kauft
+          {USAGE_LIMIT} Nutzungen pro KI-Feature sind alle 7 Tage kostenlos. Wer mehr braucht, kauft
           einmalig ein Paket, kein Abo, keine Folgekosten, Credits verfallen nicht.
         </p>
 
@@ -45,8 +45,8 @@ export default async function CreditsPage() {
           <p>
             Ein Paket gilt pro Feature-Typ: Das Jobsuche-Paket sind 100 Zusammenfassungen UND 100
             Matches UND 100 Anschreiben. Dieselbe Stelle kostet pro Feature nur einmal einen Credit
-            Erneutes Öffnen oder Neu-Generieren ist gratis. Dein Gratis-Tageskontingent wird immer
-            zuerst verbraucht.
+            Erneutes Öffnen oder Neu-Generieren ist gratis. Dein Gratis-Kontingent wird immer zuerst
+            verbraucht.
           </p>
           <p>
             Bezahlung sicher über Stripe (Karte, PayPal u. a.). Alle Preise sind Endpreise. Mit dem

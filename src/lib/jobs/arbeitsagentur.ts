@@ -24,10 +24,13 @@ interface RawJobListing {
 
 export async function searchJobs(params: JobSearchParams): Promise<JobSearchResult> {
   const query = new URLSearchParams({
-    was: params.was,
     page: String(params.page ?? 1),
     size: String(params.size ?? 25),
   })
+  // "was" ist bei der Arbeitsagentur-API kein Pflichtfeld — ein leerer Wert
+  // führt sogar zu HTTP 400, deshalb nur setzen wenn wirklich vorhanden.
+  // Ohne Stichwort filtert dann nur Ort/Umkreis/Arbeitszeit.
+  if (params.was) query.set('was', params.was)
   if (params.wo) query.set('wo', params.wo)
   if (params.umkreis) query.set('umkreis', String(params.umkreis))
   // Ausbildung ist bei der Arbeitsagentur kein Arbeitszeit-Wert, sondern ein

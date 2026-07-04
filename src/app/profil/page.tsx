@@ -6,8 +6,9 @@ import { ProfileForm } from '@/components/profile/ProfileForm'
 import { DeleteAccountSection } from '@/components/profile/DeleteAccountSection'
 import { CreditsSection } from '@/components/profile/CreditsSection'
 import { createClient, getAuthUser } from '@/lib/supabase/server'
-import { getCreditBalance } from '@/lib/credits'
+import { getCreditBalance, type CreditFeature } from '@/lib/credits'
 import { isProUser } from '@/lib/pro'
+import { peekPeriodRemaining } from '@/lib/usage'
 
 export const metadata: Metadata = {
   title: 'Mein Profil',
@@ -18,11 +19,20 @@ export default async function ProfilPage() {
   if (!user) redirect('/login?next=/profil')
 
   const supabase = await createClient()
+  const isPro = isProUser(user.email)
   // Unabhängige Abfragen parallel statt nacheinander
-  const [{ data: profile }, balance] = await Promise.all([
-    supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
-    getCreditBalance(),
-  ])
+  const [{ data: profile }, balance, summaryRemaining, matchRemaining, letterRemaining] =
+    await Promise.all([
+      supabase.from('profiles').select('*').eq('id', user.id).maybeSingle(),
+      getCreditBalance(),
+      isPro ? Promise.resolve(null) : peekPeriodRemaining('summary', user.id),
+      isPro ? Promise.resolve(null) : peekPeriodRemaining('match', user.id),
+      isPro ? Promise.resolve(null) : peekPeriodRemaining('letter', user.id),
+    ])
+  const freeRemaining: Record<CreditFeature, number> | null =
+    summaryRemaining !== null && matchRemaining !== null && letterRemaining !== null
+      ? { summary: summaryRemaining, match: matchRemaining, letter: letterRemaining }
+      : null
 
   // Signed URL, weil der cvs-Bucket privat ist (1 h gültig, reicht für die Seite)
   let cvUrl: string | null = null
@@ -42,7 +52,7 @@ export default async function ProfilPage() {
         </p>
 
         <ProfileForm initialProfile={profile} cvUrl={cvUrl} />
-        <CreditsSection balance={balance} isPro={isProUser(user.email)} />
+        <CreditsSection balance={balance} isPro={isPro} freeRemaining={freeRemaining} />
         <DeleteAccountSection />
       </Container>
     </Section>
