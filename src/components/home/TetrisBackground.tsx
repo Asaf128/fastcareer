@@ -203,24 +203,42 @@ export function TetrisBackground() {
       ctx.globalAlpha = 1
     }
 
-    // Ziehen statt Klicken: Maustaste über dem Stein halten und seitlich
-    // bewegen schiebt ihn hin und her — kein Sprung mehr durch bloßes Klicken
-    let drag: { pointerId: number; startClientX: number; startPieceX: number } | null = null
+    // Ziehen statt Klicken: Maustaste über dem Stein halten und in jede
+    // Richtung bewegen schiebt ihn — begrenzt auf den Canvas (Hero-Bereich),
+    // nach unten nie durch den Boden oder bereits gestapelte Steine hindurch
+    let drag: {
+      pointerId: number
+      startClientX: number
+      startClientY: number
+      startPieceX: number
+      startPieceY: number
+    } | null = null
 
     function onPointerDown(event: PointerEvent) {
       if (!isVisible || !piece) return
-      drag = { pointerId: event.pointerId, startClientX: event.clientX, startPieceX: piece.x }
+      drag = {
+        pointerId: event.pointerId,
+        startClientX: event.clientX,
+        startClientY: event.clientY,
+        startPieceX: piece.x,
+        startPieceY: piece.y,
+      }
       canvas.setPointerCapture(event.pointerId)
     }
 
     function onPointerMove(event: PointerEvent) {
       if (!drag || drag.pointerId !== event.pointerId || !piece) return
-      const deltaCells = Math.round((event.clientX - drag.startClientX) / CELL)
-      let target = clamp(drag.startPieceX + deltaCells, 0, cols - 1)
-      // Falls die Zielspalte belegt ist, so nah wie möglich in Zugrichtung heranrücken
-      const dir = Math.sign(target - piece.x)
-      while (target !== piece.x && collides(piece, target - piece.x, 0)) target -= dir
-      piece.x = target
+      const deltaCellsX = Math.round((event.clientX - drag.startClientX) / CELL)
+      const deltaCellsY = Math.round((event.clientY - drag.startClientY) / CELL)
+      let targetX = clamp(drag.startPieceX + deltaCellsX, 0, cols - 1)
+      let targetY = clamp(drag.startPieceY + deltaCellsY, 0, rows - 1)
+      // Falls die Zielspalte/-zeile belegt ist, so nah wie möglich in Zugrichtung heranrücken
+      const dirX = Math.sign(targetX - piece.x)
+      while (targetX !== piece.x && collides(piece, targetX - piece.x, 0)) targetX -= dirX
+      const dirY = Math.sign(targetY - piece.y)
+      while (targetY !== piece.y && collides(piece, 0, targetY - piece.y)) targetY -= dirY
+      piece.x = targetX
+      piece.y = targetY
       draw()
     }
 

@@ -95,9 +95,8 @@ export function JobSearchForm({
               }}
               onFocus={berufe.openIfAvailable}
               onBlur={() => setTimeout(berufe.close, 150)}
-              placeholder="Beruf oder Stichwort"
+              placeholder="Beruf oder Stichwort (optional)"
               autoComplete="off"
-              required
               className="border-border bg-surface text-foreground w-full rounded-lg border py-2.5 pr-4 pl-9 text-base sm:text-sm"
             />
             {berufe.isOpen && (

@@ -1,6 +1,7 @@
 export type Arbeitszeit = 'vz' | 'tz' | 'snw' | 'ho' | 'mj' | 'ausbildung'
 
 export interface JobSearchParams {
+  /** Leer = kein Stichwort-Filter, dann zählen nur Ort/Umkreis/Arbeitszeit */
   was: string
   wo?: string
   umkreis?: number

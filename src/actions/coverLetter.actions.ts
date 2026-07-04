@@ -6,7 +6,7 @@ import { generateCoverLetter } from '@/lib/ai/generateCoverLetter'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { isRateLimited } from '@/lib/ai/rateLimit'
-import { DAILY_LIMIT } from '@/lib/usage'
+import { USAGE_LIMIT } from '@/lib/usage'
 import { consumeAiQuota, refundAiQuota, type QuotaParams } from '@/lib/quota'
 
 const inputSchema = z.object({
@@ -47,8 +47,8 @@ export async function generateAndSaveCoverLetter(
     .maybeSingle()
   if (!profile) return { error: 'Bitte fülle zuerst dein Profil aus.' }
 
-  // Kontingent-Kaskade: Pro → 3 Gratis/Tag → gekaufte Credits. Dieselbe
-  // Stelle zählt nur einmal. remaining=null heißt unbegrenzt (Pro).
+  // Kontingent-Kaskade: Pro → 2 Gratis alle 7 Tage → gekaufte Credits.
+  // Dieselbe Stelle zählt nur einmal. remaining=null heißt unbegrenzt (Pro).
   const quotaParams: QuotaParams = {
     feature: 'letter',
     userKey: user.id,
@@ -59,7 +59,7 @@ export async function generateAndSaveCoverLetter(
   const quota = await consumeAiQuota(quotaParams)
   if (!quota.allowed) {
     return {
-      error: `Tageslimit erreicht: ${DAILY_LIMIT} KI-Anschreiben pro Tag sind kostenlos.`,
+      error: `Kontingent erreicht: ${USAGE_LIMIT} KI-Anschreiben alle 7 Tage sind kostenlos.`,
       limitReached: true,
     }
   }

@@ -6,7 +6,7 @@ import { calculateMatchScore } from '@/lib/ai/matchScore'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { isRateLimited } from '@/lib/ai/rateLimit'
-import { DAILY_LIMIT } from '@/lib/usage'
+import { USAGE_LIMIT } from '@/lib/usage'
 import { consumeAiQuota, refundAiQuota, type QuotaParams } from '@/lib/quota'
 import type { MatchScoreResult } from '@/types/ai.types'
 
@@ -45,8 +45,8 @@ export async function getMatchScore(
     .maybeSingle()
   if (!profile) return { error: 'Bitte fülle zuerst dein Profil aus.' }
 
-  // Kontingent-Kaskade: Pro → 3 Gratis/Tag → gekaufte Credits. Dieselbe
-  // Stelle zählt nur einmal. remaining=null heißt unbegrenzt (Pro).
+  // Kontingent-Kaskade: Pro → 2 Gratis alle 7 Tage → gekaufte Credits.
+  // Dieselbe Stelle zählt nur einmal. remaining=null heißt unbegrenzt (Pro).
   const quotaParams: QuotaParams = {
     feature: 'match',
     userKey: user.id,
@@ -57,7 +57,7 @@ export async function getMatchScore(
   const quota = await consumeAiQuota(quotaParams)
   if (!quota.allowed) {
     return {
-      error: `Tageslimit erreicht: ${DAILY_LIMIT} Match-Scores pro Tag sind kostenlos.`,
+      error: `Kontingent erreicht: ${USAGE_LIMIT} Match-Scores alle 7 Tage sind kostenlos.`,
       limitReached: true,
     }
   }

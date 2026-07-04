@@ -35,11 +35,15 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
   const page = Math.max(1, Number(params.page ?? 1))
   // Ohne Param gilt Vollzeit, konsistent zum Default im Suchformular
   const arbeitszeit = (params.arbeitszeit as Arbeitszeit | undefined) ?? 'vz'
+  // Formular wurde abgeschickt, sobald "was" als Query-Key existiert — auch
+  // mit leerem Wert (nur Anstellungsart/Ort gewählt). Direkte Navigation zu
+  // /suche ohne jeden Query-Param zeigt weiterhin die leere Startansicht.
+  const searchSubmitted = params.was !== undefined
 
   let result: Awaited<ReturnType<typeof searchJobs>> | null = null
   let searchFailed = false
 
-  if (was) {
+  if (searchSubmitted) {
     try {
       result = await searchJobs({
         was,
@@ -108,7 +112,8 @@ export default async function SuchePage({ searchParams }: SuchePageProps) {
               nextHref={page < totalPages ? pageHref(page + 1) : undefined}
             >
               <p className="text-text-secondary mb-4 text-sm">
-                {result.gesamtTreffer.toLocaleString('de-DE')} Treffer für &quot;{was}&quot;
+                {result.gesamtTreffer.toLocaleString('de-DE')} Treffer
+                {was && ` für "${was}"`}
                 {wo && ` in ${wo}`}
               </p>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
