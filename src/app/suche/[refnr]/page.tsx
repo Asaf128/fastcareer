@@ -171,7 +171,6 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
           arbeitgeber={resolvedArbeitgeber}
           ort={resolvedOrt}
           kontaktEmail={detail.kontaktEmail}
-          userEmail={user?.email ?? null}
           isAuthenticated={Boolean(user)}
           hasProfile={Boolean(profile)}
           initialRemaining={letterRemaining}
