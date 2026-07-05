@@ -7,8 +7,10 @@ export interface AdminUserRow {
   fullName: string | null
   registeredAt: string
   lastSignInAt: string | null
-  /** Jüngste Bewerbungs- oder Credit-Aktivität — Seitenaufrufe werden nicht getrackt */
+  /** Jüngste Job-Ansicht, Bewerbungs- oder Credit-Aktivität */
   lastActivityAt: string | null
+  lastJobViewAt: string | null
+  jobViewCount: number
   applicationCount: number
   appliedCount: number
   matchCount: number
@@ -56,6 +58,7 @@ export async function loadAdminAnalytics(): Promise<AdminAnalytics> {
     purchasesResult,
     usagesResult,
     summariesResult,
+    viewsResult,
   ] = await Promise.all([
     supabase.auth.admin.listUsers({ page: 1, perPage: 1000 }),
     supabase.from('profiles').select('id, full_name, cv_path'),
@@ -68,6 +71,7 @@ export async function loadAdminAnalytics(): Promise<AdminAnalytics> {
     supabase.from('credit_purchases').select('user_id, amount_cents'),
     supabase.from('credit_usages').select('user_id, created_at'),
     supabase.from('job_summaries').select('job_refnr', { count: 'exact', head: true }),
+    supabase.from('job_views').select('user_id, created_at'),
   ])
 
   if (usersResult.error) throw new Error('Nutzerliste konnte nicht geladen werden.')
@@ -117,10 +121,21 @@ export async function loadAdminAnalytics(): Promise<AdminAnalytics> {
     lastUsageByUser.set(usage.user_id, laterOf(current, usage.created_at) ?? usage.created_at)
   }
 
+  // Solange die job_views-Migration nicht angewendet ist, liefert die Query
+  // einen Fehler und data bleibt null — die Spalten zeigen dann einfach 0/—
+  const viewStats = new Map<string, { count: number; lastViewedAt: string | null }>()
+  for (const view of viewsResult.data ?? []) {
+    const entry = viewStats.get(view.user_id) ?? { count: 0, lastViewedAt: null }
+    entry.count += 1
+    entry.lastViewedAt = laterOf(entry.lastViewedAt, view.created_at)
+    viewStats.set(view.user_id, entry)
+  }
+
   const users: AdminUserRow[] = usersResult.data.users.map((user) => {
     const profile = profileById.get(user.id)
     const balance = balanceByUser.get(user.id)
     const applications = applicationStats.get(user.id)
+    const views = viewStats.get(user.id)
     return {
       id: user.id,
       email: user.email ?? '—',
@@ -128,9 +143,11 @@ export async function loadAdminAnalytics(): Promise<AdminAnalytics> {
       registeredAt: user.created_at,
       lastSignInAt: user.last_sign_in_at ?? null,
       lastActivityAt: laterOf(
-        applications?.lastUpdatedAt ?? null,
-        lastUsageByUser.get(user.id) ?? null
+        views?.lastViewedAt ?? null,
+        laterOf(applications?.lastUpdatedAt ?? null, lastUsageByUser.get(user.id) ?? null)
       ),
+      lastJobViewAt: views?.lastViewedAt ?? null,
+      jobViewCount: views?.count ?? 0,
       applicationCount: applications?.count ?? 0,
       appliedCount: applications?.applied ?? 0,
       matchCount: matchCounts.get(user.id) ?? 0,

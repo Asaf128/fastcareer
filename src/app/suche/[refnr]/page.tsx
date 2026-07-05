@@ -12,6 +12,7 @@ import { ApplicationChecklist } from '@/components/jobs/ApplicationChecklist'
 import { OriginalListing } from '@/components/jobs/OriginalListing'
 import { SummaryLimitNotice, UsageRemainingHint } from '@/components/jobs/UsageLimit'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
+import { recordJobView } from '@/lib/jobs/jobViews'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
 import { consumeAiQuota, peekAiQuota } from '@/lib/quota'
 import { createClient, getAuthUser } from '@/lib/supabase/server'
@@ -46,6 +47,8 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
   ])
   if (!detail) notFound()
 
+  // Ansicht für das Admin-Analytics-Dashboard loggen (nur angemeldete
+  // Nutzer, anonyme haben keine user_id) — läuft parallel zu den Queries
   const [applicationResult, profileResult] = await Promise.all([
     user
       ? supabase
@@ -58,6 +61,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
     user
       ? supabase.from('profiles').select('*').eq('id', user.id).maybeSingle()
       : Promise.resolve({ data: null }),
+    user ? recordJobView(supabase, user.id, refnr) : Promise.resolve(),
   ])
 
   const application = applicationResult.data

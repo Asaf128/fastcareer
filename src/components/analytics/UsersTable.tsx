@@ -39,6 +39,7 @@ export function UsersTable({ users }: UsersTableProps) {
             <th className={HEAD_CELL}>Registriert</th>
             <th className={HEAD_CELL}>Letzter Login</th>
             <th className={HEAD_CELL}>Letzte Aktivität</th>
+            <th className={HEAD_CELL}>Zuletzt angesehen</th>
             <th className={HEAD_CELL}>Bewerbungen</th>
             <th className={HEAD_CELL}>Matches</th>
             <th className={HEAD_CELL}>Anschreiben</th>
@@ -62,6 +63,12 @@ export function UsersTable({ users }: UsersTableProps) {
               </td>
               <td className={`${CELL} text-foreground tabular-nums`}>
                 {formatDateTime(user.lastActivityAt)}
+              </td>
+              <td className={`${CELL} text-foreground tabular-nums`}>
+                {formatDateTime(user.lastJobViewAt)}
+                {user.jobViewCount > 0 && (
+                  <span className="text-text-secondary text-xs"> ({user.jobViewCount}×)</span>
+                )}
               </td>
               <td className={`${CELL} text-foreground tabular-nums`}>
                 {user.applicationCount}
