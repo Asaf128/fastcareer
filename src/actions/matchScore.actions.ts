@@ -76,11 +76,12 @@ export async function getMatchScore(
     arbeitgeber: parsed.data.arbeitgeber,
     ort: parsed.data.ort ?? '',
     beschreibung,
+    userId: user.id,
   })
 
   let result: MatchScoreResult
   try {
-    result = await calculateMatchScore({ titel: parsed.data.titel, summary, profile })
+    result = await calculateMatchScore({ titel: parsed.data.titel, summary, profile }, user.id)
   } catch (error) {
     console.error('Match-Score fehlgeschlagen:', error)
     // Gescheiterter Versuch soll kein Kontingent kosten

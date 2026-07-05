@@ -12,6 +12,8 @@ interface JobSummaryInput {
   arbeitgeber: string
   ort: string
   beschreibung: string
+  /** Für die Kosten-Zuordnung im Admin-Dashboard, null = anonym */
+  userId: string | null
 }
 
 function fallbackSummary(input: JobSummaryInput): JobSummary {
@@ -46,7 +48,7 @@ export async function getOrCreateJobSummary(input: JobSummaryInput): Promise<Job
 
   let summary: JobSummary
   try {
-    summary = await summarizeJob(input)
+    summary = await summarizeJob(input, input.userId)
   } catch (error) {
     console.error('Job-Zusammenfassung fehlgeschlagen:', error)
     return fallbackSummary(input)

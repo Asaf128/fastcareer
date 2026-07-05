@@ -97,6 +97,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
       arbeitgeber: resolvedArbeitgeber,
       ort: resolvedOrt,
       beschreibung: detail.beschreibung,
+      userId: user?.id ?? null,
     })
   }
   // Rest-Anzeige nur für die Gratis-Quelle, die Credit-Anzeige kommt mit

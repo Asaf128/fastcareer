@@ -1,6 +1,6 @@
 import 'server-only'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { readAiCosts } from '@/lib/ai/costTracking'
+import { readAiCosts, readUserAiCosts } from '@/lib/ai/costTracking'
 
 export interface AdminUserRow {
   id: string
@@ -19,6 +19,8 @@ export interface AdminUserRow {
   hasCv: boolean
   creditBalance: number
   purchasedCents: number
+  aiCostTodayUsd: number
+  aiCostTotalUsd: number
 }
 
 export interface AdminOverviewStats {
@@ -81,6 +83,8 @@ export async function loadAdminAnalytics(): Promise<AdminAnalytics> {
   ])
 
   if (usersResult.error) throw new Error('Nutzerliste konnte nicht geladen werden.')
+
+  const userAiCosts = await readUserAiCosts(usersResult.data.users.map((user) => user.id))
 
   const profileById = new Map((profilesResult.data ?? []).map((profile) => [profile.id, profile]))
   const balanceByUser = new Map(
@@ -163,6 +167,8 @@ export async function loadAdminAnalytics(): Promise<AdminAnalytics> {
         ? balance.summary_credits + balance.match_credits + balance.letter_credits
         : 0,
       purchasedCents: purchasedCentsByUser.get(user.id) ?? 0,
+      aiCostTodayUsd: userAiCosts.get(user.id)?.todayUsd ?? 0,
+      aiCostTotalUsd: userAiCosts.get(user.id)?.totalUsd ?? 0,
     }
   })
 
