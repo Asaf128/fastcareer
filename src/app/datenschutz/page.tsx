@@ -78,7 +78,13 @@ export default function DatenschutzPage() {
                 gelöscht. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Erfüllung des
                 Nutzungsvertrags). Diese Daten werden gelöscht, wenn du dein Konto löschen lässt
                 oder einzelne Einträge aus deiner Merkliste entfernst. Der Zugriff auf deine Daten
-                ist technisch (Row Level Security) auf dein eigenes Konto beschränkt.
+                ist technisch (Row Level Security) auf dein eigenes Konto beschränkt. Bist du
+                angemeldet, speichern wir außerdem beim Öffnen einer Stellen-Detailseite die
+                Referenznummer der Stelle und den Zeitpunkt des Aufrufs, verknüpft mit deinem Konto,
+                zur internen statistischen Auswertung der Nutzung unseres Angebots. Rechtsgrundlage
+                hierfür ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Analyse und
+                Verbesserung des Angebots); auch diese Daten werden mit der Löschung deines Kontos
+                gelöscht.
               </p>
             </section>
 
