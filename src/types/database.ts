@@ -227,6 +227,27 @@ export type Database = {
         }
         Relationships: []
       }
+      job_views: {
+        Row: {
+          created_at: string
+          id: string
+          job_refnr: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_refnr: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_refnr?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       order_items: {
         Row: {
           id: string
