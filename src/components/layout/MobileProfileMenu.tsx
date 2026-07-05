@@ -3,10 +3,11 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import Link from 'next/link'
-import { Bookmark, LogOut, User } from 'lucide-react'
+import { BarChart3, Bookmark, LogOut, User } from 'lucide-react'
 import { logout } from '@/actions/auth.actions'
 
 interface MobileProfileMenuProps {
+  isAdmin: boolean
   onClose: () => void
 }
 
@@ -15,6 +16,9 @@ const MENU_LINKS = [
   { href: '/bewerbungen', label: 'Bewerbungen', icon: Bookmark },
 ] as const
 
+// Nur für die Admin-E-Mail sichtbar (Header prüft via isAdminUser)
+const ADMIN_MENU_LINKS = [{ href: '/analytics', label: 'Analytics', icon: BarChart3 }] as const
+
 /**
  * Overlay mit verblurrtem Seitenhintergrund, beginnt unterhalb der Navbar,
  * der Fastcareer-Schriftzug bleibt sichtbar, geschlossen wird über das
@@ -22,7 +26,7 @@ const MENU_LINKS = [
  * <body>, denn im Header würde dessen backdrop-blur das fixed-Overlay einfangen
  * und es öffnete sich innerhalb der Navbar.
  */
-export function MobileProfileMenu({ onClose }: MobileProfileMenuProps) {
+export function MobileProfileMenu({ isAdmin, onClose }: MobileProfileMenuProps) {
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') onClose()
@@ -56,17 +60,19 @@ export function MobileProfileMenu({ onClose }: MobileProfileMenuProps) {
       className="bg-background/60 animate-fade-in fixed inset-x-0 top-[65px] bottom-0 z-40 flex flex-col backdrop-blur-xl sm:hidden"
     >
       <nav className="flex flex-1 flex-col items-center justify-center gap-9 pb-16">
-        {MENU_LINKS.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            onClick={onClose}
-            className="text-foreground flex items-center gap-3 text-2xl font-medium"
-          >
-            <Icon className="text-accent h-6 w-6" />
-            {label}
-          </Link>
-        ))}
+        {[...MENU_LINKS, ...(isAdmin ? ADMIN_MENU_LINKS : [])].map(
+          ({ href, label, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={onClose}
+              className="text-foreground flex items-center gap-3 text-2xl font-medium"
+            >
+              <Icon className="text-accent h-6 w-6" />
+              {label}
+            </Link>
+          )
+        )}
 
         <form action={logout}>
           <button type="submit" className="text-error flex items-center gap-3 text-2xl font-medium">
