@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { Type } from '@google/genai'
 import { getGenAiClient, MODEL_SUMMARY } from './genai'
+import { recordAiCost } from './costTracking'
 import type { JobSummary, MatchScoreResult } from '@/types/ai.types'
 import type { Profile } from '@/types/profile.types'
 
@@ -59,6 +60,8 @@ Gib einen realistischen Score und 2 bis 4 kurze Begründungspunkte auf Deutsch (
       responseSchema,
     },
   })
+
+  await recordAiCost(MODEL_SUMMARY, response.usageMetadata)
 
   const text = response.text
   if (!text) throw new Error('Keine Antwort von Gemini erhalten.')

@@ -39,7 +39,7 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Bewerbungs-Types: `src/types/application.types.ts`
 - Profil-Types: `src/types/profile.types.ts`
 - KI-Types (Job-Zusammenfassung, CV-Parsing): `src/types/ai.types.ts`
-- KI-Anbindung (Google Gemini via Vertex AI — **nicht** Claude/Anthropic, siehe Projekt-Memory): `src/lib/ai/` (`genai.ts` Client, `summarizeJob.ts`, `generateCoverLetter.ts`, `parseCv.ts` + `normalizeCvDates.ts`, `rateLimit.ts` — async, Upstash Redis mit In-Memory-Fallback)
+- KI-Anbindung (Google Gemini via Vertex AI — **nicht** Claude/Anthropic, siehe Projekt-Memory): `src/lib/ai/` (`genai.ts` Client, `summarizeJob.ts`, `generateCoverLetter.ts`, `parseCv.ts` + `normalizeCvDates.ts`, `rateLimit.ts` — async, Upstash Redis mit In-Memory-Fallback; `costTracking.ts` — Gemini-Token-Kosten als Redis-Zähler heute/gesamt fürs Admin-Dashboard)
 - Anschreiben-Generierung on demand (auf Klick, sofort gespeichert — nie beim Seitenaufbau): `src/actions/coverLetter.actions.ts`
 - Job-Zusammenfassung-Cache (Read-through, `job_summaries`-Tabelle): `src/lib/jobs/jobSummaryCache.ts`
 - Freemium-Kontingente (2 pro Feature alle 7 Tage: Zusammenfassung/Match/Anschreiben/CV; gilt für anonyme UND angemeldete Nutzer — anonym per gehashter IP (`src/lib/ipHash.ts`, DSGVO-Pseudonymisierung), angemeldet per User-ID; Redis-Zähler): `src/lib/usage.ts`, gemeinsamer Upstash-Client `src/lib/redis.ts`, Pro-Status (Admin-E-Mail = automatisch Pro, unbegrenzt) `src/lib/pro.ts`, Limit-UI + Rest-Anzeige `src/components/jobs/UsageLimit.tsx`

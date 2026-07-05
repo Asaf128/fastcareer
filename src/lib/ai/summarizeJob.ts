@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { Type } from '@google/genai'
 import { getGenAiClient, MODEL_SUMMARY } from './genai'
+import { recordAiCost } from './costTracking'
 import type { JobSummary } from '@/types/ai.types'
 
 const jobSummarySchema = z.object({
@@ -71,6 +72,8 @@ ${input.beschreibung}`,
       responseSchema,
     },
   })
+
+  await recordAiCost(MODEL_SUMMARY, response.usageMetadata)
 
   const text = response.text
   if (!text) throw new Error('Keine Antwort von Gemini erhalten.')

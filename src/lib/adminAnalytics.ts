@@ -1,5 +1,6 @@
 import 'server-only'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { readAiCosts } from '@/lib/ai/costTracking'
 
 export interface AdminUserRow {
   id: string
@@ -26,6 +27,9 @@ export interface AdminOverviewStats {
   totalApplications: number
   cachedSummaries: number
   revenueCents: number
+  /** Gemini-Kosten in USD (Vertex rechnet in USD ab), heute ab 0 Uhr Berlin */
+  aiCostTodayUsd: number
+  aiCostTotalUsd: number
 }
 
 export interface AdminAnalytics {
@@ -59,6 +63,7 @@ export async function loadAdminAnalytics(): Promise<AdminAnalytics> {
     usagesResult,
     summariesResult,
     viewsResult,
+    aiCosts,
   ] = await Promise.all([
     supabase.auth.admin.listUsers({ page: 1, perPage: 1000 }),
     supabase.from('profiles').select('id, full_name, cv_path'),
@@ -72,6 +77,7 @@ export async function loadAdminAnalytics(): Promise<AdminAnalytics> {
     supabase.from('credit_usages').select('user_id, created_at'),
     supabase.from('job_summaries').select('job_refnr', { count: 'exact', head: true }),
     supabase.from('job_views').select('user_id, created_at'),
+    readAiCosts(),
   ])
 
   if (usersResult.error) throw new Error('Nutzerliste konnte nicht geladen werden.')
@@ -179,6 +185,8 @@ export async function loadAdminAnalytics(): Promise<AdminAnalytics> {
       (sum, purchase) => sum + purchase.amount_cents,
       0
     ),
+    aiCostTodayUsd: aiCosts.todayUsd,
+    aiCostTotalUsd: aiCosts.totalUsd,
   }
 
   return { stats, users }

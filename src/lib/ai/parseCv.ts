@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { Type } from '@google/genai'
 import { getGenAiClient, MODEL_CV } from './genai'
+import { recordAiCost } from './costTracking'
 import { normalizeIsoDate, normalizeMonthDate } from './normalizeCvDates'
 import type { CvParseResult } from '@/types/ai.types'
 
@@ -106,6 +107,8 @@ export async function parseCv(pdfBase64: string): Promise<CvParseResult> {
       responseSchema,
     },
   })
+
+  await recordAiCost(MODEL_CV, response.usageMetadata)
 
   const text = response.text
   if (!text) throw new Error('Keine Antwort von Gemini erhalten.')

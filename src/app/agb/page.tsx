@@ -34,8 +34,8 @@ export default function AgbPage() {
               <h2 className="mb-2 font-medium">2. Leistung: Credit-Pakete</h2>
               <p>
                 Ein Credit-Paket schaltet ein Nutzungskontingent für die KI-Funktionen frei. Die
-                Paketgröße gilt je Funktionsart: Ein 100er-Paket umfasst 100 KI-Zusammenfassungen,
-                100 Match-Berechnungen und 100 KI-Anschreiben. Für dieselbe Stellenanzeige wird pro
+                Paketgröße gilt je Funktionsart: Ein 30er-Paket umfasst 30 KI-Zusammenfassungen, 30
+                Match-Berechnungen und 30 KI-Anschreiben. Für dieselbe Stellenanzeige wird pro
                 Funktion nur einmal ein Credit verbraucht; erneutes Öffnen oder Neu-Generieren
                 derselben Anzeige ist kostenfrei. Credits sind an das Nutzerkonto gebunden, nicht
                 übertragbar und verfallen nicht. Das Gratis-Kontingent wird stets vor den gekauften

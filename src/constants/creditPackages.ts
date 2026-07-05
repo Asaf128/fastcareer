@@ -1,8 +1,10 @@
 /**
  * Credit-Pakete: Einmalkauf statt Abo. Ein Paket schaltet pro Feature-Typ
- * DIESELBE Anzahl frei, das 100er-Paket sind also 100 Zusammenfassungen
- * UND 100 Match-Berechnungen UND 100 Anschreiben. Credits verfallen nicht;
+ * DIESELBE Anzahl frei, das 30er-Paket sind also 30 Zusammenfassungen
+ * UND 30 Match-Berechnungen UND 30 Anschreiben. Credits verfallen nicht;
  * dieselbe Stelle kostet pro Feature nur einmal einen Credit.
+ * Bei Größenänderung auch die konkreten Zahlen in credits/page.tsx
+ * und agb/page.tsx (§ 2) anpassen.
  */
 export type CreditPackageId = 'starter' | 'jobsuche'
 
@@ -20,7 +22,7 @@ export const CREDIT_PACKAGES: readonly CreditPackage[] = [
   {
     id: 'starter',
     name: 'Starter',
-    credits: 25,
+    credits: 10,
     priceCents: 199,
     tagline: 'Zum Ausprobieren, für die ersten Bewerbungen.',
     highlight: false,
@@ -28,7 +30,7 @@ export const CREDIT_PACKAGES: readonly CreditPackage[] = [
   {
     id: 'jobsuche',
     name: 'Jobsuche',
-    credits: 100,
+    credits: 30,
     priceCents: 499,
     tagline: 'Für die komplette Jobsuche, bis der Vertrag unterschrieben ist.',
     highlight: true,

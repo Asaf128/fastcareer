@@ -1,4 +1,5 @@
 import { getGenAiClient, MODEL_LETTER } from './genai'
+import { recordAiCost } from './costTracking'
 import type { Profile } from '@/types/profile.types'
 import type { JobSummary } from '@/types/ai.types'
 
@@ -50,6 +51,8 @@ Schreibe NUR den Brieftext eines individuellen, überzeugenden Anschreibens auf 
         'Du bist ein professioneller Karriereberater, der maßgeschneiderte Anschreiben auf Deutsch verfasst: sachlich, konkret, ohne Floskeln.',
     },
   })
+
+  await recordAiCost(MODEL_LETTER, response.usageMetadata)
 
   const text = response.text
   if (!text) throw new Error('Keine Antwort von Gemini erhalten.')
