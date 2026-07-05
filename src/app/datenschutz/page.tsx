@@ -36,7 +36,9 @@ export default function DatenschutzPage() {
                 Vercel automatisch technische Daten (u. a. IP-Adresse, Zeitstempel, aufgerufene
                 Seite) in Form von Server-Logs, um die Auslieferung der Seite technisch zu
                 ermöglichen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse
-                an einem sicheren und funktionsfähigen Betrieb).
+                an einem sicheren und funktionsfähigen Betrieb). Vercel ist nach dem EU-U.S. Data
+                Privacy Framework zertifiziert; eine Übermittlung in die USA stützt sich auf den
+                entsprechenden Angemessenheitsbeschluss (Art. 45 DSGVO).
               </p>
             </section>
 
@@ -46,14 +48,29 @@ export default function DatenschutzPage() {
                 Wir nutzen Vercel Analytics und Vercel Speed Insights zur anonymisierten,
                 aggregierten Auswertung von Seitenaufrufen und Ladezeiten. Beide Dienste arbeiten
                 cookielos und ohne Wiedererkennung einzelner Nutzer über mehrere Sitzungen hinweg,
-                daher ist keine Einwilligung nach § 25 TTDSG erforderlich. Rechtsgrundlage ist Art.
+                daher ist keine Einwilligung nach § 25 TDDDG erforderlich. Rechtsgrundlage ist Art.
                 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Analyse und Optimierung des
                 Angebots).
               </p>
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">4. Jobsuche-Funktion</h2>
+              <h2 className="mb-2 font-medium">4. Cookies &amp; lokale Speicherung</h2>
+              <p>
+                Für die Anmeldung setzen wir ausschließlich technisch notwendige Cookies
+                (Session-Cookies unseres Backend-Anbieters Supabase), die deine Anmeldung
+                aufrechterhalten. Sie sind für den Betrieb des Nutzerkontos erforderlich und
+                bedürfen keiner Einwilligung (§ 25 Abs. 2 Nr. 2 TDDDG); da darüber hinaus keine
+                Cookies gesetzt werden, ist kein Cookie-Banner erforderlich. Deine letzten
+                Suchanfragen werden ausschließlich lokal in deinem Browser (localStorage)
+                gespeichert, um sie dir auf der Startseite wieder anzuzeigen; sie werden nicht an
+                unsere Server übertragen und du kannst sie jederzeit über deine
+                Browser-Einstellungen löschen.
+              </p>
+            </section>
+
+            <section>
+              <h2 className="mb-2 font-medium">5. Jobsuche-Funktion</h2>
               <p>
                 Bei Nutzung der Jobsuche werden die eingegebenen Suchbegriffe serverseitig an die
                 offene Schnittstelle der Bundesagentur für Arbeit weitergeleitet, um passende
@@ -65,7 +82,7 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">5. Nutzerkonto &amp; Merkliste (Supabase)</h2>
+              <h2 className="mb-2 font-medium">6. Nutzerkonto &amp; Merkliste (Supabase)</h2>
               <p>
                 Für die Anmeldung und die Merkliste nutzen wir Supabase als Backend-Infrastruktur.
                 Bei der Anmeldung per E-Mail-Code verarbeiten wir deine E-Mail-Adresse, um dir einen
@@ -78,28 +95,28 @@ export default function DatenschutzPage() {
                 gelöscht. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Erfüllung des
                 Nutzungsvertrags). Diese Daten werden gelöscht, wenn du dein Konto löschen lässt
                 oder einzelne Einträge aus deiner Merkliste entfernst. Der Zugriff auf deine Daten
-                ist technisch (Row Level Security) auf dein eigenes Konto beschränkt.
+                ist technisch (Row Level Security) auf dein eigenes Konto beschränkt. Bist du
+                angemeldet, speichern wir außerdem beim Öffnen einer Stellen-Detailseite die
+                Referenznummer der Stelle und den Zeitpunkt des Aufrufs, verknüpft mit deinem Konto,
+                zur internen statistischen Auswertung der Nutzung unseres Angebots. Rechtsgrundlage
+                hierfür ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Analyse und
+                Verbesserung des Angebots); auch diese Daten werden mit der Löschung deines Kontos
+                gelöscht.
               </p>
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">
-                6. E-Mail-Versand: Anmelde-Codes &amp; Job-Alerts (Resend)
-              </h2>
+              <h2 className="mb-2 font-medium">7. E-Mail-Versand: Anmelde-Codes (Resend)</h2>
               <p>
-                Für den Versand von Anmelde-Codes und Job-Alert-Benachrichtigungen nutzen wir den
-                Versanddienstleister Resend (Resend, Inc.), Serverstandort EU. Dabei wird deine
-                E-Mail-Adresse an Resend übermittelt. Job-Alerts erhältst du nur, wenn du eine Suche
-                ausdrücklich als Alert gespeichert hast; wir speichern dazu deine Suchkriterien
-                (Suchbegriff, Ort, Umkreis, Arbeitszeit) verknüpft mit deinem Konto und senden dir
-                höchstens einmal täglich neue passende Stellenangebote. Rechtsgrundlage ist Art. 6
-                Abs. 1 lit. b DSGVO (Erfüllung des Nutzungsvertrags). Du kannst jeden Job-Alert
-                jederzeit in deinem Profil löschen, damit endet der Versand sofort.
+                Für den Versand der Anmelde-Codes nutzen wir den Versanddienstleister Resend
+                (Resend, Inc.), Serverstandort EU. Dabei wird deine E-Mail-Adresse an Resend
+                übermittelt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Erfüllung des
+                Nutzungsvertrags).
               </p>
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">7. KI-Funktionen (Google Cloud Vertex AI)</h2>
+              <h2 className="mb-2 font-medium">8. KI-Funktionen (Google Cloud Vertex AI)</h2>
               <p>
                 Für die KI-Funktionen (Zusammenfassen von Stellenanzeigen, Auslesen deines
                 hochgeladenen Lebenslaufs, Erstellen von Anschreiben und Match-Score) nutzen wir
@@ -113,7 +130,26 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">8. Zahlungsabwicklung (Stripe)</h2>
+              <h2 className="mb-2 font-medium">
+                9. Gratis-Kontingente &amp; Missbrauchsschutz (Upstash Redis)
+              </h2>
+              <p>
+                Die KI-Funktionen haben ein begrenztes Gratis-Kontingent. Um es durchzusetzen und
+                unsere Systeme vor Missbrauch zu schützen, speichern wir kurzlebige Nutzungszähler
+                in einer Redis-Datenbank des Anbieters Upstash, Inc. (USA). Bei angemeldeten Nutzern
+                wird dafür die Konto-ID verwendet, bei nicht angemeldeten Nutzern die IP-Adresse in
+                pseudonymisierter Form (SHA-256-Hash) — deine Klar-IP wird dabei nicht gespeichert.
+                Die Zähler löschen sich automatisch: Kontingent-Zähler spätestens neun Tage nach
+                Ende des jeweiligen Zeitraums, Rate-Limiting-Zähler nach wenigen Minuten.
+                Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der fairen
+                Begrenzung der kostenlosen KI-Nutzung und am Schutz vor Missbrauch). Eine
+                Übermittlung in die USA erfolgt auf Grundlage von EU-Standardvertragsklauseln (Art.
+                46 Abs. 2 lit. c DSGVO).
+              </p>
+            </section>
+
+            <section>
+              <h2 className="mb-2 font-medium">10. Zahlungsabwicklung (Stripe)</h2>
               <p>
                 Für den Kauf von Credit-Paketen nutzen wir den Zahlungsdienstleister Stripe (Stripe
                 Payments Europe, Ltd., Irland). Beim Bezahlvorgang verarbeitet Stripe die für die
@@ -126,7 +162,7 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">9. Schriftarten (Google Fonts)</h2>
+              <h2 className="mb-2 font-medium">11. Schriftarten (Google Fonts)</h2>
               <p>
                 Die verwendeten Schriftarten werden über <code>next/font</code> beim Build in die
                 Website eingebunden und lokal von unserem Server ausgeliefert. Beim Aufruf der Seite
@@ -136,7 +172,7 @@ export default function DatenschutzPage() {
             </section>
 
             <section>
-              <h2 className="mb-2 font-medium">10. Deine Rechte</h2>
+              <h2 className="mb-2 font-medium">12. Deine Rechte</h2>
               <p>
                 Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der
                 Verarbeitung, Datenübertragbarkeit sowie Widerspruch gegen die Verarbeitung deiner
