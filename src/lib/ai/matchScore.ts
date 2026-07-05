@@ -25,7 +25,10 @@ interface MatchScoreInput {
   profile: Profile
 }
 
-export async function calculateMatchScore(input: MatchScoreInput): Promise<MatchScoreResult> {
+export async function calculateMatchScore(
+  input: MatchScoreInput,
+  userId: string | null
+): Promise<MatchScoreResult> {
   const ai = getGenAiClient()
 
   const response = await ai.models.generateContent({
@@ -61,7 +64,7 @@ Gib einen realistischen Score und 2 bis 4 kurze Begründungspunkte auf Deutsch (
     },
   })
 
-  await recordAiCost(MODEL_SUMMARY, response.usageMetadata)
+  await recordAiCost(MODEL_SUMMARY, response.usageMetadata, userId)
 
   const text = response.text
   if (!text) throw new Error('Keine Antwort von Gemini erhalten.')

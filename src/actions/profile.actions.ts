@@ -113,7 +113,7 @@ export async function uploadAndParseCv(
 
   let parsed: CvParseResult
   try {
-    parsed = await parseCv(base64)
+    parsed = await parseCv(base64, user.id)
   } catch (error) {
     console.error('Lebenslauf-Auslesen fehlgeschlagen:', error)
     return { error: 'Lebenslauf konnte nicht ausgelesen werden. Bitte versuche es erneut.' }

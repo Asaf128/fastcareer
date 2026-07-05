@@ -81,11 +81,12 @@ export async function generateAndSaveCoverLetter(
     arbeitgeber,
     ort,
     beschreibung,
+    userId: user.id,
   })
 
   let coverLetter: string
   try {
-    coverLetter = await generateCoverLetter({ titel, arbeitgeber, ort, summary, profile })
+    coverLetter = await generateCoverLetter({ titel, arbeitgeber, ort, summary, profile }, user.id)
   } catch (error) {
     console.error('Anschreiben-Generierung fehlgeschlagen:', error)
     // Gescheiterter Versuch soll kein Kontingent kosten

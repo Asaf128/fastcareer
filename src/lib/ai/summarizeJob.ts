@@ -43,7 +43,10 @@ interface SummarizeJobInput {
   beschreibung: string
 }
 
-export async function summarizeJob(input: SummarizeJobInput): Promise<JobSummary> {
+export async function summarizeJob(
+  input: SummarizeJobInput,
+  userId: string | null
+): Promise<JobSummary> {
   const ai = getGenAiClient()
 
   const response = await ai.models.generateContent({
@@ -73,7 +76,7 @@ ${input.beschreibung}`,
     },
   })
 
-  await recordAiCost(MODEL_SUMMARY, response.usageMetadata)
+  await recordAiCost(MODEL_SUMMARY, response.usageMetadata, userId)
 
   const text = response.text
   if (!text) throw new Error('Keine Antwort von Gemini erhalten.')
