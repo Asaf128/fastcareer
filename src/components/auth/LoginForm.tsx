@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useActionState, useEffect, useRef, useState } from 'react'
 import { requestLoginCode, verifyLoginCode } from '@/actions/auth.actions'
 import { Button } from '@/components/shared/Button'
@@ -95,6 +96,14 @@ export function LoginForm({ next }: LoginFormProps) {
       <Button type="submit" variant="accent" isLoading={isRequesting}>
         Code anfordern
       </Button>
+      <p className="text-text-secondary text-xs leading-relaxed">
+        Mit dem Anfordern des Codes wird ein Nutzerkonto für deine E-Mail-Adresse erstellt.
+        Informationen zur Verarbeitung deiner Daten findest du in der{' '}
+        <Link href="/datenschutz" className="underline">
+          Datenschutzerklärung
+        </Link>
+        .
+      </p>
     </form>
   )
 }

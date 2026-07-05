@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { summarizeJob } from '@/lib/ai/summarizeJob'
 import { isRateLimited } from '@/lib/ai/rateLimit'
+import { hashIp } from '@/lib/ipHash'
 import type { JobSummary } from '@/types/ai.types'
 import type { Json } from '@/types/database'
 
@@ -40,7 +41,7 @@ export async function getOrCreateJobSummary(input: JobSummaryInput): Promise<Job
   const requestHeaders = await headers()
   const ip = requestHeaders.get('x-forwarded-for') ?? 'anonymous'
 
-  if (await isRateLimited(`summary:${ip}`)) {
+  if (await isRateLimited(`summary:${hashIp(ip)}`)) {
     return fallbackSummary(input)
   }
 
