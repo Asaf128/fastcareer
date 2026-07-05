@@ -11,6 +11,7 @@ import { CoverLetterPanel } from '@/components/jobs/CoverLetterPanel'
 import { ApplicationChecklist } from '@/components/jobs/ApplicationChecklist'
 import { OriginalListing } from '@/components/jobs/OriginalListing'
 import { SummaryLimitNotice, UsageRemainingHint } from '@/components/jobs/UsageLimit'
+import { hashIp } from '@/lib/ipHash'
 import { getJobDetail } from '@/lib/jobs/arbeitsagentur-detail'
 import { recordJobView } from '@/lib/jobs/jobViews'
 import { getOrCreateJobSummary } from '@/lib/jobs/jobSummaryCache'
@@ -79,7 +80,7 @@ export default async function JobDetailPage({ params, searchParams }: JobDetailP
   // verbraucht nichts (Dedupe in beiden Quellen).
   const requestHeaders = await headers()
   const ip = requestHeaders.get('x-forwarded-for')?.split(',')[0]?.trim() ?? 'unknown'
-  const usageKey = user ? user.id : `ip:${ip}`
+  const usageKey = user ? user.id : `ip:${hashIp(ip)}`
 
   const summaryQuota = await consumeAiQuota({
     feature: 'summary',
