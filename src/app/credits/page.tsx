@@ -43,8 +43,8 @@ export default async function CreditsPage() {
 
         <div className="text-text-secondary mt-8 space-y-2 text-xs leading-relaxed">
           <p>
-            Ein Paket gilt pro Feature-Typ: Das Jobsuche-Paket sind 100 Zusammenfassungen UND 100
-            Matches UND 100 Anschreiben. Dieselbe Stelle kostet pro Feature nur einmal einen Credit
+            Ein Paket gilt pro Feature-Typ: Das Jobsuche-Paket sind 30 Zusammenfassungen UND 30
+            Matches UND 30 Anschreiben. Dieselbe Stelle kostet pro Feature nur einmal einen Credit
             Erneutes Öffnen oder Neu-Generieren ist gratis. Dein Gratis-Kontingent wird immer zuerst
             verbraucht.
           </p>
