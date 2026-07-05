@@ -52,6 +52,7 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Bewerbungen Server Actions (speichern/entfernen/Checkliste/Notizen/Anschreiben): `src/actions/applications.actions.ts`
 - Profil-Seite + Lebenslauf-Upload: `src/app/profil/page.tsx`, `src/components/profile/` (`ProfileForm`, `WorkExperienceFields`, `EducationFields`, `SkillsInput`, `CvUpload`)
 - Profil Server Actions (speichern, CV hochladen & auslesen): `src/actions/profile.actions.ts`
+- Admin-Analytics (nur Admin-E-Mail, `src/lib/adminAccess.ts`; Nutzerübersicht mit Aktivität/Bewerbungen/Matches/Credits, Daten-Aggregation über Service-Role): `src/app/analytics/page.tsx`, `src/lib/adminAnalytics.ts`, `src/components/analytics/` (AnalyticsStats, UsersTable); Nav-Link in `HeaderNav.tsx`/`MobileProfileMenu.tsx`
 - Navigation/Config: `src/constants/`
 
 (Pflege: bei jeder strukturrelevanten Änderung — neue Seite, neuer Feature-Ordner, verschobene Komponente — diesen Abschnitt im selben Schritt aktualisieren.)

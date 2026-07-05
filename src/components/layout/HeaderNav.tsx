@@ -3,13 +3,14 @@
 import { useState, useTransition } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Bookmark, Loader2, LogOut, User, UserCircle, X } from 'lucide-react'
+import { BarChart3, Bookmark, Loader2, LogOut, User, UserCircle, X } from 'lucide-react'
 import { logout } from '@/actions/auth.actions'
 import { MobileProfileMenu } from '@/components/layout/MobileProfileMenu'
 import { cn } from '@/lib/cn'
 
 interface HeaderNavProps {
   isAuthenticated: boolean
+  isAdmin: boolean
 }
 
 const NAV_LINKS = [
@@ -17,7 +18,10 @@ const NAV_LINKS = [
   { href: '/bewerbungen', label: 'Bewerbungen', icon: Bookmark },
 ] as const
 
-export function HeaderNav({ isAuthenticated }: HeaderNavProps) {
+// Nur für die Admin-E-Mail sichtbar (Header prüft via isAdminUser)
+const ADMIN_NAV_LINKS = [{ href: '/analytics', label: 'Analytics', icon: BarChart3 }] as const
+
+export function HeaderNav({ isAuthenticated, isAdmin }: HeaderNavProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
@@ -50,10 +54,12 @@ export function HeaderNav({ isAuthenticated }: HeaderNavProps) {
     })
   }
 
+  const navLinks = isAdmin ? [...NAV_LINKS, ...ADMIN_NAV_LINKS] : [...NAV_LINKS]
+
   return (
     <>
       <nav className="bg-surface border-border hidden items-center gap-1 rounded-full border p-1 sm:flex">
-        {NAV_LINKS.map(({ href, label, icon: Icon }) => {
+        {navLinks.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href
           const isLoading = isPending && pendingHref === href
           return (
@@ -103,7 +109,7 @@ export function HeaderNav({ isAuthenticated }: HeaderNavProps) {
         {isMenuOpen ? <X className="h-6 w-6" /> : <UserCircle className="h-6 w-6" />}
       </button>
 
-      {isMenuOpen && <MobileProfileMenu onClose={() => setIsMenuOpen(false)} />}
+      {isMenuOpen && <MobileProfileMenu isAdmin={isAdmin} onClose={() => setIsMenuOpen(false)} />}
     </>
   )
 }

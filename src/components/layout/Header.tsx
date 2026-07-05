@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { APP_NAME } from '@/constants/config'
+import { isAdminUser } from '@/lib/adminAccess'
 import { getAuthUser } from '@/lib/supabase/server'
 import { HeaderNav } from '@/components/layout/HeaderNav'
 
@@ -15,7 +16,7 @@ export async function Header() {
           {APP_NAME}
         </Link>
 
-        <HeaderNav isAuthenticated={!!user} />
+        <HeaderNav isAuthenticated={!!user} isAdmin={isAdminUser(user?.email)} />
       </div>
     </header>
   )
