@@ -84,7 +84,7 @@ const responseSchema = {
   ],
 }
 
-export async function parseCv(pdfBase64: string): Promise<CvParseResult> {
+export async function parseCv(pdfBase64: string, userId: string | null): Promise<CvParseResult> {
   const ai = getGenAiClient()
 
   const response = await ai.models.generateContent({
@@ -108,7 +108,7 @@ export async function parseCv(pdfBase64: string): Promise<CvParseResult> {
     },
   })
 
-  await recordAiCost(MODEL_CV, response.usageMetadata)
+  await recordAiCost(MODEL_CV, response.usageMetadata, userId)
 
   const text = response.text
   if (!text) throw new Error('Keine Antwort von Gemini erhalten.')

@@ -11,7 +11,10 @@ interface GenerateCoverLetterInput {
   profile: Profile
 }
 
-export async function generateCoverLetter(input: GenerateCoverLetterInput): Promise<string> {
+export async function generateCoverLetter(
+  input: GenerateCoverLetterInput,
+  userId: string | null
+): Promise<string> {
   const ai = getGenAiClient()
 
   const profilBlock = `Name: ${input.profile.full_name ?? 'unbekannt'}
@@ -52,7 +55,7 @@ Schreibe NUR den Brieftext eines individuellen, überzeugenden Anschreibens auf 
     },
   })
 
-  await recordAiCost(MODEL_LETTER, response.usageMetadata)
+  await recordAiCost(MODEL_LETTER, response.usageMetadata, userId)
 
   const text = response.text
   if (!text) throw new Error('Keine Antwort von Gemini erhalten.')

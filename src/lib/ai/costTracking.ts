@@ -35,6 +35,14 @@ function dayKey(): string {
   return `aicost:day:${berlinDay()}`
 }
 
+function userTotalKey(userId: string): string {
+  return `aicost:user:${userId}:total`
+}
+
+function userDayKey(userId: string): string {
+  return `aicost:user:${userId}:day:${berlinDay()}`
+}
+
 // ── In-Memory-Fallback (lokal / Redis-Ausfall, gilt pro Instanz) ──
 const memoryCosts = new Map<string, number>()
 
@@ -53,12 +61,15 @@ async function incrementCost(key: string, microUsd: number, ttlSeconds?: number)
 }
 
 /**
- * Nach jedem Gemini-Call aufrufen. Bewusst fehlertolerant: Ein
- * fehlgeschlagener Zähler darf das KI-Feature nie blockieren.
+ * Nach jedem Gemini-Call aufrufen. Zählt global (heute + gesamt) und, wenn
+ * eine User-ID bekannt ist, zusätzlich pro Nutzer (anonyme Aufrufe landen
+ * nur im globalen Zähler). Bewusst fehlertolerant: Ein fehlgeschlagener
+ * Zähler darf das KI-Feature nie blockieren.
  */
 export async function recordAiCost(
   model: string,
-  usageMetadata: UsageMetadataLike | undefined
+  usageMetadata: UsageMetadataLike | undefined,
+  userId: string | null = null
 ): Promise<void> {
   const pricing = MODEL_PRICING_USD_PER_M[model]
   if (!pricing || !usageMetadata) return
@@ -70,6 +81,12 @@ export async function recordAiCost(
   await Promise.all([
     incrementCost(TOTAL_KEY, microUsd),
     incrementCost(dayKey(), microUsd, DAY_TTL_SECONDS),
+    ...(userId
+      ? [
+          incrementCost(userTotalKey(userId), microUsd),
+          incrementCost(userDayKey(userId), microUsd, DAY_TTL_SECONDS),
+        ]
+      : []),
   ])
 }
 
@@ -97,4 +114,48 @@ export async function readAiCosts(): Promise<AiCosts> {
     todayUsd: (memoryCosts.get(key) ?? 0) / 1_000_000,
     totalUsd: (memoryCosts.get(TOTAL_KEY) ?? 0) / 1_000_000,
   }
+}
+
+// Upstash-MGET in Häppchen, damit auch viele Nutzer in eine Anfrage passen
+const MGET_CHUNK_SIZE = 400
+
+/**
+ * Kosten pro Nutzer fürs Admin-Dashboard lesen (heute + gesamt, in USD).
+ * Nutzer ohne Einträge fehlen in der Map — Aufrufer fällt auf 0 zurück.
+ */
+export async function readUserAiCosts(userIds: string[]): Promise<Map<string, AiCosts>> {
+  const costs = new Map<string, AiCosts>()
+  if (userIds.length === 0) return costs
+
+  const redis = getRedis()
+  if (redis) {
+    try {
+      // Pro Nutzer zwei Keys: [total, day] — Reihenfolge bleibt erhalten
+      const keys = userIds.flatMap((id) => [userTotalKey(id), userDayKey(id)])
+      const values: (number | null)[] = []
+      for (let i = 0; i < keys.length; i += MGET_CHUNK_SIZE) {
+        const chunk = await redis.mget<(number | null)[]>(...keys.slice(i, i + MGET_CHUNK_SIZE))
+        values.push(...chunk)
+      }
+      userIds.forEach((id, index) => {
+        const total = values[index * 2] ?? 0
+        const today = values[index * 2 + 1] ?? 0
+        if (total > 0) costs.set(id, { todayUsd: today / 1_000_000, totalUsd: total / 1_000_000 })
+      })
+      return costs
+    } catch (error) {
+      console.error('Nutzer-KI-Kosten konnten nicht gelesen werden:', error)
+    }
+  }
+
+  for (const id of userIds) {
+    const total = memoryCosts.get(userTotalKey(id)) ?? 0
+    if (total > 0) {
+      costs.set(id, {
+        todayUsd: (memoryCosts.get(userDayKey(id)) ?? 0) / 1_000_000,
+        totalUsd: total / 1_000_000,
+      })
+    }
+  }
+  return costs
 }

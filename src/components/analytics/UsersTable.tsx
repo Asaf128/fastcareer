@@ -18,6 +18,15 @@ function formatDateTime(iso: string | null): string {
   return iso ? dateTimeFormat.format(new Date(iso)) : '—'
 }
 
+// Vertex rechnet in USD ab; bis 4 Nachkommastellen, damit kleine
+// Einzelnutzer-Beträge nicht als "0,00 $" untergehen
+const usdFormat = new Intl.NumberFormat('de-DE', {
+  style: 'currency',
+  currency: 'USD',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 4,
+})
+
 const HEAD_CELL = 'px-3 py-2.5 text-left text-xs font-medium whitespace-nowrap'
 const CELL = 'px-3 py-2.5 whitespace-nowrap'
 
@@ -46,6 +55,7 @@ export function UsersTable({ users }: UsersTableProps) {
             <th className={HEAD_CELL}>CV</th>
             <th className={HEAD_CELL}>Credits</th>
             <th className={HEAD_CELL}>Käufe</th>
+            <th className={HEAD_CELL}>KI-Kosten</th>
           </tr>
         </thead>
         <tbody className="divide-border bg-background divide-y">
@@ -91,6 +101,15 @@ export function UsersTable({ users }: UsersTableProps) {
               <td className={`${CELL} text-foreground tabular-nums`}>{user.creditBalance}</td>
               <td className={`${CELL} text-foreground tabular-nums`}>
                 {user.purchasedCents > 0 ? formatPrice(user.purchasedCents) : '—'}
+              </td>
+              <td className={`${CELL} text-foreground tabular-nums`}>
+                {user.aiCostTotalUsd > 0 ? usdFormat.format(user.aiCostTotalUsd) : '—'}
+                {user.aiCostTodayUsd > 0 && (
+                  <span className="text-text-secondary text-xs">
+                    {' '}
+                    (heute {usdFormat.format(user.aiCostTodayUsd)})
+                  </span>
+                )}
               </td>
             </tr>
           ))}
