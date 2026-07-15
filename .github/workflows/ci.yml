@@ -14,7 +14,7 @@ jobs:
       - uses: pnpm/action-setup@v6
         with:
           version: latest
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
       - run: pnpm install --ignore-scripts
@@ -28,7 +28,7 @@ jobs:
       - uses: pnpm/action-setup@v6
         with:
           version: latest
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
       - run: pnpm install --ignore-scripts
@@ -42,7 +42,7 @@ jobs:
       - uses: pnpm/action-setup@v6
         with:
           version: latest
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
       - run: pnpm install --ignore-scripts
@@ -57,7 +57,7 @@ jobs:
       - uses: pnpm/action-setup@v6
         with:
           version: latest
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
       - run: pnpm install --ignore-scripts
