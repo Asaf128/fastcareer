@@ -33,6 +33,8 @@ export interface JobDetail {
   refnr: string
   beschreibung: string
   kontaktEmail: string | null
+  /** Freitext-Kontaktangaben des Arbeitgebers (kann einen Ansprechpartner nennen) */
+  kontaktInfo: string | null
   quelleUrl: string
 }
 
