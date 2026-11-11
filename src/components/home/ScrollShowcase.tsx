@@ -271,7 +271,14 @@ export function ScrollShowcase() {
   const active = Math.round(progress)
 
   return (
-    <section className="bg-surface border-border border-t">
+    <section className="bg-surface relative">
+      {/* Weicher Farbverlauf statt harter Trennlinie: Mobil (v. a. iOS-Safari
+          mit schwebender Leiste) ragt der Sektionsanfang je nach Leisten-
+          Zustand ein paar Pixel ins Bild, eine Linie fiele dort auf */}
+      <div
+        aria-hidden="true"
+        className="from-background to-surface pointer-events-none absolute inset-x-0 top-0 h-40 bg-linear-to-b"
+      />
       {/* Hoher Track: 100svh Scrollweg pro Schritt, darin klebt der Viewport */}
       <div ref={trackRef} className="relative h-[500svh]">
         {/* h-dvh statt svh: füllt den echten sichtbaren Viewport, auch wenn
