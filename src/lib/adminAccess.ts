@@ -4,7 +4,7 @@
  * Admin sieht zusätzlich nutzerübergreifende Daten. Deshalb steht hier
  * ausschließlich die eigene E-Mail, nie die komplette Pro-Liste.
  */
-const ADMIN_EMAILS = new Set(['ceb.asaf@gmail.com'])
+const ADMIN_EMAILS = new Set(['ceb.asaf@gmail.com', 'afatcan2007@gmail.com'])
 
 export function isAdminUser(email: string | null | undefined): boolean {
   return email != null && ADMIN_EMAILS.has(email.toLowerCase())
