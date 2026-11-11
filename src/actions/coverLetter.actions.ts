@@ -45,7 +45,10 @@ export async function generateAndSaveCoverLetter(
     .select('*')
     .eq('id', user.id)
     .maybeSingle()
-  if (!profile) return { error: 'Bitte fülle zuerst dein Profil aus.' }
+  // Ohne Namen entsteht ein Anschreiben ohne Absender und Unterschrift
+  if (!profile?.full_name?.trim()) {
+    return { error: 'Bitte trage zuerst deinen Namen im Profil ein und speichere es.' }
+  }
 
   // Kontingent-Kaskade: Pro → 2 Gratis alle 7 Tage → gekaufte Credits.
   // Dieselbe Stelle zählt nur einmal. remaining=null heißt unbegrenzt (Pro).
@@ -68,9 +71,11 @@ export async function generateAndSaveCoverLetter(
   const ort = parsed.data.ort ?? ''
 
   let beschreibung = ''
+  let kontaktInfo: string | null = null
   try {
     const detail = await getJobDetail(jobRefnr)
     beschreibung = detail.beschreibung
+    kontaktInfo = detail.kontaktInfo
   } catch (error) {
     console.error('Job-Detail für Anschreiben nicht abrufbar:', error)
   }
@@ -86,7 +91,10 @@ export async function generateAndSaveCoverLetter(
 
   let coverLetter: string
   try {
-    coverLetter = await generateCoverLetter({ titel, arbeitgeber, ort, summary, profile }, user.id)
+    coverLetter = await generateCoverLetter(
+      { titel, arbeitgeber, ort, summary, profile, beschreibung, kontaktInfo },
+      user.id
+    )
   } catch (error) {
     console.error('Anschreiben-Generierung fehlgeschlagen:', error)
     // Gescheiterter Versuch soll kein Kontingent kosten

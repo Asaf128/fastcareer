@@ -9,6 +9,7 @@ import { isRateLimited } from '@/lib/ai/rateLimit'
 import { consumePeriodCount, USAGE_LIMIT } from '@/lib/usage'
 import { isProUser } from '@/lib/pro'
 import type { CvParseResult } from '@/types/ai.types'
+import type { Json } from '@/types/database'
 
 const workExperienceSchema = z.object({
   position: z.string().min(1),
@@ -136,9 +137,26 @@ export async function uploadAndParseCv(
     return { error: 'Lebenslauf konnte nicht gespeichert werden.' }
   }
 
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .upsert({ id: user.id, cv_path: path })
+  // Ausgelesene Daten direkt mitspeichern: Sonst bleibt das Profil leer, wenn
+  // nach dem Upload nicht noch "Profil speichern" geklickt wird, und das
+  // Anschreiben entsteht ohne Name, Anschrift und Erfahrung. Leere Felder
+  // überschreiben vorhandene Profildaten nicht (gleiche Logik wie im Formular).
+  const { error: profileError } = await supabase.from('profiles').upsert({
+    id: user.id,
+    cv_path: path,
+    ...(parsed.full_name ? { full_name: parsed.full_name } : {}),
+    ...(parsed.birth_date ? { birth_date: parsed.birth_date } : {}),
+    ...(parsed.street ? { street: parsed.street } : {}),
+    ...(parsed.location ? { location: parsed.location } : {}),
+    ...(parsed.headline ? { headline: parsed.headline } : {}),
+    ...(parsed.about ? { about: parsed.about } : {}),
+    ...(parsed.work_experience.length > 0
+      ? { work_experience: parsed.work_experience as unknown as Json }
+      : {}),
+    ...(parsed.education.length > 0 ? { education: parsed.education as unknown as Json } : {}),
+    ...(parsed.skills.length > 0 ? { skills: parsed.skills } : {}),
+    ...(parsed.languages.length > 0 ? { languages: parsed.languages } : {}),
+  })
 
   if (profileError) {
     console.error('CV-Pfad konnte nicht gespeichert werden:', profileError.code)
@@ -150,5 +168,6 @@ export async function uploadAndParseCv(
     }
   }
 
+  revalidatePath('/profil')
   return { error: null, parsed }
 }

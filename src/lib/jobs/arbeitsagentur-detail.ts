@@ -30,12 +30,14 @@ export async function getJobDetail(refnr: string): Promise<JobDetail> {
 
   let beschreibung = ''
   let kontaktEmail: string | null = null
+  let kontaktInfo: string | null = null
 
   if (ngStateRaw) {
     try {
       const state = JSON.parse(ngStateRaw) as NgStateJson
       beschreibung = state.jobdetail?.stellenangebotsBeschreibung ?? ''
       const kontaktinformationen = state.arbeitgeberdarstellung?.kontaktinformationen
+      kontaktInfo = kontaktinformationen?.trim() || null
       // Viele Arbeitgeber nennen die Bewerbungs-Mail nur im Fließtext der
       // Beschreibung statt im separaten Kontakt-Feld — daher als Fallback
       // dort ebenfalls suchen, sonst bleibt der "Per Mail senden"-Button bei
@@ -49,5 +51,5 @@ export async function getJobDetail(refnr: string): Promise<JobDetail> {
     }
   }
 
-  return { refnr, beschreibung, kontaktEmail, quelleUrl }
+  return { refnr, beschreibung, kontaktEmail, kontaktInfo, quelleUrl }
 }
