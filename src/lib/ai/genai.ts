@@ -1,8 +1,12 @@
 import { GoogleGenAI } from '@google/genai'
 
-export const MODEL_SUMMARY = 'gemini-2.5-flash'
-export const MODEL_LETTER = 'gemini-2.5-pro'
-export const MODEL_CV = 'gemini-2.5-pro'
+// gemini-2.5-flash/-pro wurden auf Vertex AI zum 20.10.2026 abgekündigt.
+// Nachfolger laut Google: 3.5 Flash-Lite (schnell/günstig) und 3.8 Flash
+// (stärkstes Flash-Modell). Per Env überschreibbar, damit die nächste
+// Abkündigung ohne Code-Änderung abgefangen werden kann.
+export const MODEL_SUMMARY = process.env.GEMINI_MODEL_FAST || 'gemini-3.5-flash-lite'
+export const MODEL_LETTER = process.env.GEMINI_MODEL_PRO || 'gemini-3.8-flash'
+export const MODEL_CV = process.env.GEMINI_MODEL_PRO || 'gemini-3.8-flash'
 
 let cachedClient: GoogleGenAI | null = null
 
