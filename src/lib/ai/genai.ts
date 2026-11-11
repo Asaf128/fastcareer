@@ -1,8 +1,14 @@
 import { GoogleGenAI } from '@google/genai'
 
-export const MODEL_SUMMARY = 'gemini-2.5-flash'
-export const MODEL_LETTER = 'gemini-2.5-pro'
-export const MODEL_CV = 'gemini-2.5-pro'
+// Google hat für gemini-2.5-flash/-pro auf Vertex AI den 20.10.2026 als
+// frühestes Abschaltdatum genannt. Stand 11.11.2026 antwortet 2.5-flash in
+// europe-west4 noch, die genannten Nachfolger (gemini-3.5-flash-lite,
+// gemini-3.8-flash) sind dort für dieses Projekt aber nicht verfügbar (404).
+// Deshalb bleiben die 2.5er Default und sind per Env überschreibbar, damit
+// der Wechsel ohne Code-Änderung möglich ist, sobald er nötig wird.
+export const MODEL_SUMMARY = process.env.GEMINI_MODEL_FAST || 'gemini-2.5-flash'
+export const MODEL_LETTER = process.env.GEMINI_MODEL_PRO || 'gemini-2.5-pro'
+export const MODEL_CV = process.env.GEMINI_MODEL_PRO || 'gemini-2.5-pro'
 
 let cachedClient: GoogleGenAI | null = null
 

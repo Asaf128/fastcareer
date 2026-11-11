@@ -13,6 +13,9 @@ import { getRedis } from '@/lib/redis'
 const MODEL_PRICING_USD_PER_M: Record<string, { input: number; output: number }> = {
   'gemini-2.5-flash': { input: 0.3, output: 2.5 },
   'gemini-2.5-pro': { input: 1.25, output: 10 },
+  'gemini-3.5-flash-lite': { input: 0.3, output: 2.5 },
+  // Einführungspreis bis 31.12.2026, ab 01.01.2027 laut Google 1.5 / 7.5
+  'gemini-3.8-flash': { input: 0.75, output: 3.75 },
 }
 
 const TOTAL_KEY = 'aicost:total'
