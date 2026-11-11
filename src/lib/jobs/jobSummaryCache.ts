@@ -2,6 +2,7 @@ import { headers } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { summarizeJob } from '@/lib/ai/summarizeJob'
+import { MODEL_SUMMARY } from '@/lib/ai/genai'
 import { isRateLimited } from '@/lib/ai/rateLimit'
 import { hashIp } from '@/lib/ipHash'
 import type { JobSummary } from '@/types/ai.types'
@@ -62,7 +63,7 @@ export async function getOrCreateJobSummary(input: JobSummaryInput): Promise<Job
     const { error: insertError } = await admin.from('job_summaries').insert({
       job_refnr: input.refnr,
       summary: summary as unknown as Json,
-      model: 'gemini-2.5-flash',
+      model: MODEL_SUMMARY,
     })
     if (insertError) {
       console.error('Job-Zusammenfassung konnte nicht gecacht werden:', insertError.code)
