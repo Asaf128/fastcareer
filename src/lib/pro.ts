@@ -8,6 +8,7 @@ const PRO_EMAILS = new Set([
   'ceb.asaf@gmail.com',
   'cebecisirack@gmail.com',
   'afatcan2007@gmail.com',
+  'tamaraertle@icloud.com',
 ])
 
 export function isProUser(email: string | null | undefined): boolean {
