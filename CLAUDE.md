@@ -34,7 +34,7 @@ Next.js 16 (App Router) · TypeScript strict · Tailwind CSS v4 · Supabase · V
 - Supabase Clients: `src/lib/supabase/` (`server.ts` Session-Client, `admin.ts` Service-Role-Client für Cache-Inserts & Konto-Löschung — nie im Client importieren)
 - Konto-Löschung (DSGVO — Storage + DB + Auth-User): `src/actions/account.actions.ts`, UI: `src/components/profile/DeleteAccountSection.tsx`
 - SQL-Migrationen (werden via PR reviewt, dann manuell/per MCP angewendet): `supabase/migrations/`
-- Supabase-Projekt: geteilt mit "Aurum Watches" (Free-Tier-Limit); Tabellen `applications`, `profiles`, `job_summaries` sowie Storage-Bucket `cvs` gehören zu Fastcareer. `favorites` ist die alte Vorgänger-Tabelle von `applications` — Daten migriert, Drop-Migration liegt in `supabase/migrations/` (Ausführung nach User-OK)
+- Supabase-Projekt `fnlmzyovveilsjurysql`: gehört seit 11.11.2026 ausschließlich Fastcareer (Alt-Tabellen von "Aurum Watches" und "Linked" wurden entfernt, Linked hat ein eigenes Projekt). Tabellen: `applications`, `profiles`, `job_summaries`, `job_views`, `credit_balances`, `credit_usages`, `credit_purchases`; Storage-Bucket `cvs`
 - Job-Types: `src/types/job.types.ts`
 - Bewerbungs-Types: `src/types/application.types.ts`
 - Profil-Types: `src/types/profile.types.ts`
