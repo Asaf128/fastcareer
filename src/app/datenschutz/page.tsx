@@ -120,7 +120,9 @@ export default function DatenschutzPage() {
               <p>
                 Für die KI-Funktionen (Zusammenfassen von Stellenanzeigen, Auslesen deines
                 hochgeladenen Lebenslaufs, Erstellen von Anschreiben und Match-Score) nutzen wir
-                Google Cloud Vertex AI (Google Ireland Ltd.), Serverstandort EU. Dabei werden die
+                Google Cloud Vertex AI (Google Ireland Ltd.). Die Verarbeitung erfolgt über den
+                globalen Endpunkt von Google und kann daher auch auf Servern außerhalb der EU
+                stattfinden (u. a. USA; Grundlage: EU-Standardvertragsklauseln). Dabei werden die
                 jeweils nötigen Daten (Stellenbeschreibung, dein Lebenslauf bzw. deine Profildaten)
                 zur Verarbeitung an Google übermittelt; sie werden dort nicht zum Training von
                 KI-Modellen verwendet. Die KI-Funktionen auf Basis deiner Profildaten nutzt du nur,
