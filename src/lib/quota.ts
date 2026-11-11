@@ -58,8 +58,8 @@ export async function consumeAiQuota(params: QuotaParams): Promise<QuotaResult> 
 export async function refundAiQuota(params: QuotaParams, result: QuotaResult): Promise<void> {
   if (result.source === 'free') {
     await refundPeriodUnique(params.feature, params.userKey, params.jobRefnr)
-  } else if (result.source === 'credit' && result.creditCharged) {
-    await refundCredit(params.feature, params.jobRefnr)
+  } else if (result.source === 'credit' && result.creditCharged && params.userId) {
+    await refundCredit(params.userId, params.feature, params.jobRefnr)
   }
 }
 

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 /**
  * Gekaufte Credit-Pakete: Guthaben pro Feature (Zusammenfassung, Match,
@@ -40,10 +41,20 @@ export async function consumeCredit(
   return data[0]
 }
 
-/** Credit zurückgeben, wenn die KI-Aktion nach dem Abbuchen fehlschlägt. */
-export async function refundCredit(feature: CreditFeature, jobRefnr: string): Promise<void> {
-  const supabase = await createClient()
+/**
+ * Credit zurückgeben, wenn die KI-Aktion nach dem Abbuchen fehlschlägt.
+ * Läuft über den Service-Role-Client: die Postgres-Funktion ist für
+ * Endnutzer nicht aufrufbar, sonst könnte sich jeder nach einer
+ * erfolgreichen Generierung den Credit selbst zurückerstatten.
+ */
+export async function refundCredit(
+  userId: string,
+  feature: CreditFeature,
+  jobRefnr: string
+): Promise<void> {
+  const supabase = createAdminClient()
   const { error } = await supabase.rpc('refund_credit', {
+    p_user_id: userId,
     p_feature: feature,
     p_job_refnr: jobRefnr,
   })

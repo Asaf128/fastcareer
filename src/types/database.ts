@@ -538,7 +538,7 @@ export type Database = {
         }[]
       }
       refund_credit: {
-        Args: { p_feature: string; p_job_refnr: string }
+        Args: { p_user_id: string; p_feature: string; p_job_refnr: string }
         Returns: undefined
       }
     }
