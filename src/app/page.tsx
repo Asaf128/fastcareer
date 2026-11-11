@@ -21,8 +21,10 @@ export default function Home() {
     <main className="bg-background flex flex-1 flex-col">
       {/* Header ist exakt 4rem + 1px Border hoch. Hero füllt den restlichen
           Viewport vollständig, sodass die nächste Sektion erst beim Scrollen
-          erscheint (auch mobil, svh) */}
-      <Section className="relative flex min-h-[calc(100svh-4rem-1px)] flex-col justify-center py-8 lg:py-12">
+          erscheint. lvh statt svh: svh ist die kleinste Viewport-Höhe (URL-Leiste
+          ausgeklappt); ist die Leiste eingeklappt, ragte sonst die Trennlinie
+          der nächsten Sektion ins Bild */}
+      <Section className="relative flex min-h-[calc(100lvh-4rem-1px)] flex-col justify-center py-8 lg:py-12">
         <TetrisBackground />
         <Container className="relative">
           <TypingHeadline />
